@@ -39,6 +39,10 @@ void ide_settings_load(void)
                 snprintf(g_ide.emu_args, sizeof(g_ide.emu_args), "%s", eq + 1);
             else if (strcmp(line, "emu_workdir") == 0)
                 snprintf(g_ide.emu_workdir, sizeof(g_ide.emu_workdir), "%s", eq + 1);
+            else if (strcmp(line, "sign_cert") == 0)
+                snprintf(g_ide.sign_cert, sizeof(g_ide.sign_cert), "%s", eq + 1);
+            else if (strcmp(line, "sign_key") == 0)
+                snprintf(g_ide.sign_key, sizeof(g_ide.sign_key), "%s", eq + 1);
             else if (strcmp(line, "pkg") == 0)
                 snprintf(g_ide.proj.pkg, sizeof(g_ide.proj.pkg), "%s", eq + 1);
         }
@@ -155,7 +159,7 @@ void ide_package(void)
         return;
     }
     GetModuleFileNameA(NULL, exe_dir, sizeof(exe_dir));
-    for (i = (int)strlen(exe_dir); i > 0 && exe_dir[i] != '\\' && exe_dir[i] != '/'; i--)
+    for (i = (int)strlen(exe_dir); i > 0 && exe_dir[i] != 92 && exe_dir[i] != 47; i--)
         exe_dir[i] = 0;
     snprintf(root, sizeof(root), "%s/../..", exe_dir);
     if (g_ide.proj.pkg[0]) {
@@ -196,7 +200,7 @@ void ide_run(void)
     int i;
 
     GetModuleFileNameA(NULL, exe_dir, sizeof(exe_dir));
-    for (i = (int)strlen(exe_dir); i > 0 && exe_dir[i] != '\\' && exe_dir[i] != '/'; i--)
+    for (i = (int)strlen(exe_dir); i > 0 && exe_dir[i] != 92 && exe_dir[i] != 47; i--)
         exe_dir[i] = 0;
     snprintf(root, sizeof(root), "%s/../..", exe_dir);
     snprintf(e32, sizeof(e32), "%s/build/%s.e32", root, g_ide.proj.name);
@@ -237,4 +241,43 @@ void ide_run(void)
     CloseHandle(pi.hThread);
     CloseHandle(pi.hProcess);
     ide_set_status("emulator started: %s", cmd);
+}
+
+void ide_sign(void)
+{
+    char exe_dir[512];
+    char root[512];
+    char cmd[2048];
+    int i;
+    int code;
+
+    if (!g_ide.sign_cert[0] || !g_ide.sign_key[0]) {
+        ide_set_status("sign: set sign_cert and sign_key in acetylene.ini");
+        add_msg("signing needs a certificate/key pair (sign_cert, sign_key in acetylene.ini)");
+        return;
+    }
+    if (!g_ide.last_sisx[0] || GetFileAttributesA(g_ide.last_sisx) == INVALID_FILE_ATTRIBUTES) {
+        ide_package();
+        if (!g_ide.last_sisx[0])
+            return;
+    }
+    GetModuleFileNameA(NULL, exe_dir, sizeof(exe_dir));
+    for (i = (int)strlen(exe_dir); i > 0 && exe_dir[i] != 92 && exe_dir[i] != 47; i--)
+        exe_dir[i] = 0;
+    snprintf(root, sizeof(root), "%s/../..", exe_dir);
+    snprintf(cmd, sizeof(cmd),
+             "\"%s/acetylene-sis.exe\" -pkg \"%s/build/%s.pkg\" -o \"%s\" -sdk \"%s/sdk/targets/%s\" -sign \"%s\" \"%s\"",
+             exe_dir, root, g_ide.proj.name, g_ide.last_sisx, root, g_ide.proj.target,
+             g_ide.sign_cert, g_ide.sign_key);
+    buf_put(&g_ide.build_log, cmd, strlen(cmd));
+    buf_u8(&g_ide.build_log, 0x0a);
+    ide_set_status("Signing...");
+    UpdateWindow(g_ide.hwnd);
+    code = run_capture(cmd, NULL, 0);
+    if (code != 0) {
+        add_msg("signing failed (exit %d)", code);
+        ide_set_status("Sign FAILED");
+        return;
+    }
+    ide_set_status("signed: %s.signed.sisx", g_ide.last_sisx);
 }

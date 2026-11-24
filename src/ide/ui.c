@@ -1280,7 +1280,7 @@ static void ide_command(int cmd)
         ide_choose_emulator();
         break;
     case CMD_SIGN:
-        ide_set_status("Signing: run acetylene-makekeys once, then acetylene-sign (see Help > About)");
+        ide_sign();
         break;
     case CMD_RUN:
         ide_run();

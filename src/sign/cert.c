@@ -1,5 +1,8 @@
 #include "ac_crypto.h"
 
+static int g_cert_v1;
+static int g_no_null;
+
 void der_init(Der *d)
 {
     d->data = NULL;
@@ -192,7 +195,8 @@ static void mk_alg_sha1(Der *d)
     Buf b;
     buf_init(&b);
     buf_put(&b, oid_sha1, sizeof(oid_sha1));
-    buf_put(&b, nullp, sizeof(nullp));
+    if (!g_no_null)
+        buf_put(&b, nullp, sizeof(nullp));
     der_tlv(d, 0x30, b.data, b.len);
     buf_free(&b);
 }
@@ -204,7 +208,8 @@ static void mk_alg_rsa(Der *d)
     Buf b;
     buf_init(&b);
     buf_put(&b, oid_rsa, sizeof(oid_rsa));
-    buf_put(&b, nullp, sizeof(nullp));
+    if (!g_no_null)
+        buf_put(&b, nullp, sizeof(nullp));
     der_tlv(d, 0x30, b.data, b.len);
     buf_free(&b);
 }
@@ -390,7 +395,8 @@ static void tbs_bytes(Der *out, const RsaKey *key, const char *cn, const char *o
     {
         Der body;
         der_init(&body);
-        der_tlv(&body, 0xa0, ver.data, ver.len);
+        if (!g_cert_v1)
+            der_tlv(&body, 0xa0, ver.data, ver.len);
         der_raw(&body, serial_d.data, serial_d.len);
         {
             Der a;
@@ -403,7 +409,8 @@ static void tbs_bytes(Der *out, const RsaKey *key, const char *cn, const char *o
         der_raw(&body, validity.data, validity.len);
         der_raw(&body, name.data, name.len);
         der_raw(&body, spki.data, spki.len);
-        der_raw(&body, ext.data, ext.len);
+        if (!g_cert_v1)
+            der_raw(&body, ext.data, ext.len);
         der_tlv(out, 0x30, body.data, body.len);
         der_free(&body);
     }
@@ -415,6 +422,16 @@ static void tbs_bytes(Der *out, const RsaKey *key, const char *cn, const char *o
     der_free(&ext);
     der_free(&alg);
     der_free(&rsa_inner);
+}
+
+void devcert_set_nonull(int v)
+{
+    g_no_null = v ? 1 : 0;
+}
+
+void devcert_set_v1(int v)
+{
+    g_cert_v1 = v ? 1 : 0;
 }
 
 int devcert_generate(DevCert *dc, int bits, const char *common_name)

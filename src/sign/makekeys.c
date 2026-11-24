@@ -1,5 +1,8 @@
 #include "ac_crypto.h"
 
+void devcert_set_v1(int v);
+void devcert_set_nonull(int v);
+
 int main(int argc, char **argv)
 {
     int bits = 1024;
@@ -13,6 +16,10 @@ int main(int argc, char **argv)
             bits = atoi(argv[++i]);
         } else if (strcmp(argv[i], "-name") == 0 && i + 1 < argc) {
             name = argv[++i];
+        } else if (strcmp(argv[i], "-nonull") == 0) {
+            devcert_set_nonull(1);
+        } else if (strcmp(argv[i], "-v1") == 0) {
+            devcert_set_v1(1);
         } else if (strcmp(argv[i], "--selftest") == 0) {
             u8 h1[20], h2[32];
             u8 sig[512];

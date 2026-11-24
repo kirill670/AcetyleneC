@@ -128,6 +128,8 @@ typedef struct {
     char emu_args[512];
     char emu_workdir[512];
     char last_sisx[768];
+    char sign_cert[512];
+    char sign_key[512];
     int dirty_layout;
     int find_open;
     char find_text[128];
@@ -165,6 +167,7 @@ void ide_settings_save(void);
 void ide_choose_emulator(void);
 void ide_package(void);
 void ide_run(void);
+void ide_sign(void);
 
 Doc *doc_active(void);
 void doc_init(Doc *d, const char *path);
