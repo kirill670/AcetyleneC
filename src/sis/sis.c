@@ -118,6 +118,74 @@ static void pkg_parse(const char *path, Pkg *p)
     buf_free(&b);
 }
 
+static void pkg_absolutize(const char *pkg_path, const char *out_path)
+{
+    Buf in, out;
+    char dir[1024];
+    char *line;
+    char *slash;
+    if (ac_read_file(pkg_path, &in) != 0)
+        return;
+    buf_put(&in, "", 1);
+    {
+        char full[1024];
+        DWORD n = GetFullPathNameA(pkg_path, sizeof(full), full, NULL);
+        if (n > 0 && n < sizeof(full))
+            snprintf(dir, sizeof(dir), "%s", full);
+        else
+            snprintf(dir, sizeof(dir), "%s", pkg_path);
+    }
+    slash = strrchr(dir, 92);
+    if (!slash)
+        slash = strrchr(dir, 47);
+    if (slash)
+        *slash = 0;
+    else
+        strcpy(dir, ".");
+    buf_init(&out);
+    line = (char *)in.data;
+    while (*line) {
+        char *nl = strchr(line, 10);
+        char buf[2048];
+        size_t n = nl ? (size_t)(nl - line) : strlen(line);
+        if (n >= sizeof(buf))
+            n = sizeof(buf) - 1;
+        memcpy(buf, line, n);
+        buf[n] = 0;
+        {
+            char *s = buf;
+            while (*s == 32 || *s == 9)
+                s++;
+            if (*s == 34) {
+                char *end = strchr(s + 1, 34);
+                if (end && end[1] == 45 && end[2] == 34) {
+                    char src[1024];
+                    size_t sl = (size_t)(end - s - 1);
+                    if (sl < sizeof(src)) {
+                        memcpy(src, s + 1, sl);
+                        src[sl] = 0;
+                        if (!(strlen(src) > 1 && src[1] == 58 && src[0] != 0)) {
+                            char abs[1024];
+                            char tail[1024];
+                            snprintf(abs, sizeof(abs), "%s%s%s", dir, "\\", src);
+                            snprintf(tail, sizeof(tail), "%s", end + 1);
+                            snprintf(buf, sizeof(buf), "\"%s\"%s", abs, tail);
+                        }
+                    }
+                }
+            }
+        }
+        buf_put(&out, buf, strlen(buf));
+        buf_u8(&out, 10);
+        if (!nl)
+            break;
+        line = nl + 1;
+    }
+    ac_write_file(out_path, out.data, out.len);
+    buf_free(&out);
+    buf_free(&in);
+}
+
 static int run_tool(const char *exe, const char *args, char *out, size_t outlen)
 {
     char cmd[2048];
@@ -240,7 +308,23 @@ int main(int argc, char **argv)
             snprintf(sis_path, sizeof(sis_path), "%s", out_path);
             if (ac_has_ext(sis_path, ".sisx") || ac_has_ext(sis_path, ".SISX"))
                 sis_path[strlen(sis_path) - 1] = 0;
-            snprintf(args, sizeof(args), "\"%s\" \"%s\"", pkg_path, sis_path);
+            {
+                char pkg_dir[1024];
+                char *slash;
+                snprintf(pkg_dir, sizeof(pkg_dir), "%s", pkg_path);
+                slash = strrchr(pkg_dir, 92);
+                if (!slash)
+                    slash = strrchr(pkg_dir, 47);
+                if (slash)
+                    *slash = 0;
+                else
+                    strcpy(pkg_dir, ".");
+                char norm[1024];
+                snprintf(norm, sizeof(norm), "%s.abs.pkg", sis_path);
+                pkg_absolutize(pkg_path, norm);
+                (void)pkg_dir;
+                snprintf(args, sizeof(args), "\"%s\" \"%s\"", norm, sis_path);
+            }
             code = run_tool(makesis, args, log, sizeof(log));
             if (code != 0) {
                 fprintf(stderr, "acetylene-sis: makesis failed (%d)", code);
