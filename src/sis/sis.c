@@ -32,7 +32,7 @@ static void pkg_parse(const char *path, Pkg *p)
             *nl = 0;
         while (*s == ' ' || *s == '\t')
             s++;
-        if (s[0] && s[0] != ';' && s[0] != '#') {
+        if (s[0] && s[0] != ';' && !(s[0] == '#' && s[1] != '{')) {
             if (s[0] == '"' || s[0] == '\'') {
                 char *dash = strstr(s, "\"-\"");
                 if (dash) {
