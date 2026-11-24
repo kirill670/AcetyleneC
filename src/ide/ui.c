@@ -277,6 +277,8 @@ void ide_layout(void)
     g_ide.rc_status.bottom = rc.bottom;
 }
 
+static void draw_find_bar(HDC dc);
+
 static void draw_menu_bar(HDC dc, int w)
 {
     int x = 8, i;
@@ -632,6 +634,7 @@ void ide_paint(HDC dc, RECT *client)
     draw_editor(mem);
     if (g_ide.show_output)
         draw_output(mem);
+    draw_find_bar(mem);
     draw_status(mem, w);
     if (g_ide.menu_index >= 0)
         draw_popup(mem, w, h);
@@ -802,11 +805,109 @@ void ide_goto_line(int line)
     doc_scroll_to_caret(d);
 }
 
+static int find_next_from(Doc *d, int from)
+{
+    const char *hay = (const char *)d->data.data;
+    int hlen = (int)d->data.len;
+    int nlen = (int)strlen(g_ide.find_text);
+    int i;
+    if (nlen <= 0)
+        return -1;
+    for (i = from; i + nlen <= hlen; i++) {
+        int k;
+        int ok = 1;
+        for (k = 0; k < nlen; k++) {
+            char a = hay[i + k];
+            char b = g_ide.find_text[k];
+            if (a >= 'A' && a <= 'Z')
+                a = (char)(a - 'A' + 'a');
+            if (b >= 'A' && b <= 'Z')
+                b = (char)(b - 'A' + 'a');
+            if (a != b) {
+                ok = 0;
+                break;
+            }
+        }
+        if (ok)
+            return i;
+    }
+    return -1;
+}
+
+static void do_find(void)
+{
+    Doc *d = doc_active();
+    int at;
+    if (!d || !g_ide.find_text[0])
+        return;
+    at = find_next_from(d, d->caret + (doc_has_selection(d) ? 1 : 0));
+    if (at < 0)
+        at = find_next_from(d, 0);
+    if (at < 0) {
+        ide_set_status("not found: %s", g_ide.find_text);
+        return;
+    }
+    d->anchor = at;
+    d->caret = at + (int)strlen(g_ide.find_text);
+    d->sel_active = 1;
+    d->caret = at;
+    d->sel_active = 1;
+    d->anchor = at + (int)strlen(g_ide.find_text);
+    doc_scroll_to_caret(d);
+    ide_set_status("found at offset %d", at);
+}
+
+static void do_goto(void)
+{
+    Doc *d = doc_active();
+    int line;
+    if (!d)
+        return;
+    line = atoi(g_ide.find_text);
+    if (line <= 0) {
+        ide_set_status("enter a line number");
+        return;
+    }
+    ide_goto_line(line);
+    ide_set_status("line %d", line);
+}
+
+static void draw_find_bar(HDC dc)
+{
+    RECT r = g_ide.rc_editor;
+    int w = 360;
+    int h = 26;
+    RECT box;
+    char label[64];
+    if (!g_ide.find_open)
+        return;
+    box.left = r.right - w - 12;
+    box.top = r.top + 6;
+    box.right = r.right - 12;
+    box.bottom = box.top + h;
+    fill(dc, box, C_PANEL2);
+    frame(dc, box, C_ACCENT);
+    snprintf(label, sizeof(label), "%s", g_ide.find_focus ? "Go to line:" : "Find:");
+    text_at(dc, box.left + 8, box.top + 5, label, C_DIM, g_ide.font_ui);
+    {
+        int lw = text_w(dc, label, g_ide.font_ui);
+        char shown[160];
+        snprintf(shown, sizeof(shown), "%s", g_ide.find_text);
+        text_at(dc, box.left + 8 + lw + 6, box.top + 5, shown, C_TEXT, g_ide.font_ui);
+        if (g_ide.blink_on) {
+            int tw = text_w(dc, shown, g_ide.font_ui);
+            fill(dc, (RECT){box.left + 8 + lw + 6 + tw, box.top + 6, box.left + 9 + lw + 6 + tw, box.top + 20}, C_TEXT);
+        }
+    }
+    text_at(dc, box.left + 8, box.top + 18, "", C_DIM, g_ide.font_ui);
+}
+
 void ide_find(void)
 {
     g_ide.find_open = 1;
     g_ide.find_focus = 0;
-    ide_set_status("Find: %s", g_ide.find_text);
+    g_ide.find_text[0] = 0;
+    ide_set_status("type to search, Enter = next, Esc = close");
 }
 
 static int run_capture(const char *cmd, char *log, size_t logcap)
@@ -893,84 +994,142 @@ static void run_build_pipeline(void)
     Doc *d = doc_active();
     char exe_dir[512];
     char root[512];
-    char tcc[768], ld[768], elf2e32[768];
+    char tcc[768], ld[768], elf2e32[768], cxx[768];
     char build_dir[768];
-    char src_abs[768];
-    char obj_file[768];
     char elf_file[768];
     char e32_file[768];
-    char cmd[2048];
+    char objects[4096];
+    char cmd[4096];
     int i;
     int code;
+    int compiled = 0;
 
     if (strcmp(g_ide.proj.target, "s60v3") == 0)
         snprintf(g_ide.proj.target, sizeof(g_ide.proj.target), "s60v30");
+
     GetModuleFileNameA(NULL, exe_dir, sizeof(exe_dir));
     for (i = (int)strlen(exe_dir); i > 0 && exe_dir[i] != '\\' && exe_dir[i] != '/'; i--)
         exe_dir[i] = 0;
     snprintf(root, sizeof(root), "%s/../..", exe_dir);
-    join_path(tcc, sizeof(tcc), exe_dir, "acetylene-cc.exe");
-    join_path(ld, sizeof(ld), exe_dir, "acetylene-ld.exe");
+    snprintf(tcc, sizeof(tcc), "%s/acetylene-cc.exe", exe_dir);
+    snprintf(ld, sizeof(ld), "%s/acetylene-ld.exe", exe_dir);
+    snprintf(cxx, sizeof(cxx), "%s/acetylene-cxx.exe", exe_dir);
     snprintf(elf2e32, sizeof(elf2e32), "%s/sdk/targets/%s/tools/elf2e32.exe", root, g_ide.proj.target);
     snprintf(build_dir, sizeof(build_dir), "%s/build", root);
     CreateDirectoryA(build_dir, NULL);
+    snprintf(elf_file, sizeof(elf_file), "%s/%s.elf", build_dir, g_ide.proj.name);
+    snprintf(e32_file, sizeof(e32_file), "%s/%s.e32", build_dir, g_ide.proj.name);
 
     buf_free(&g_ide.build_log);
     buf_init(&g_ide.build_log);
     g_ide.nmsgs = 0;
     g_ide.selected_msg = -1;
+    objects[0] = 0;
 
-    if (!d || !d->path) {
-        add_msg("open a source file first");
-        ide_set_status("Build: nothing to compile");
-        return;
-    }
-    snprintf(src_abs, sizeof(src_abs), "%s", d->path);
-    snprintf(obj_file, sizeof(obj_file), "%s/%s.o", build_dir, g_ide.proj.name);
-    snprintf(elf_file, sizeof(elf_file), "%s/%s.elf", build_dir, g_ide.proj.name);
-    snprintf(e32_file, sizeof(e32_file), "%s/%s.e32", build_dir, g_ide.proj.name);
-
-    if (ac_has_ext(d->path, ".cpp") || ac_has_ext(d->path, ".cc")) {
-        char cxx[768];
-        char gen_c[768];
-        snprintf(cxx, sizeof(cxx), "%s/acetylene-cxx.exe", exe_dir);
-        snprintf(gen_c, sizeof(gen_c), "%s/%s.gen.c", build_dir, g_ide.proj.name);
-        snprintf(cmd, sizeof(cmd), "\"%s\" \"%s\" -o \"%s\"", cxx, src_abs, gen_c);
-        buf_put(&g_ide.build_log, cmd, strlen(cmd));
-        buf_u8(&g_ide.build_log, 0x0a);
-        ide_set_status("Translating C++...");
-        UpdateWindow(g_ide.hwnd);
-        code = run_capture(cmd, NULL, 0);
-        if (code != 0) {
-            add_msg("C++ frontend failed (exit %d)", code);
-            ide_set_status("C++ FAILED");
+    if (g_ide.proj.sources.count == 0) {
+        if (!d || !d->path) {
+            add_msg("open a source file or add source= lines to the .acproj");
+            ide_set_status("Build: nothing to compile");
             return;
         }
-        snprintf(cmd, sizeof(cmd),
-                 "\"%s\" -I\"%s/sdk/include\" -I\"%s/sdk/include/tcc\" -c \"%s\" -o \"%s\"",
-                 tcc, root, root, gen_c, obj_file);
+        compiled = 1;
+        {
+            char gen_c[768];
+            char obj[768];
+            const char *base = ac_basename(d->path);
+            snprintf(gen_c, sizeof(gen_c), "%s/%s.gen.c", build_dir, g_ide.proj.name);
+            snprintf(obj, sizeof(obj), "%s/%.*s.o", build_dir, (int)(strrchr(base, '.') ? (size_t)(strrchr(base, '.') - base) : strlen(base)), base);
+            if (ac_has_ext(d->path, ".cpp") || ac_has_ext(d->path, ".cc")) {
+                snprintf(cmd, sizeof(cmd), "\"%s\" \"%s\" -o \"%s\"", cxx, d->path, gen_c);
+                buf_put(&g_ide.build_log, cmd, strlen(cmd));
+                buf_u8(&g_ide.build_log, 10);
+                ide_set_status("Translating C++...");
+                UpdateWindow(g_ide.hwnd);
+                if (run_capture(cmd, NULL, 0) != 0) {
+                    add_msg("C++ frontend failed");
+                    ide_set_status("C++ FAILED");
+                    return;
+                }
+                snprintf(cmd, sizeof(cmd), "\"%s\" -I\"%s/sdk/include\" -I\"%s/sdk/include/tcc\" -c \"%s\" -o \"%s\"",
+                         tcc, root, root, gen_c, obj);
+            } else {
+                snprintf(cmd, sizeof(cmd), "\"%s\" -I\"%s/sdk/include\" -I\"%s/sdk/include/tcc\" -c \"%s\" -o \"%s\"",
+                         tcc, root, root, d->path, obj);
+            }
+            buf_put(&g_ide.build_log, cmd, strlen(cmd));
+            buf_u8(&g_ide.build_log, 10);
+            ide_set_status("Compiling...");
+            UpdateWindow(g_ide.hwnd);
+            if (run_capture(cmd, NULL, 0) != 0) {
+                if (g_ide.nmsgs == 0)
+                    add_msg("compiler failed");
+                ide_set_status("Compile FAILED");
+                return;
+            }
+            snprintf(objects, sizeof(objects), "\"%s\"", obj);
+        }
     } else {
-        snprintf(cmd, sizeof(cmd),
-                 "\"%s\" -I\"%s/sdk/include\" -I\"%s/sdk/include/tcc\" -c \"%s\" -o \"%s\"",
-                 tcc, root, root, src_abs, obj_file);
+        for (i = 0; i < g_ide.proj.sources.count; i++) {
+            const char *src = g_ide.proj.sources.items[i];
+            char full[768];
+            char gen_c[768];
+            char obj[768];
+            const char *base;
+            char stem[256];
+            size_t sl;
+            if (src[1] == ':') {
+                snprintf(full, sizeof(full), "%s", src);
+            } else {
+                snprintf(full, sizeof(full), "%s/%s", root, src);
+            }
+            base = ac_basename(full);
+            sl = strlen(base);
+            if (strrchr(base, '.'))
+                sl = (size_t)(strrchr(base, '.') - base);
+            snprintf(stem, sizeof(stem), "%.*s", (int)(sl > 200 ? 200 : sl), base);
+            snprintf(obj, sizeof(obj), "%s/%s.o", build_dir, stem);
+            if (ac_has_ext(full, ".cpp") || ac_has_ext(full, ".cc")) {
+                snprintf(gen_c, sizeof(gen_c), "%s/%s.gen.c", build_dir, stem);
+                snprintf(cmd, sizeof(cmd), "\"%s\" \"%s\" -o \"%s\"", cxx, full, gen_c);
+                buf_put(&g_ide.build_log, cmd, strlen(cmd));
+                buf_u8(&g_ide.build_log, 10);
+                if (run_capture(cmd, NULL, 0) != 0) {
+                    add_msg("C++ frontend failed for %s", base);
+                    ide_set_status("C++ FAILED");
+                    return;
+                }
+                snprintf(cmd, sizeof(cmd), "\"%s\" -I\"%s/sdk/include\" -I\"%s/sdk/include/tcc\" -c \"%s\" -o \"%s\"",
+                         tcc, root, root, gen_c, obj);
+            } else {
+                snprintf(cmd, sizeof(cmd), "\"%s\" -I\"%s/sdk/include\" -I\"%s/sdk/include/tcc\" -c \"%s\" -o \"%s\"",
+                         tcc, root, root, full, obj);
+            }
+            buf_put(&g_ide.build_log, cmd, strlen(cmd));
+            buf_u8(&g_ide.build_log, 10);
+            ide_set_status("Compiling %s...", base);
+            UpdateWindow(g_ide.hwnd);
+            if (run_capture(cmd, NULL, 0) != 0) {
+                if (g_ide.nmsgs == 0)
+                    add_msg("compiler failed for %s", base);
+                ide_set_status("Compile FAILED: %s", base);
+                return;
+            }
+            if (strlen(objects) + strlen(obj) + 4 < sizeof(objects)) {
+                if (objects[0])
+                    strncat(objects, " ", sizeof(objects) - strlen(objects) - 1);
+                strncat(objects, "\"", sizeof(objects) - strlen(objects) - 1);
+                strncat(objects, obj, sizeof(objects) - strlen(objects) - 1);
+                strncat(objects, "\"", sizeof(objects) - strlen(objects) - 1);
+            }
+        }
     }
-    buf_put(&g_ide.build_log, cmd, strlen(cmd));
-    buf_u8(&g_ide.build_log, 0x0a);
-    ide_set_status("Compiling...");
-    UpdateWindow(g_ide.hwnd);
-    code = run_capture(cmd, NULL, 0);
-    if (code != 0) {
-        if (g_ide.nmsgs == 0)
-            add_msg("compiler failed with exit code %d", code);
-        ide_set_status("Compile FAILED");
-        return;
-    }
+    (void)compiled;
 
     snprintf(cmd, sizeof(cmd),
-             "\"%s\" -o \"%s\" -L \"%s/sdk/targets/%s/lib\" \"%s\" -lecrt0 -lestlib -leuser -ldrtaeabi -lusrt2_2",
-             ld, elf_file, root, g_ide.proj.target, obj_file);
+             "\"%s\" -o \"%s\" -L \"%s/sdk/targets/%s/lib\" %s -lecrt0 -lestlib -leuser -ldrtaeabi -lusrt2_2",
+             ld, elf_file, root, g_ide.proj.target, objects);
     buf_put(&g_ide.build_log, cmd, strlen(cmd));
-    buf_u8(&g_ide.build_log, 0x0a);
+    buf_u8(&g_ide.build_log, 10);
     ide_set_status("Linking...");
     UpdateWindow(g_ide.hwnd);
     code = run_capture(cmd, NULL, 0);
@@ -985,7 +1144,7 @@ static void run_build_pipeline(void)
              "--uid3=%s --sid=%s --heap=%d --stack=%d --uncompressed",
              elf2e32, elf_file, e32_file, g_ide.proj.uid3, g_ide.proj.uid3, g_ide.proj.heap, g_ide.proj.stack);
     buf_put(&g_ide.build_log, cmd, strlen(cmd));
-    buf_u8(&g_ide.build_log, 0x0a);
+    buf_u8(&g_ide.build_log, 10);
     ide_set_status("Post-linking (elf2e32)...");
     UpdateWindow(g_ide.hwnd);
     code = run_capture(cmd, NULL, 0);
@@ -1116,6 +1275,26 @@ static void ide_command(int cmd)
 int ide_key(int vk, int ctrl, int shift, int alt)
 {
     Doc *d = doc_active();
+    if (g_ide.find_open) {
+        if (vk == VK_ESCAPE) {
+            g_ide.find_open = 0;
+            return 1;
+        }
+        if (vk == VK_RETURN) {
+            if (g_ide.find_focus)
+                do_goto();
+            else
+                do_find();
+            return 1;
+        }
+        if (vk == VK_BACK) {
+            size_t n = strlen(g_ide.find_text);
+            if (n)
+                g_ide.find_text[n - 1] = 0;
+            return 1;
+        }
+        return 1;
+    }
     if (ctrl && vk == 'S') {
         ide_command(CMD_SAVE);
         return 1;
@@ -1308,6 +1487,28 @@ void ide_char(wchar_t ch)
     Doc *d = doc_active();
     char utf8[8];
     int n;
+    if (ch > 0 && ch < 32 && ch != 9 && ch != 10 && ch != 13) {
+        switch (ch) {
+        case 1: ide_command(CMD_SELECT_ALL); return;
+        case 3: ide_command(CMD_COPY); return;
+        case 6: ide_command(CMD_FIND); return;
+        case 7: ide_command(CMD_GOTO); return;
+        case 19: ide_command(CMD_SAVE); return;
+        case 22: ide_command(CMD_PASTE); return;
+        case 23: ide_command(CMD_CLOSE_TAB); return;
+        case 24: ide_command(CMD_CUT); return;
+        case 26: ide_command(CMD_UNDO); return;
+        default: return;
+        }
+    }
+    if (g_ide.find_open) {
+        size_t len = strlen(g_ide.find_text);
+        if (ch >= 32 && ch < 127 && len < sizeof(g_ide.find_text) - 1) {
+            g_ide.find_text[len] = (char)ch;
+            g_ide.find_text[len + 1] = 0;
+        }
+        return;
+    }
     if (!d)
         return;
     if (ch < 32 && ch != '\t')
@@ -1535,8 +1736,8 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         paint_caret_timer(hwnd);
         return 0;
     case WM_KEYDOWN: {
-        int ctrl = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
-        int shift = (GetKeyState(VK_SHIFT) & 0x8000) != 0;
+        int ctrl = ((GetKeyState(VK_CONTROL) & 0x8000) != 0) || ((GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0);
+        int shift = ((GetKeyState(VK_SHIFT) & 0x8000) != 0) || ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0);
         int alt = (GetKeyState(VK_MENU) & 0x8000) != 0;
         if (ide_key((int)wp, ctrl, shift, alt))
             InvalidateRect(hwnd, NULL, FALSE);

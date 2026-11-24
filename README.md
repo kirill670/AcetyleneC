@@ -19,7 +19,7 @@ Studio: project tree, tabbed editor with C/C++ syntax highlighting, build pipeli
 | Signing with those certs | **not accepted by `signsis`** | The SDK's `signsis.exe` only parses its own PEM profile and rejects ours. Sign with keys produced by the bundled `makekeys.exe` for now. |
 | C++ | works (subset) | `acetylene-cxx`, MIT, our own front-end: classes, fields, methods, constructors, member access, out-of-line definitions, Itanium mangling (`_ZN7Counter3GetEv`). It transpiles to C and then goes through TCC. Rejects inheritance, virtuals, destructors, references and templates with an explicit error. The bundled GCCE `g++` is still available for full C++. |
 | C headers/libs from all SDKs | yes | `sdk/targets/{s60v2,s60v30,s60v31,s60v32,s60v5}/{include,lib,tools}` — imported from the official archives. |
-| IDE | works | Tree, tabs, highlighting, editing with undo/redo, find/goto, build to `.e32`, error list, output log. |
+| IDE | works | Tree, tabs, C/C++ highlighting, editing with undo/redo, find bar (Ctrl+F, Enter = next) and go-to-line (Ctrl+G), multi-file project build where every `source=` entry is compiled and linked, error list with the exact command log, status bar. Verified interactively: typing, undo, save-to-disk, search match, C and C++ builds. |
 
 ## Layout
 
@@ -52,7 +52,7 @@ sh build/build-tools.sh        # linker, makekeys, sis, IDE
 1. `build/bin/AcetyleneC.exe`
 2. **File > New Project** — pick a folder; a `main.c` stub is created.
 3. Edit `target=s60v5` (or `s60v2`, `s60v30`, `s60v31`, `s60v32`) in the `.acproj`.
-4. **F7** builds: TCC → `acetylene-ld` → `elf2e32`, producing `build/<name>.e32`.
+4. **F7** builds every `source=` in the project (C via TCC, C++ via `acetylene-cxx` then TCC), links with `acetylene-ld` and post-links with `elf2e32` into `build/<name>.e32`.
 5. `Ctrl+F` find, `Ctrl+G` goto line, `Ctrl+S` save, `Ctrl+Z/Y` undo/redo, `Ctrl+W` close tab.
 
 C sources include `sdk/include` (AcetyleneC C bindings) and `sdk/include/tcc` (freestanding libc
@@ -77,4 +77,3 @@ built from them without checking those terms.
   `-shared` link flow reproduced exactly, or a from-scratch E32 writer with a verified Idata layout.
 * `signsis` rejects our generated certificates; the SDK `makekeys` path works.
 * C++ relies on the bundled GCCE compiler, not on an MIT-licensed frontend.
-* The IDE builds one active source file per project; multi-file projects need a workspace build step.
