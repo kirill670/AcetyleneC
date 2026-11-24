@@ -32,11 +32,12 @@ relocation sites, appends the import section to the E32 produced by `elf2e32`, p
 `iImportAddressTableOffset` (0x6C) and the DLL reference count (0x54), and recomputes the header CRC.
 The IDE runs it automatically after `elf2e32`.
 
-**On multi-DLL images:** `elf2e32 --dump=i` prints only the *first* Idata record, no matter where a
-second record is placed (verified by sweeping the second record across every plausible offset
-40..76). So the dump cannot confirm or refute chaining. `acetylene-e32fix` writes one self-contained
-block per DLL (header + address table + ordinal table + name) and advances by `iSize`, which is the
-conventional layout; whether the loader accepts it for more than one DLL remains unverified.
+**Multi-DLL images (resolved).** `elf2e32 --dump=i` prints only the first record regardless of
+layout, so it cannot confirm chaining. `tests/check-e32.py` walks the section by `iSize` instead and
+verifies, for every record, that the name offset lands inside the record, the address and ordinal
+tables land inside the image at `code_off + offset`, and the count is positive. A three-DLL image
+(estlib + euser + drtaeabi, 13 imports) walks cleanly. The name offset is **record-relative**; the
+address/ordinal table offsets are **code-section-relative**.
 
 **Not tested on hardware.** There is no S60 device and no working emulator here, so "the loader
 binds these imports at runtime" is an assumption resting on the format matching, not an observation.

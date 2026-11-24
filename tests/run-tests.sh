@@ -109,6 +109,45 @@ check "e32fix adds the import table" $? "$(cat "$WORK/fix.log")"
 grep -q "imports from" "$WORK/dump.log" && ok "Symbian dumper reads the import record" || bad "dumper sees no imports"
 grep -q "estlib" "$WORK/dump.log" && ok "import names the ESTLIB DLL" || bad "wrong DLL in import record"
 
+python "$ROOT/tests/check-e32.py" "$WORK/hello.e32"
+check "import section walks record by record" $?
+
+grep -q "imports from" "$WORK/dump.log" && ok "Symbian dumper agrees on the record" || bad "dumper disagrees"
+
+echo '== multi-DLL imports =='
+cat > "$WORK/imp2.c" <<'EOF'
+#include <acetylene/e32c.h>
+#include <stdio.h>
+GLDEF_C TInt E32Main(void)
+{
+    void *tc = CTrapCleanup_New();
+    printf("tc ok");
+    return 0;
+}
+EOF
+"$BIN/acetylene-cc.exe" -I "$ROOT/sdk/include" -I "$ROOT/sdk/include/tcc" -c "$WORK/imp2.c" -o "$WORK/imp2.o" 2>"$WORK/imp2_cc.log"
+"$BIN/acetylene-ld.exe" -o "$WORK/imp2.elf" -L "$SDK/lib" "$WORK/imp2.o"     -lecrt0 -lestlib -leuser -ldrtaeabi -lusrt2_2 2>"$WORK/imp2_ld.log"
+check "app importing from two DLLs links" $? "$(cat "$WORK/imp2_ld.log")"
+"$SDK/tools/elf2e32.exe" --elfinput="$WORK/imp2.elf" --output="$WORK/imp2.raw.e32" --targettype=EXE     --uid1=0x1000007A --uid2=0x100039CE --uid3=0xE0000103 --sid=0xE0000103     --heap=65536 --stack=32768 --uncompressed >"$WORK/imp2_e32.log" 2>&1
+"$BIN/acetylene-e32fix.exe" -elf "$WORK/imp2.elf" -in "$WORK/imp2.raw.e32" -out "$WORK/imp2.e32" >"$WORK/imp2_fix.log" 2>&1
+check "import table written for multiple DLLs" $? "$(cat "$WORK/imp2_fix.log")"
+python "$ROOT/tests/check-e32.py" "$WORK/imp2.e32"
+check "multi-DLL records walk cleanly" $?
+python - "$WORK/imp2.e32" <<'EOF'
+import struct, sys
+d = open(sys.argv[1], 'rb').read()
+off = struct.unpack_from('<I', d, 0x6c)[0]
+n = 0
+while off + 4 <= len(d):
+    size, = struct.unpack_from('<I', d, off)
+    if size == 0:
+        break
+    n += 1
+    off += size
+sys.exit(0 if n >= 2 else 1)
+EOF
+check "at least two DLL records present" $?
+
 echo '== C++ subset =='
 cat > "$WORK/counter.cpp" <<'EOF'
 class Counter

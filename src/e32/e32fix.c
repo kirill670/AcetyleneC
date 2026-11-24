@@ -216,7 +216,7 @@ int main(int argc, char **argv)
                 buf_u8(&sec, 0);
             rec_size = (u32)sec.len - block;
             wr32(sec.data + block + 0, rec_size);
-            wr32(sec.data + block + 4, name_off);
+            wr32(sec.data + block + 4, name_off - block);
             wr32(sec.data + block + 8, counts[d]);
             wr32(sec.data + block + 12, (imp_off + addr_off) - code_off);
             wr32(sec.data + block + 16, (imp_off + ord_off) - code_off);

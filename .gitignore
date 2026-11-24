@@ -8,3 +8,5 @@ build/
 *.sisx
 *.suo
 *.user
+selftest.cer
+selftest.key
