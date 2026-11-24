@@ -152,6 +152,53 @@ check "translated C++ output compiles with TCC" $? "$(cat "$WORK/cxx_cc.log")"
     -lecrt0 -lestlib -leuser -ldrtaeabi -lusrt2_2 2>"$WORK/cxx_ld.log"
 check "C++ object links into ARM image" $? "$(cat "$WORK/cxx_ld.log")"
 
+cat > "$WORK/point.cpp" <<'EOF'
+class Point
+{
+public:
+    TInt m_x;
+    TInt m_y;
+    Point();
+    void Move(TInt dx, TInt dy);
+    TInt Sum();
+};
+
+Point::Point()
+{
+    m_x = 0;
+    m_y = 0;
+}
+
+void Point::Move(TInt dx, TInt dy)
+{
+    this->m_x = this->m_x + dx;
+    this->m_y = this->m_y + dy;
+}
+
+TInt Point::Sum()
+{
+    return this->m_x + this->m_y;
+}
+
+GLDEF_C TInt E32Main()
+{
+    Point *p = new Point;
+    p->Move(3, 4);
+    TInt r = p->Sum();
+    delete p;
+    return r;
+}
+EOF
+"$BIN/acetylene-cxx.exe" "$WORK/point.cpp" -o "$WORK/point.c" >"$WORK/point_cxx.log" 2>&1
+check "C++ new/delete/this-> translate" $? "$(cat "$WORK/point_cxx.log")"
+grep -q "ac_new_Point()" "$WORK/point.c" && ok "new emits the constructor helper" || bad "new not rewritten"
+grep -q "free(p)" "$WORK/point.c" && ok "delete emits free()" || bad "delete not rewritten"
+grep -q "self->m_x" "$WORK/point.c" && ok "this-> becomes self->" || bad "this-> not rewritten"
+"$BIN/acetylene-cc.exe" -I "$ROOT/sdk/include" -I "$ROOT/sdk/include/tcc" -c "$WORK/point.c" -o "$WORK/point.o" 2>"$WORK/point_cc.log"
+check "translated new/delete code compiles" $? "$(cat "$WORK/point_cc.log")"
+"$BIN/acetylene-ld.exe" -o "$WORK/point.elf" -L "$SDK/lib" "$WORK/point.o"     -lecrt0 -lestlib -leuser -ldrtaeabi -lusrt2_2 2>"$WORK/point_ld.log"
+check "new/delete object links" $? "$(cat "$WORK/point_ld.log")"
+
 echo '== DLL =='
 cat > "$WORK/plugin.c" <<'EOF'
 #include <acetylene/e32c.h>

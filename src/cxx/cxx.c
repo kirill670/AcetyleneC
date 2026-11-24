@@ -6,6 +6,7 @@ typedef struct {
     int nfields;
     char methods[64][96];
     char mrets[64][64];
+    char mprm[64][256];
     int nmethods;
 } Cls;
 
@@ -28,6 +29,11 @@ static void put_line(Buf *b, const char *s)
     size_t n = strlen(s);
     buf_put(b, s, n);
     buf_u8(b, 0x0a);
+}
+
+static void dp(Cx *c, const char *s)
+{
+    buf_put(&c->decls, s, strlen(s));
 }
 
 static Cls *find_cls(Cx *c, const char *name)
@@ -154,6 +160,37 @@ static void rewrite_body(Cx *c, Cls *cls, const char *body, size_t len, Buf *out
             while (i < len && is_id_char((unsigned char)body[i]) && n < 95)
                 id[n++] = body[i++];
             id[n] = 0;
+            if (strcmp(id, "this") == 0) {
+                const char *q = body + i;
+                while (q < body + len && (*q == 32 || *q == 9))
+                    q++;
+                if (q + 1 < body + len && q[0] == '-' && q[1] == '>') {
+                    size_t r;
+                    buf_put(out, "self->", 6);
+                    r = (size_t)(q - body) + 2;
+                    while (r < len && (body[r] == 32 || body[r] == 9))
+                        r++;
+                    while (r < len && is_id_char((unsigned char)body[r]))
+                        buf_u8(out, (u8)body[r++]);
+                    i = r;
+                    continue;
+                }
+            }
+            if (strcmp(id, "delete") == 0) {
+                size_t r = i;
+                char vn[96];
+                size_t vnl = 0;
+                while (r < len && (body[r] == 32 || body[r] == 9))
+                    r++;
+                while (r < len && is_id_char((unsigned char)body[r]) && vnl < 95)
+                    vn[vnl++] = body[r++];
+                vn[vnl] = 0;
+                buf_put(out, "free(", 5);
+                buf_put(out, vn, vnl);
+                buf_put(out, ")", 1);
+                i = r;
+                continue;
+            }
             if (is_field(cls, id)) {
                 buf_put(out, "self->", 6);
                 buf_put(out, id, strlen(id));
@@ -270,6 +307,21 @@ static int parse_class_lines(Cx *c, Lines *ls, int start, const char *cls_name, 
                 name[n] = 0;
                 if (name[0]) {
                     char rt[64];
+                    char prm[256];
+                    prm[0] = 0;
+                    {
+                        const char *pp = paren + 1;
+                        size_t pl = 0;
+                        while (*pp && *pp != ')' && pl < 250)
+                            prm[pl++] = *pp++;
+                        prm[pl] = 0;
+                        {
+                            char *t = (char *)trim(prm);
+                            snprintf(prm, sizeof(prm), "%s", t);
+                        }
+                        if (strcmp(prm, "void") == 0)
+                            prm[0] = 0;
+                    }
                     char head[256];
                     size_t hl = (size_t)((q < s + 0) ? 0 : 0);
                     (void)hl;
@@ -304,11 +356,13 @@ static int parse_class_lines(Cx *c, Lines *ls, int start, const char *cls_name, 
                         if (cls.nmethods < 64) {
                             snprintf(cls.methods[cls.nmethods], 96, "%s", cls.name);
                             cls.mrets[cls.nmethods][0] = 0;
+                            snprintf(cls.mprm[cls.nmethods], 256, "%s", prm);
                             cls.nmethods++;
                         }
                     } else if (cls.nmethods < 64) {
                         snprintf(cls.methods[cls.nmethods], 96, "%s", name);
                         snprintf(cls.mrets[cls.nmethods], 64, "%s", rt);
+                        snprintf(cls.mprm[cls.nmethods], 256, "%s", prm);
                         cls.nmethods++;
                     }
                 }
@@ -364,6 +418,56 @@ static int parse_class_lines(Cx *c, Lines *ls, int start, const char *cls_name, 
     buf_put(&c->decls, "} ", 2);
     buf_put(&c->decls, cls.name, strlen(cls.name));
     buf_put(&c->decls, ";\n\n", 3);
+    {
+        int mi;
+        for (mi = 0; mi < cls.nmethods; mi++) {
+            char mg[256];
+            int isctor = strcmp(cls.methods[mi], cls.name) == 0;
+            mangle(mg, sizeof(mg), cls.name, cls.methods[mi], isctor, 0);
+            if (isctor)
+                dp(c, "void ");
+            else {
+                dp(c, cls.mrets[mi][0] ? cls.mrets[mi] : "TInt");
+                dp(c, " ");
+            }
+            dp(c, mg);
+            dp(c, "(struct ");
+            dp(c, cls.name);
+            dp(c, " *self");
+            if (cls.mprm[mi][0]) {
+                dp(c, ", ");
+                dp(c, cls.mprm[mi]);
+            }
+            dp(c, ");");
+            buf_u8(&c->decls, 10);
+        }
+    }
+    {
+        int ctor = 0;
+        int kk;
+        for (kk = 0; kk < cls.nmethods; kk++)
+            if (strcmp(cls.methods[kk], cls.name) == 0)
+                ctor = 1;
+        if (ctor) {
+            char mg[256];
+            mangle(mg, sizeof(mg), cls.name, cls.name, 1, 0);
+            dp(c, "struct ");
+            dp(c, cls.name);
+            dp(c, " *ac_new_");
+            dp(c, cls.name);
+            dp(c, "(void) { struct ");
+            dp(c, cls.name);
+            dp(c, " *s = (struct ");
+            dp(c, cls.name);
+            dp(c, " *)malloc(sizeof(struct ");
+            dp(c, cls.name);
+            dp(c, ")); ");
+            dp(c, mg);
+            dp(c, "(s); return s; }");
+            buf_u8(&c->decls, 10);
+        }
+    }
+    buf_u8(&c->decls, 10);
     return i;
 }
 
@@ -648,6 +752,40 @@ static void rewrite_free_calls(Cx *c, const char *body, size_t len, Buf *out)
                     }
                     buf_put(out, ")", 1);
                     i = q + 1;
+                    continue;
+                }
+            }
+            if (strcmp(a, "delete") == 0) {
+                size_t r = i;
+                char vn[96];
+                size_t vnl = 0;
+                while (r < len && (body[r] == 32 || body[r] == 9))
+                    r++;
+                while (r < len && is_id_char((unsigned char)body[r]) && vnl < 95)
+                    vn[vnl++] = body[r++];
+                vn[vnl] = 0;
+                buf_put(out, "free(", 5);
+                buf_put(out, vn, vnl);
+                buf_put(out, ")", 1);
+                i = r;
+                continue;
+            }
+            if (strcmp(a, "new") == 0) {
+                size_t j = i;
+                char cn[96];
+                size_t cnl = 0;
+                Cls *k;
+                while (j < len && (body[j] == 32 || body[j] == 9))
+                    j++;
+                while (j < len && is_id_char((unsigned char)body[j]) && cnl < 95)
+                    cn[cnl++] = body[j++];
+                cn[cnl] = 0;
+                k = find_cls(c, cn);
+                if (k) {
+                    buf_put(out, "ac_new_", 7);
+                    buf_put(out, cn, strlen(cn));
+                    buf_put(out, "()", 2);
+                    i = j;
                     continue;
                 }
             }
