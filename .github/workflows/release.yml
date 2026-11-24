@@ -47,13 +47,15 @@ jobs:
         run: |
           set -e
           API="https://api.github.com/repos/${{ github.repository }}/releases?per_page=100"
-          LAST=$(curl -s -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "$API" \
-                 | grep -o '"tag_name": *"CB-[0-9]\+"' \
-                 | grep -o '[0-9]\+' \
-                 | sort -n | tail -1)
+          RELEASES=$(curl -fsS -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "$API" || true)
+          LAST=$(printf '%s' "$RELEASES" \
+                 | grep -oE '"tag_name":[[:space:]]*"CB-[0-9]+"' \
+                 | grep -oE '[0-9]+' \
+                 | sort -n | tail -1 || true)
           N=$(( ${LAST:-0} + 1 ))
           TAG=$(printf 'CB-%03d' "$N")
           TITLE="$TAG (Community Build № $N)"
+          echo "last published build: ${LAST:-none}, next: $N"
           echo "number=$N" >> "$GITHUB_OUTPUT"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "title=$TITLE" >> "$GITHUB_OUTPUT"
