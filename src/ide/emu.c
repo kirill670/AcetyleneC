@@ -252,9 +252,26 @@ void ide_sign(void)
     int code;
 
     if (!g_ide.sign_cert[0] || !g_ide.sign_key[0]) {
-        ide_set_status("sign: set sign_cert and sign_key in acetylene.ini");
-        add_msg("signing needs a certificate/key pair (sign_cert, sign_key in acetylene.ini)");
-        return;
+        char mk[1024];
+        GetModuleFileNameA(NULL, exe_dir, sizeof(exe_dir));
+        for (i = (int)strlen(exe_dir); i > 0 && exe_dir[i] != 92 && exe_dir[i] != 47; i--)
+            exe_dir[i] = 0;
+        snprintf(root, sizeof(root), "%s/../..", exe_dir);
+        snprintf(g_ide.sign_cert, sizeof(g_ide.sign_cert), "%s/build/dev.cer", root);
+        snprintf(g_ide.sign_key, sizeof(g_ide.sign_key), "%s/build/dev.key", root);
+        if (GetFileAttributesA(g_ide.sign_cert) == INVALID_FILE_ATTRIBUTES ||
+            GetFileAttributesA(g_ide.sign_key) == INVALID_FILE_ATTRIBUTES) {
+            snprintf(mk, sizeof(mk), "\"%s/acetylene-makekeys.exe\" -dsa -name \"AcetyleneC Dev\" \"%s\" \"%s\"",
+                     exe_dir, g_ide.sign_cert, g_ide.sign_key);
+            buf_put(&g_ide.build_log, mk, strlen(mk));
+            buf_u8(&g_ide.build_log, 0x0a);
+            if (run_capture(mk, NULL, 0) != 0) {
+                add_msg("dev certificate generation failed");
+                ide_set_status("Sign: certificate generation FAILED");
+                return;
+            }
+            ide_settings_save();
+        }
     }
     if (!g_ide.last_sisx[0] || GetFileAttributesA(g_ide.last_sisx) == INVALID_FILE_ATTRIBUTES) {
         ide_package();

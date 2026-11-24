@@ -135,6 +135,7 @@ typedef struct {
     char find_text[128];
     char replace_text[128];
     int find_focus;
+    int find_caret;
     int tree_sel;
     StrVec tree_files;
 } Ide;
@@ -146,6 +147,7 @@ void ide_layout(void);
 void ide_paint(HDC dc, RECT *client);
 int ide_key(int vk, int ctrl, int shift, int alt);
 void ide_char(wchar_t ch);
+void ide_rbutton_down(int x, int y);
 void ide_mouse_down(int x, int y, int shift, int button);
 void ide_mouse_up(int x, int y);
 void ide_mouse_move(int x, int y, int buttons);

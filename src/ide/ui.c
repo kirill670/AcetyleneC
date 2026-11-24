@@ -3,6 +3,10 @@
 
 Ide g_ide;
 
+static void ide_command(int cmd);
+static void ide_set_active_index(int i);
+
+
 #define C_BG        RGB(24, 26, 30)
 #define C_PANEL     RGB(32, 35, 40)
 #define C_PANEL2    RGB(38, 42, 48)
@@ -282,6 +286,341 @@ void ide_layout(void)
 }
 
 static void draw_find_bar(HDC dc);
+
+typedef struct {
+    const char *label;
+    const char *shortcut;
+    int cmd;
+    int sep;
+} CtxItem;
+
+enum {
+    CTX_NONE = 0,
+    CTX_TREE = 1,
+    CTX_EDITOR,
+    CTX_TABS,
+    CTX_OUTPUT,
+    CTX_FIND
+};
+
+static const CtxItem k_ctx_tree[] = {
+    {"Open", "Enter", 900, 0},
+    {"Open in New Tab", "", 901, 0},
+    {"", "", 0, 1},
+    {"Save", "Ctrl+S", CMD_SAVE, 0},
+    {"", "", 0, 1},
+    {"Build Project", "F7", CMD_BUILD, 0},
+    {"Package SISX", "Ctrl+P", CMD_PACKAGE, 0},
+    {"Sign Package", "F9", CMD_SIGN, 0},
+    {"Run", "F5", CMD_RUN, 0},
+    {"", "", 0, 1},
+    {"Refresh Tree", "", 902, 0},
+};
+
+static const CtxItem k_ctx_editor[] = {
+    {"Undo", "Ctrl+Z", CMD_UNDO, 0},
+    {"Redo", "Ctrl+Y", CMD_REDO, 0},
+    {"", "", 0, 1},
+    {"Cut", "Ctrl+X", CMD_CUT, 0},
+    {"Copy", "Ctrl+C", CMD_COPY, 0},
+    {"Paste", "Ctrl+V", CMD_PASTE, 0},
+    {"Select All", "Ctrl+A", CMD_SELECT_ALL, 0},
+    {"", "", 0, 1},
+    {"Find", "Ctrl+F", CMD_FIND, 0},
+    {"Go to Line", "Ctrl+G", CMD_GOTO, 0},
+    {"", "", 0, 1},
+    {"Save", "Ctrl+S", CMD_SAVE, 0},
+};
+
+static const CtxItem k_ctx_tabs[] = {
+    {"Save", "Ctrl+S", CMD_SAVE, 0},
+    {"Close", "Ctrl+W", CMD_CLOSE_TAB, 0},
+    {"Close Others", "", 903, 0},
+    {"", "", 0, 1},
+    {"Save All", "", 904, 0},
+};
+
+static const CtxItem k_ctx_output[] = {
+    {"Copy Selected Line", "Ctrl+C", 905, 0},
+    {"Copy Whole Log", "", 906, 0},
+    {"Clear Output", "", 907, 0},
+};
+
+static const CtxItem k_ctx_find[] = {
+    {"Cut", "Ctrl+X", 908, 0},
+    {"Copy", "Ctrl+C", 909, 0},
+    {"Paste", "Ctrl+V", 910, 0},
+    {"Select All", "Ctrl+A", 911, 0},
+    {"", "", 0, 1},
+    {"Close", "Esc", 912, 0},
+};
+
+static int g_ctx_kind;
+static int g_ctx_x, g_ctx_y;
+static int g_ctx_hover;
+static const CtxItem *g_ctx_items;
+static int g_ctx_count;
+
+static void panel_draw(HDC dc, int px, int py, const CtxItem *items, int count, int hover)
+{
+    int k;
+    int wmax = 140;
+    int height = 8;
+    for (k = 0; k < count; k++) {
+        int ww;
+        if (items[k].sep)
+            continue;
+        ww = text_w(dc, items[k].label, g_ide.font_ui) + text_w(dc, items[k].shortcut, g_ide.font_ui) + 48;
+        if (ww > wmax)
+            wmax = ww;
+        height += 24;
+    }
+    {
+        RECT r = {px, py, px + wmax, py + height};
+        fill(dc, r, C_PANEL2);
+        frame(dc, r, C_BORDER);
+    }
+    {
+        int y = py + 4;
+        for (k = 0; k < count; k++) {
+            const CtxItem *it = &items[k];
+            if (it->sep) {
+                fill(dc, (RECT){px + 8, y + 4, px + wmax - 8, y + 5}, C_BORDER);
+                y += 8;
+                continue;
+            }
+            if (k == hover)
+                fill(dc, (RECT){px + 1, y, px + wmax - 1, y + 24}, C_SEL);
+            text_at(dc, px + 12, y + 7, it->label, C_TEXT, g_ide.font_ui);
+            if (it->shortcut[0])
+                text_at(dc, px + wmax - text_w(dc, it->shortcut, g_ide.font_ui) - 12, y + 7,
+                        it->shortcut, C_DIM, g_ide.font_ui);
+            y += 24;
+        }
+    }
+}
+
+static int panel_hit(int x, int y, int px, int py, const CtxItem *items, int count, int *item)
+{
+    int k;
+    int y2 = py + 4;
+    int wmax = 140;
+    HDC dc = GetDC(g_ide.hwnd);
+    for (k = 0; k < count; k++) {
+        int ww;
+        if (items[k].sep)
+            continue;
+        ww = text_w(dc, items[k].label, g_ide.font_ui) + text_w(dc, items[k].shortcut, g_ide.font_ui) + 48;
+        if (ww > wmax)
+            wmax = ww;
+    }
+    ReleaseDC(g_ide.hwnd, dc);
+    for (k = 0; k < count; k++) {
+        if (items[k].sep) {
+            y2 += 8;
+            continue;
+        }
+        if (x >= px && x < px + wmax && y >= y2 && y < y2 + 24) {
+            *item = k;
+            return 1;
+        }
+        y2 += 24;
+    }
+    return 0;
+}
+
+static void ctx_open(int x, int y, const CtxItem *items, int count, int kind)
+{
+    g_ctx_kind = kind;
+    g_ctx_x = x;
+    g_ctx_y = y;
+    g_ctx_items = items;
+    g_ctx_count = count;
+    g_ctx_hover = -1;
+    g_ide.menu_index = -1;
+}
+
+static void ctx_close(void)
+{
+    g_ctx_kind = CTX_NONE;
+    g_ctx_items = NULL;
+    g_ctx_count = 0;
+}
+
+static void find_insert(const char *s)
+{
+    size_t len = strlen(g_ide.find_text);
+    size_t add = strlen(s);
+    if (len + add < sizeof(g_ide.find_text) - 1)
+        memcpy(g_ide.find_text + len, s, add + 1);
+}
+
+static void find_cut_cb(int cut)
+{
+    if (g_ide.find_text[0]) {
+        if (OpenClipboard(g_ide.hwnd)) {
+            HGLOBAL h;
+            EmptyClipboard();
+            h = GlobalAlloc(GMEM_MOVEABLE, strlen(g_ide.find_text) + 1);
+            if (h) {
+                char *p = GlobalLock(h);
+                strcpy(p, g_ide.find_text);
+                GlobalUnlock(h);
+                SetClipboardData(CF_TEXT, h);
+            }
+            CloseClipboard();
+        }
+        if (cut)
+            g_ide.find_text[0] = 0;
+    }
+}
+
+static void find_paste_cb(void)
+{
+    if (OpenClipboard(g_ide.hwnd)) {
+        HANDLE h = GetClipboardData(CF_TEXT);
+        if (h) {
+            char *p = GlobalLock(h);
+            if (p) {
+                size_t room = sizeof(g_ide.find_text) - strlen(g_ide.find_text) - 1;
+                strncat(g_ide.find_text, p, room);
+                GlobalUnlock(h);
+            }
+        }
+        CloseClipboard();
+    }
+}
+
+static void copy_output_line(void)
+{
+    char line[512];
+    int i = g_ide.selected_msg;
+    if (i >= 0 && i < g_ide.nmsgs)
+        snprintf(line, sizeof(line), "%s", g_ide.msgs[i].message);
+    else if (g_ide.build_log.len) {
+        const char *p = (const char *)g_ide.build_log.data;
+        size_t n = g_ide.build_log.len;
+        size_t start = n;
+        while (start > 0 && p[start - 1] != '\n')
+            start--;
+        snprintf(line, sizeof(line), "%.*s", (int)(n - start > 500 ? 500 : n - start), p + start);
+    } else {
+        return;
+    }
+    if (OpenClipboard(g_ide.hwnd)) {
+        HGLOBAL h;
+        EmptyClipboard();
+        h = GlobalAlloc(GMEM_MOVEABLE, strlen(line) + 1);
+        if (h) {
+            char *q = GlobalLock(h);
+            strcpy(q, line);
+            GlobalUnlock(h);
+            SetClipboardData(CF_TEXT, h);
+        }
+        CloseClipboard();
+    }
+    ide_set_status("copied: %s", line);
+}
+
+static void ctx_execute(int cmd)
+{
+    Doc *d = doc_active();
+    switch (cmd) {
+    case 900:
+        if (g_ide.tree_sel >= 0 && g_ide.tree_sel < g_ide.tree_files.count)
+            ide_open_file(g_ide.tree_files.items[g_ide.tree_sel]);
+        break;
+    case 901:
+        if (g_ide.tree_sel >= 0 && g_ide.tree_sel < g_ide.tree_files.count)
+            ide_open_file(g_ide.tree_files.items[g_ide.tree_sel]);
+        break;
+    case 902:
+        break;
+    case 903:
+        if (d) {
+            while (g_ide.ndocs > 1) {
+                int keep = g_ide.active;
+                int victim = (keep == 0) ? 1 : 0;
+                ide_set_active_index(keep);
+                ide_close_file(victim);
+            }
+        }
+        break;
+    case 904:
+        {
+            int i;
+            int keep = g_ide.active;
+            for (i = 0; i < g_ide.ndocs; i++) {
+                g_ide.active = i;
+                if (g_ide.docs[i].path && g_ide.docs[i].modified)
+                    ide_save_file(i, 0);
+            }
+            g_ide.active = keep;
+        }
+        break;
+    case 905:
+        copy_output_line();
+        break;
+    case 906:
+        if (g_ide.build_log.len && OpenClipboard(g_ide.hwnd)) {
+            HGLOBAL h;
+            EmptyClipboard();
+            h = GlobalAlloc(GMEM_MOVEABLE, g_ide.build_log.len + 1);
+            if (h) {
+                char *q = GlobalLock(h);
+                memcpy(q, g_ide.build_log.data, g_ide.build_log.len);
+                q[g_ide.build_log.len] = 0;
+                GlobalUnlock(h);
+                SetClipboardData(CF_TEXT, h);
+            }
+            CloseClipboard();
+            ide_set_status("log copied");
+        }
+        break;
+    case 907:
+        buf_free(&g_ide.build_log);
+        buf_init(&g_ide.build_log);
+        g_ide.nmsgs = 0;
+        g_ide.selected_msg = -1;
+        ide_set_status("output cleared");
+        break;
+    case 908:
+        find_cut_cb(1);
+        break;
+    case 909:
+        find_cut_cb(0);
+        break;
+    case 910:
+        find_paste_cb();
+        break;
+    case 911:
+        break;
+    case 912:
+        g_ide.find_open = 0;
+        break;
+    default:
+        ide_command(cmd);
+        break;
+    }
+}
+
+static void ctx_show_at(int x, int y)
+{
+    if (PtInRect(&g_ide.rc_tabs, (POINT){x, y})) {
+        ctx_open(x, y, k_ctx_tabs, (int)(sizeof(k_ctx_tabs) / sizeof(k_ctx_tabs[0])), CTX_TABS);
+    } else if (g_ide.find_open && PtInRect(&g_ide.rc_editor, (POINT){x, y})) {
+        ctx_open(x, y, k_ctx_find, (int)(sizeof(k_ctx_find) / sizeof(k_ctx_find[0])), CTX_FIND);
+    } else if (PtInRect(&g_ide.rc_tree, (POINT){x, y})) {
+        ctx_open(x, y, k_ctx_tree, (int)(sizeof(k_ctx_tree) / sizeof(k_ctx_tree[0])), CTX_TREE);
+    } else if (g_ide.show_output && PtInRect(&g_ide.rc_output, (POINT){x, y})) {
+        ctx_open(x, y, k_ctx_output, (int)(sizeof(k_ctx_output) / sizeof(k_ctx_output[0])), CTX_OUTPUT);
+    } else if (PtInRect(&g_ide.rc_editor, (POINT){x, y})) {
+        Doc *d = doc_active();
+        if (d)
+            doc_set_caret(d, doc_hit_test(d, x - g_ide.rc_editor.left - 52, y - g_ide.rc_editor.top - 2), 0);
+        ctx_open(x, y, k_ctx_editor, (int)(sizeof(k_ctx_editor) / sizeof(k_ctx_editor[0])), CTX_EDITOR);
+    }
+}
 
 static void draw_menu_bar(HDC dc, int w)
 {
@@ -642,6 +981,8 @@ void ide_paint(HDC dc, RECT *client)
     draw_status(mem, w);
     if (g_ide.menu_index >= 0)
         draw_popup(mem, w, h);
+    if (g_ctx_kind && g_ctx_items)
+        panel_draw(mem, g_ctx_x, g_ctx_y, g_ctx_items, g_ctx_count, g_ctx_hover);
 
     BitBlt(dc, 0, 0, w, h, mem, 0, 0, SRCCOPY);
     SelectObject(mem, old);
@@ -649,7 +990,6 @@ void ide_paint(HDC dc, RECT *client)
     DeleteDC(mem);
 }
 
-static void ide_command(int cmd);
 
 static int hit_menu(int x, int y)
 {
@@ -796,6 +1136,12 @@ void ide_close_file(int index)
         g_ide.active = g_ide.ndocs - 1;
 }
 
+static void ide_set_active_index(int i)
+{
+    if (i >= 0 && i < g_ide.ndocs)
+        g_ide.active = i;
+}
+
 void ide_goto_line(int line)
 {
     Doc *d = doc_active();
@@ -899,8 +1245,14 @@ static void draw_find_bar(HDC dc)
         snprintf(shown, sizeof(shown), "%s", g_ide.find_text);
         text_at(dc, box.left + 8 + lw + 6, box.top + 5, shown, C_TEXT, g_ide.font_ui);
         if (g_ide.blink_on) {
-            int tw = text_w(dc, shown, g_ide.font_ui);
-            fill(dc, (RECT){box.left + 8 + lw + 6 + tw, box.top + 6, box.left + 9 + lw + 6 + tw, box.top + 20}, C_TEXT);
+            char pre[160];
+            int cw;
+            int n = g_ide.find_caret;
+            if (n < 0 || n > (int)strlen(shown))
+                n = (int)strlen(shown);
+            snprintf(pre, sizeof(pre), "%.*s", n, shown);
+            cw = text_w(dc, pre, g_ide.font_ui);
+            fill(dc, (RECT){box.left + 8 + lw + 6 + cw, box.top + 6, box.left + 9 + lw + 6 + cw, box.top + 20}, C_TEXT);
         }
     }
     text_at(dc, box.left + 8, box.top + 18, "", C_DIM, g_ide.font_ui);
@@ -911,6 +1263,7 @@ void ide_find(void)
     g_ide.find_open = 1;
     g_ide.find_focus = 0;
     g_ide.find_text[0] = 0;
+    g_ide.find_caret = 0;
     ide_set_status("type to search, Enter = next, Esc = close");
 }
 
@@ -1328,14 +1681,89 @@ int ide_key(int vk, int ctrl, int shift, int alt)
         }
         if (vk == VK_BACK) {
             size_t n = strlen(g_ide.find_text);
-            if (n)
-                g_ide.find_text[n - 1] = 0;
+            if (n) {
+                if (g_ide.find_caret <= 0 || (size_t)g_ide.find_caret > n)
+                    g_ide.find_caret = (int)n;
+                memmove(g_ide.find_text + g_ide.find_caret - 1, g_ide.find_text + g_ide.find_caret,
+                        n - (size_t)g_ide.find_caret + 1);
+                g_ide.find_caret--;
+            }
+            return 1;
+        }
+        if (vk == VK_DELETE) {
+            size_t n = strlen(g_ide.find_text);
+            if ((size_t)g_ide.find_caret < n)
+                memmove(g_ide.find_text + g_ide.find_caret, g_ide.find_text + g_ide.find_caret + 1,
+                        n - (size_t)g_ide.find_caret);
+            return 1;
+        }
+        if (vk == VK_LEFT) {
+            if (g_ide.find_caret > 0)
+                g_ide.find_caret--;
+            return 1;
+        }
+        if (vk == VK_RIGHT) {
+            if ((size_t)g_ide.find_caret < strlen(g_ide.find_text))
+                g_ide.find_caret++;
+            return 1;
+        }
+        if (vk == VK_HOME) {
+            g_ide.find_caret = 0;
+            return 1;
+        }
+        if (vk == VK_END) {
+            g_ide.find_caret = (int)strlen(g_ide.find_text);
+            return 1;
+        }
+        if (ctrl && vk == 'A') {
+            g_ide.find_caret = (int)strlen(g_ide.find_text);
+            g_ide.find_text[0] = 0;
+            g_ide.find_caret = 0;
+            return 1;
+        }
+        if (ctrl && vk == 'V') {
+            if (OpenClipboard(g_ide.hwnd)) {
+                HANDLE h = GetClipboardData(CF_TEXT);
+                if (h) {
+                    char *clip = GlobalLock(h);
+                    if (clip) {
+                        size_t n = strlen(g_ide.find_text);
+                        size_t room = sizeof(g_ide.find_text) - n - 1;
+                        size_t add = strlen(clip);
+                        if (add > room)
+                            add = room;
+                        memmove(g_ide.find_text + g_ide.find_caret + add, g_ide.find_text + g_ide.find_caret,
+                                n - (size_t)g_ide.find_caret + 1);
+                        memcpy(g_ide.find_text + g_ide.find_caret, clip, add);
+                        g_ide.find_caret += (int)add;
+                        GlobalUnlock(h);
+                    }
+                }
+                CloseClipboard();
+            }
             return 1;
         }
         return 1;
     }
     if (ctrl && vk == 'S') {
-        ide_command(CMD_SAVE);
+        ide_command(shift ? CMD_SAVE_AS : CMD_SAVE);
+        return 1;
+    }
+    if (ctrl && vk == VK_TAB) {
+        if (g_ide.ndocs > 1) {
+            int i = g_ide.active + (shift ? -1 : 1);
+            if (i < 0) i = g_ide.ndocs - 1;
+            if (i >= g_ide.ndocs) i = 0;
+            g_ide.active = i;
+        }
+        return 1;
+    }
+    if (ctrl && vk == VK_F4) {
+        ide_command(CMD_CLOSE_TAB);
+        return 1;
+    }
+    if (ctrl && vk == VK_OEM_3) {
+        ide_command(CMD_TOGGLE_OUTPUT);
         return 1;
     }
     if (ctrl && vk == 'O') {
@@ -1388,6 +1816,10 @@ int ide_key(int vk, int ctrl, int shift, int alt)
     }
     if (vk == VK_F7) {
         ide_command(shift ? CMD_REBUILD : CMD_BUILD);
+        return 1;
+    }
+    if (vk == VK_F9) {
+        ide_command(CMD_SIGN);
         return 1;
     }
     if (vk == VK_F5) {
@@ -1518,6 +1950,7 @@ int ide_key(int vk, int ctrl, int shift, int alt)
     case VK_ESCAPE:
         g_ide.menu_index = -1;
         g_ide.find_open = 0;
+        ctx_close();
         return 1;
     default:
         break;
@@ -1546,9 +1979,13 @@ void ide_char(wchar_t ch)
     }
     if (g_ide.find_open) {
         size_t len = strlen(g_ide.find_text);
-        if (ch >= 32 && ch < 127 && len < sizeof(g_ide.find_text) - 1) {
-            g_ide.find_text[len] = (char)ch;
-            g_ide.find_text[len + 1] = 0;
+        if (ch >= 32 && ch < 127 && len + 1 < sizeof(g_ide.find_text)) {
+            if (g_ide.find_caret < 0 || (size_t)g_ide.find_caret > len)
+                g_ide.find_caret = (int)len;
+            memmove(g_ide.find_text + g_ide.find_caret + 1, g_ide.find_text + g_ide.find_caret,
+                    len - (size_t)g_ide.find_caret + 1);
+            g_ide.find_text[g_ide.find_caret] = (char)ch;
+            g_ide.find_caret++;
         }
         return;
     }
@@ -1571,9 +2008,28 @@ void ide_char(wchar_t ch)
     doc_scroll_to_caret(d);
 }
 
+void ide_rbutton_down(int x, int y)
+{
+    ctx_show_at(x, y);
+    InvalidateRect(g_ide.hwnd, NULL, FALSE);
+}
+
 void ide_mouse_down(int x, int y, int shift, int button)
 {
     int mi;
+    if (g_ctx_kind && g_ctx_items) {
+        int item = -1;
+        if (panel_hit(x, y, g_ctx_x, g_ctx_y, g_ctx_items, g_ctx_count, &item)) {
+            int cmd = g_ctx_items[item].cmd;
+            ctx_close();
+            ctx_execute(cmd);
+            InvalidateRect(g_ide.hwnd, NULL, FALSE);
+            return;
+        }
+        ctx_close();
+        InvalidateRect(g_ide.hwnd, NULL, FALSE);
+        return;
+    }
     if (button != 0)
         return;
     if (y < 26) {
@@ -1710,6 +2166,13 @@ void ide_mouse_move(int x, int y, int buttons)
             InvalidateRect(g_ide.hwnd, NULL, FALSE);
         }
     }
+    if (g_ctx_kind && g_ctx_items) {
+        int item = -1;
+        if (panel_hit(x, y, g_ctx_x, g_ctx_y, g_ctx_items, g_ctx_count, &item) && g_ctx_hover != item) {
+            g_ctx_hover = item;
+            InvalidateRect(g_ide.hwnd, NULL, FALSE);
+        }
+    }
 }
 
 void ide_wheel(int delta, int ctrl)
@@ -1794,6 +2257,10 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         SetFocus(hwnd);
         ide_mouse_down((short)LOWORD(lp), (short)HIWORD(lp), (GetKeyState(VK_SHIFT) & 0x8000) != 0, 0);
         InvalidateRect(hwnd, NULL, FALSE);
+        return 0;
+    case WM_RBUTTONDOWN:
+        SetFocus(hwnd);
+        ide_rbutton_down((short)LOWORD(lp), (short)HIWORD(lp));
         return 0;
     case WM_LBUTTONUP:
         ide_mouse_up((short)LOWORD(lp), (short)HIWORD(lp));

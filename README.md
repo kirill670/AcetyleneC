@@ -62,7 +62,15 @@ sh build/build-tools.sh        # linker, makekeys, sis, IDE
 2. **File > New Project** — pick a folder; a `main.c` stub is created.
 3. Edit `target=s60v5` (or `s60v2`, `s60v30`, `s60v31`, `s60v32`) in the `.acproj`.
 4. **F7** builds every `source=` in the project (C via TCC, C++ via `acetylene-cxx` then TCC), links with `acetylene-ld` and post-links with `elf2e32` into `build/<name>.e32`.
-5. `Ctrl+F` find, `Ctrl+G` goto line, `Ctrl+S` save, `Ctrl+Z/Y` undo/redo, `Ctrl+W` close tab.
+5. Shortcuts: `Ctrl+N` new project, `Ctrl+O` open, `Ctrl+S`/`Ctrl+Shift+S` save/save-as, `Ctrl+W`
+   close tab, `Ctrl+Tab` / `Ctrl+Shift+Tab` switch tabs, `Ctrl+Z/Y` undo/redo, `Ctrl+F`/`Ctrl+G`
+   find / goto, `Ctrl+P` package, `F7`/`Ctrl+F7` build/rebuild, `F9` sign, `F5` run, `` Ctrl+` ``
+   toggle output.
+
+Right-click works everywhere it should: the project tree (open, save, build, package, sign, run,
+refresh), the tab strip (save, close, close others, save all), the editor (undo/redo/clipboard/find/
+goto/save), the output pane (copy line, copy log, clear) and the find bar (cut/copy/paste/select all/
+close). The find field itself is editable: arrows, Home/End, Backspace/Delete and `Ctrl+V`.
 
 C sources include `sdk/include` (AcetyleneC C bindings) and `sdk/include/tcc` (freestanding libc
 prototypes). Symbian's own headers are C++-only and are **not** usable from C; the C bindings declare

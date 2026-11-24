@@ -538,7 +538,7 @@ static void bn_divmod(BigNum *q, BigNum *rem, const BigNum *a, const BigNum *b)
     *rem = cur;
 }
 
-static void bn_modinv(BigNum *r, const BigNum *a, const BigNum *m)
+void bn_modinv(BigNum *r, const BigNum *a, const BigNum *m)
 {
     BigNum old_r, rr, old_s, ss, q, rem, prod, tmp;
     old_r = *m;

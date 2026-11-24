@@ -55,6 +55,7 @@ void bn_mul(BigNum *r, const BigNum *a, const BigNum *b);
 void bn_mod(BigNum *r, const BigNum *a, const BigNum *m);
 void bn_modmul(BigNum *r, const BigNum *a, const BigNum *b, const BigNum *m);
 void bn_modpow(BigNum *r, const BigNum *b, const BigNum *e, const BigNum *m);
+void bn_modinv(BigNum *r, const BigNum *a, const BigNum *m);
 int bn_is_zero(const BigNum *a);
 int bn_bit(const BigNum *a, int i);
 int bn_bits(const BigNum *a);
@@ -84,15 +85,35 @@ void der_utctime(Der *d, int year, int mon, int day, int hour, int min, int sec)
 void der_bits(Der *d, const u8 *p, size_t n, int unused);
 
 typedef struct {
+    BigNum p;
+    BigNum q;
+    BigNum g;
+    BigNum y;
+    BigNum x;
+} DsaKey;
+
+int dsa_generate(DsaKey *k);
+int dsa_sign(DsaKey *k, const u8 hash[20], u8 r_out[20], u8 s_out[20]);
+
+typedef struct DevCert DevCert;
+
+int devcert_generate_dsa(DevCert *dc, const char *common_name);
+int devcert_save_dsa(const DevCert *dc, const char *cer_path, const char *key_path);
+
+struct DevCert {
     RsaKey key;
+    DsaKey dsa;
+    int is_dsa;
+    int bits;
     u8 cert[4096];
     size_t cert_len;
-} DevCert;
+};
 
 int devcert_generate(DevCert *dc, int bits, const char *common_name);
 int devcert_save(const DevCert *dc, const char *cer_path, const char *key_path);
 int devcert_load_cert(const char *cer_path, BigNum *n, BigNum *e, u8 *raw, size_t *rawlen);
 int devcert_sign(const DevCert *dc, int sha256, const u8 *data, size_t len, u8 *sig, size_t *siglen);
 u32 crc32_ieee(const void *data, size_t len);
+void ac_pem_write(const char *path, const char *label, const u8 *der, size_t len);
 
 #endif

@@ -506,7 +506,7 @@ static void b64_line(Buf *out, const u8 *data, size_t len)
         buf_u8(out, 0x0a);
 }
 
-static void pem_write(const char *path, const char *label, const u8 *der, size_t len)
+void ac_pem_write(const char *path, const char *label, const u8 *der, size_t len)
 {
     Buf b;
     char hdr[64];
@@ -566,11 +566,11 @@ int devcert_save(const DevCert *dc, const char *cer_path, const char *key_path)
     if (ac_has_ext(cer_path, ".der") || ac_has_ext(cer_path, ".bin"))
         ac_write_file(cer_path, dc->cert, dc->cert_len);
     else
-        pem_write(cer_path, "CERTIFICATE", dc->cert, dc->cert_len);
+        ac_pem_write(cer_path, "CERTIFICATE", dc->cert, dc->cert_len);
     if (ac_has_ext(key_path, ".der") || ac_has_ext(key_path, ".bin"))
         ac_write_file(key_path, priv.data, priv.len);
     else
-        pem_write(key_path, "RSA PRIVATE KEY", priv.data, priv.len);
+        ac_pem_write(key_path, "RSA PRIVATE KEY", priv.data, priv.len);
     der_free(&priv);
     return 0;
 }
