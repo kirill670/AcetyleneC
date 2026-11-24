@@ -1,5 +1,46 @@
 # E32 import table — state of the investigation
 
+## SOLVED (2026-11-24)
+
+**Header CRC.** The stored `iHeaderCrc` is a plain CRC-32 (reflected, poly `0xEDB88320`, init 0)
+over header bytes `0x00..0x9C` with the CRC field itself zeroed, XORed with the constant
+`0x7601236A`:
+
+```c
+crc = crc32_reflected_init0(header[0..0x9C] with [0x14..0x18] = 0) ^ 0x7601236A;
+```
+
+Verified against five independent images produced by `elf2e32` (heap 0x10000/0x20000/0x30000 and
+two older samples). This makes it possible to modify an E32 image and keep it loadable.
+
+**Idata record.** The import section starts with a record whose fields are:
+
+```
++0   u32 iSize                // bytes of this record INCLUDING its tables and name
++4   u32 iDllNameOffset       // relative to the start of the import section
++8   u32 iNumberOfImports
++12  u32 iAddressTableOffset  // relative to the CODE section
++16  u32 iOrdinalTableOffset  // relative to the CODE section
+```
+
+followed by the address table (u32 code offsets of the words the loader patches), the ordinal
+table (u32), and the DLL name. `elf2e32 --e32input --dump=i` reads a table built this way and
+prints the correct DLL name, import count and patched address.
+
+**`acetylene-e32fix`** implements this: it reads the linked ELF for `#<DLL>...` markers and their
+relocation sites, appends the import section to the E32 produced by `elf2e32`, patches
+`iImportAddressTableOffset` (0x6C) and the DLL reference count (0x54), and recomputes the header CRC.
+The IDE runs it automatically after `elf2e32`.
+
+**Still open:** chaining several Idata records (one per DLL) is not confirmed — the parser advances
+by `iSize` in a way that does not line up for the second record, so images importing from more than
+one DLL currently describe only the first. Single-DLL images (the common `printf` case) validate
+cleanly. On-device binding was not tested: there is no S60 device or working emulator here.
+
+---
+
+# Original investigation notes (kept for reference)
+
 This is the one functional gap in the toolchain: images built by AcetyleneC have a correct header,
 code section, entry point and relocation tables, but `Dll ref table count: 0`. Calls into OS DLLs
 are not bound on device.

@@ -1172,6 +1172,19 @@ static void run_build_pipeline(void)
         ide_set_status("E32 FAILED");
         return;
     }
+    {
+        char fix_cmd[2048];
+        char fixed_file[768];
+        snprintf(fixed_file, sizeof(fixed_file), "%s/%s.imp.e32", build_dir, g_ide.proj.name);
+        snprintf(fix_cmd, sizeof(fix_cmd), "\"%s/acetylene-e32fix.exe\" -elf \"%s\" -in \"%s\" -out \"%s\"",
+                 exe_dir, elf_file, e32_file, fixed_file);
+        buf_put(&g_ide.build_log, fix_cmd, strlen(fix_cmd));
+        buf_u8(&g_ide.build_log, 10);
+        if (run_capture(fix_cmd, NULL, 0) == 0) {
+            DeleteFileA(e32_file);
+            MoveFileA(fixed_file, e32_file);
+        }
+    }
     ide_set_status("Build OK: %s", e32_file);
 }
 

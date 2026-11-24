@@ -49,6 +49,7 @@
 #define R_ARM_MOVT_PREL 46
 #define R_ARM_THM_MOVW_ABS_NC 47
 #define R_ARM_THM_MOVT_ABS 48
+#define R_ARM_GOT_PREL 96
 
 enum { O_TEXT = 0, O_EXIDX, O_RODATA, O_DATA, O_BSS, O_DIRECTIVE, O_ATTR, O_COUNT };
 
@@ -158,6 +159,13 @@ static GSym *g_buckets[NBUCKET];
 static Obj *g_objs, *g_objs_tail;
 static Arch *g_archs, *g_archs_tail;
 static OutSec g_out[O_COUNT];
+typedef struct {
+    char *name;
+    u32 addr;
+} GotSlot;
+
+static GotSlot *g_got;
+static int g_ngot;
 static PendingRel *g_prel;
 static int g_nprel, g_cprel;
 static u32 g_base;
@@ -617,6 +625,15 @@ static void layout(void)
         g_out[O_BSS].size += cmax - cbase;
         g_out[O_BSS].present = 1;
     }
+    if (g_ngot > 0) {
+        int gi;
+        u32 base = g_out[O_DATA].addr + g_out[O_DATA].size;
+        base = align_up(base, 4);
+        g_out[O_DATA].size = base - g_out[O_DATA].addr + (u32)g_ngot * 4;
+        g_out[O_DATA].present = 1;
+        for (gi = 0; gi < g_ngot; gi++)
+            g_got[gi].addr = base + (u32)gi * 4;
+    }
 }
 
 static u32 insec_addr(Obj *o, u32 shndx)
@@ -646,9 +663,15 @@ static void finalize_globals(void)
     int i;
     for (i = 0; i < NBUCKET; i++) {
         GSym *g = g_buckets[i];
-        for (; g; g = g->next)
-            if (g->defined)
-                g->addr = gsym_addr(g);
+        for (; g; g = g->next) {
+            if (!g->defined)
+                continue;
+            if (g->forced) {
+                g->addr = g->forced_addr;
+                continue;
+            }
+            g->addr = gsym_addr(g);
+        }
     }
 }
 
@@ -690,6 +713,134 @@ static u32 sym_resolve(Obj *o, u32 idx, const char **nm, int *undef)
     if (s->shndx == SHN_ABS)
         return s->value;
     return insec_addr(o, s->shndx) + s->value;
+}
+
+static void collect_got(void)
+{
+    Obj *o;
+    int i;
+    for (o = g_objs; o; o = o->next) {
+        for (i = 1; i < o->nsec; i++) {
+            InSec *rs = &o->secs[i];
+            u32 info, n, k;
+            if (rs->type != SHT_REL)
+                continue;
+            {
+                u32 idx = (u32)i;
+                const u8 *p = o->file.data + rd32(o->file.data + 32) + idx * 40;
+                info = rd32(p + 28);
+            }
+            if (info == 0 || info >= (u32)o->nsec)
+                continue;
+            n = rs->size / 8;
+            for (k = 0; k < n; k++) {
+                u32 r_info = rd32(rs->data + k * 8 + 4);
+                if ((r_info & 0xffu) == R_ARM_GOT_PREL) {
+                    const char *nm;
+                    int undef;
+                    u32 dummy = sym_resolve(o, r_info >> 8, &nm, &undef);
+                    int j, dup = 0;
+                    (void)dummy;
+                    (void)undef;
+                    for (j = 0; j < g_ngot; j++)
+                        if (strcmp(g_got[j].name, nm) == 0) {
+                            dup = 1;
+                            break;
+                        }
+                    if (!dup) {
+                        g_got = ac_realloc(g_got, sizeof(GotSlot) * (size_t)(g_ngot + 1));
+                        g_got[g_ngot].name = ac_strdup(nm);
+                        g_got[g_ngot].addr = 0;
+                        g_ngot++;
+                    }
+                }
+            }
+        }
+    }
+}
+
+static void mark_region_symbols(void)
+{
+    static const char *names[] = {
+        "Image$$ER_RO$$Base", "Image$$ER_RO$$Limit",
+        "Image$$ER_RW$$Base", "Image$$ER_RW$$Limit",
+        "Image$$ER_ZI$$Base", "Image$$ER_ZI$$Limit",
+        ".ARM.exidx$$Base", ".ARM.exidx$$Limit",
+        "SHT$$INIT_ARRAY$$Base", "SHT$$INIT_ARRAY$$Limit",
+        "SHT$$FINI_ARRAY$$Base", "SHT$$FINI_ARRAY$$Limit",
+    };
+    unsigned i;
+    for (i = 0; i < sizeof(names) / sizeof(names[0]); i++) {
+        GSym *g = gsym_find(names[i]);
+        if (g && !g->defined) {
+            g->defined = 1;
+            g->forced = 1;
+            g->forced_addr = 0;
+        }
+    }
+    {
+        int b;
+        for (b = 0; b < NBUCKET; b++) {
+            GSym *t = g_buckets[b];
+            for (; t; t = t->next) {
+                if (t->defined || t->is_common)
+                    continue;
+                if (strncmp(t->name, "_ZTI", 4) == 0 || strncmp(t->name, "_ZTV", 4) == 0 ||
+                    strncmp(t->name, "_ZTS", 4) == 0) {
+                    t->defined = 1;
+                    t->forced = 1;
+                    t->forced_addr = 0;
+                }
+            }
+        }
+    }
+}
+
+static void define_typeinfo_stubs(void)
+{
+    int i;
+    u32 base = g_out[O_RODATA].addr;
+    for (i = 0; i < NBUCKET; i++) {
+        GSym *g = g_buckets[i];
+        for (; g; g = g->next) {
+            if (!g->forced || g->is_common)
+                continue;
+            if (strncmp(g->name, "_ZTI", 4) == 0 || strncmp(g->name, "_ZTV", 4) == 0 ||
+                strncmp(g->name, "_ZTS", 4) == 0) {
+                g->forced_addr = base;
+                g->addr = base;
+                ac_info("stubbed typeinfo symbol %s", g->name);
+            }
+        }
+    }
+}
+
+static void define_region_symbols(void)
+{
+    static const struct { const char *name; int sec; int end; } table[] = {
+        {"Image$$ER_RO$$Base", O_TEXT, 0},
+        {"Image$$ER_RO$$Limit", O_RODATA, 1},
+        {"Image$$ER_RW$$Base", O_DATA, 0},
+        {"Image$$ER_RW$$Limit", O_DATA, 1},
+        {"Image$$ER_ZI$$Base", O_BSS, 0},
+        {"Image$$ER_ZI$$Limit", O_BSS, 1},
+        {".ARM.exidx$$Base", O_EXIDX, 0},
+        {".ARM.exidx$$Limit", O_EXIDX, 1},
+        {"SHT$$INIT_ARRAY$$Base", O_RODATA, 0},
+        {"SHT$$INIT_ARRAY$$Limit", O_RODATA, 1},
+        {"SHT$$FINI_ARRAY$$Base", O_RODATA, 0},
+        {"SHT$$FINI_ARRAY$$Limit", O_RODATA, 1},
+    };
+    unsigned i;
+    for (i = 0; i < sizeof(table) / sizeof(table[0]); i++) {
+        GSym *g = gsym_find(table[i].name);
+        if (!g || g->defined)
+            continue;
+        g->defined = 1;
+        g->forced = 1;
+        g->forced_addr = g_out[table[i].sec].addr + (table[i].end ? g_out[table[i].sec].size : 0);
+        g->addr = g->forced_addr;
+    }
 }
 
 static void define_markers(void)
@@ -756,16 +907,31 @@ static void fill_sections(void)
     }
 }
 
+static u32 got_addr_for(const char *name)
+{
+    int i;
+    for (i = 0; i < g_ngot; i++)
+        if (strcmp(g_got[i].name, name) == 0)
+            return g_got[i].addr;
+    return 0;
+}
+
 static int reloc_apply(Obj *o, u32 type, u32 place, u32 s, i32 a, u8 *p, const char *nm)
 {
     switch (type) {
     case R_ARM_NONE:
     case R_ARM_V4BX:
         return 0;
+    case 41:
     case R_ARM_ABS32:
     case R_ARM_TARGET1:
         wr32(p, s + (u32)a);
         return 0;
+    case 96: {
+        u32 g = got_addr_for(nm);
+        wr32(p, g + (u32)a - place);
+        return 0;
+    }
     case R_ARM_REL32:
         wr32(p, (u32)((i64)s + a - (i64)place));
         return 0;
@@ -911,6 +1077,37 @@ static void apply_relocs(void)
                         ac_die("%s: undefined symbol %s", o->path, nm);
                     s = 0;
                 }
+                if (type == 96) {
+                    u32 g = got_addr_for(nm);
+                    if (g) {
+                        OutSec *ds = &g_out[O_DATA];
+                        size_t off = (size_t)(g - ds->addr);
+                        int gi;
+                        const char *gn = "";
+                        u32 value = 0;
+                        for (gi = 0; gi < g_ngot; gi++)
+                            if (g_got[gi].addr == g) {
+                                gn = g_got[gi].name;
+                                break;
+                            }
+                        {
+                            GSym *sym = gsym_find(gn);
+                            if (sym && sym->defined)
+                                value = sym->addr;
+                        }
+                        if (off + 4 <= ds->data.len)
+                            wr32(ds->data.data + off, value);
+                        if (g_nprel == g_cprel) {
+                            g_cprel = g_cprel ? g_cprel * 2 : 64;
+                            g_prel = ac_realloc(g_prel, sizeof(PendingRel) * (size_t)g_cprel);
+                        }
+                        g_prel[g_nprel].sec = (char *)".rel.data";
+                        g_prel[g_nprel].off = (u32)off;
+                        g_prel[g_nprel].type = R_ARM_ABS32;
+                        g_prel[g_nprel].sym = ac_strdup(gn);
+                        g_nprel++;
+                    }
+                }
                 place = g_out[ts->out].data.data + ts->out_off + r_off;
                 paddr = g_out[ts->out].addr + ts->out_off + r_off;
                 reloc_apply(o, type, paddr, s, addend, place, nm);
@@ -993,6 +1190,32 @@ static void emit(const char *path)
         syms[i].shndx = (u16)(i + 1);
     }
     nsyms = nsec_list;
+    {
+        int tsec = -1, dsec = -1;
+        int k2;
+        for (k2 = 0; k2 < nsec_list; k2++) {
+            if (sec_list[k2] == O_TEXT)
+                tsec = k2;
+            if (sec_list[k2] == O_DATA)
+                dsec = k2;
+        }
+        if (tsec >= 0) {
+            syms[nsyms].name = "$a";
+            syms[nsyms].value = g_out[O_TEXT].addr;
+            syms[nsyms].size = 0;
+            syms[nsyms].info = (STB_LOCAL << 4) | STT_NOTYPE;
+            syms[nsyms].shndx = (u16)(tsec + 1);
+            nsyms++;
+        }
+        if (dsec >= 0) {
+            syms[nsyms].name = "$d";
+            syms[nsyms].value = g_out[O_DATA].addr;
+            syms[nsyms].size = 0;
+            syms[nsyms].info = (STB_LOCAL << 4) | STT_NOTYPE;
+            syms[nsyms].shndx = (u16)(dsec + 1);
+            nsyms++;
+        }
+    }
     first_global = (u32)nsyms + 1;
     for (i = 0; i < NBUCKET; i++) {
         GSym *g = g_buckets[i];
@@ -1409,15 +1632,31 @@ int main(int argc, char **argv)
         } else if ((strcmp(a, "-l") == 0) && i + 1 < argc) {
             char nm[512];
             snprintf(nm, sizeof(nm), "%s", argv[++i]);
-            if (!strchr(nm, '.'))
-                strncat(nm, ".lib", sizeof(nm) - strlen(nm) - 1);
+            if (!strchr(nm, '.')) {
+                char alt[512];
+                snprintf(alt, sizeof(alt), "%s.lib", nm);
+                if (load_archive(alt))
+                    continue;
+                snprintf(alt, sizeof(alt), "lib%s.a", nm);
+                if (load_archive(alt))
+                    continue;
+                ac_die("cannot open library %s", nm);
+            }
             if (!load_archive(nm))
                 ac_die("cannot open library %s", nm);
         } else if (strncmp(a, "-l", 2) == 0 && a[2]) {
             char nm[512];
             snprintf(nm, sizeof(nm), "%s", a + 2);
-            if (!strchr(nm, '.'))
-                strncat(nm, ".lib", sizeof(nm) - strlen(nm) - 1);
+            if (!strchr(nm, '.')) {
+                char alt[512];
+                snprintf(alt, sizeof(alt), "%s.lib", nm);
+                if (load_archive(alt))
+                    continue;
+                snprintf(alt, sizeof(alt), "lib%s.a", nm);
+                if (load_archive(alt))
+                    continue;
+                ac_die("cannot open library %s", nm);
+            }
             if (!load_archive(nm))
                 ac_die("cannot open library %s", nm);
         } else if (strcmp(a, "--base") == 0 && i + 1 < argc) {
@@ -1471,11 +1710,15 @@ int main(int argc, char **argv)
         }
     }
     resolve_archives();
+    collect_got();
+    mark_region_symbols();
     report_undefined();
     layout();
     fill_sections();
     finalize_globals();
     define_markers();
+    define_region_symbols();
+    define_typeinfo_stubs();
     apply_relocs();
     if (g_map) {
         ac_info("text   %08x-%08x", g_out[O_TEXT].addr, g_out[O_TEXT].addr + g_out[O_TEXT].size);
