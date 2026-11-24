@@ -1,5 +1,9 @@
 # AcetyleneC — unofficial Symbian S60 SDK
 
+A Symbian OS custom IDE and SDK based on OSS and official materials by iXlinx Corporation and in
+honor of NNProject and others.
+Copyright iXlinx Corporation and Kirill Lavrentiev 2026.
+
 An unofficial, self-hosted SDK and IDE for Symbian S60 devices, from **S60v2 (2nd Edition)** up to
 **S60v5 (5th Edition)**. Everything is 32-bit Win32, built from source in this repo.
 
@@ -97,12 +101,26 @@ events, and trigger the IDE's own commands. Load results and failures land in
 Everything is documented in [`docs/PLUGINS.md`](docs/PLUGINS.md), which also covers the MCP server
 and the `acetylene-mcp-stdio.exe` bridge.
 
+## Community builds
+
+Every push to `master` runs `.github/workflows/release.yml` on a Windows runner: it builds TinyCC,
+the toolchain, the IDE and the plugins, runs the whole test suite, packs the portable tree and
+publishes a GitHub release. Milestones are named automatically as
+`CB-XXX (Community Build № N)`, where the number is taken from the highest existing `CB-*` tag plus
+one. The tag is baked into the binary, so `Help > About` and the title bar show which build you run,
+and the package carries `SHA256SUMS.txt`.
+
 ## Licensing
 
-Our code is MIT (see `LICENSE`). Vendored components keep their own licenses: TCC (LGPL-2.1),
-unshield (MIT), zlib (zlib). The imported SDK headers, libraries and tools remain under Nokia's
-SDK EULA and Symbian/GPL terms respectively — see `THIRD_PARTY.md`. Do not redistribute binaries
-built from them without checking those terms.
+AcetyleneC — a Symbian OS custom IDE and SDK based on OSS and official materials by iXlinx
+Corporation and in honor of NNProject and others. Copyright iXlinx Corporation and Kirill
+Lavrentiev 2026.
+
+Our code is released under the **iXlinx Open Platform License 1.0** — see [`LICENSE`](LICENSE),
+also reachable from `Help > License` inside the IDE. Vendored components keep their own licenses:
+TCC (LGPL-2.1), unshield (MIT), zlib (zlib). The imported SDK headers, libraries and tools remain
+under Nokia's SDK EULA and Symbian/GPL terms respectively — see `THIRD_PARTY.md`. Do not
+redistribute binaries built from them without checking those terms.
 
 ## Known gaps, stated plainly
 

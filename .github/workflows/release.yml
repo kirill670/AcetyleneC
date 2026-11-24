@@ -1,0 +1,134 @@
+name: community-build
+
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: community-build-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: msys2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW32
+          update: false
+          install: >-
+            mingw-w64-i686-gcc
+            make
+            zip
+            coreutils
+            curl
+            grep
+            sed
+
+      - name: next community build number
+        id: cb
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          API="https://api.github.com/repos/${{ github.repository }}/releases?per_page=100"
+          LAST=$(curl -s -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "$API" \
+                 | grep -o '"tag_name": *"CB-[0-9]\+"' \
+                 | grep -o '[0-9]\+' \
+                 | sort -n | tail -1)
+          N=$(( ${LAST:-0} + 1 ))
+          TAG=$(printf 'CB-%03d' "$N")
+          TITLE="$TAG (Community Build № $N)"
+          echo "number=$N" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "title=$TITLE" >> "$GITHUB_OUTPUT"
+          echo "community build $TITLE"
+
+      - name: build compiler
+        env:
+          AC_BUILD_TAG: ${{ steps.cb.outputs.tag }}
+          AC_BUILD_TITLE: ${{ steps.cb.outputs.title }}
+        run: sh build/build-tcc.sh
+
+      - name: build tools and IDE
+        env:
+          AC_BUILD_TAG: ${{ steps.cb.outputs.tag }}
+          AC_BUILD_TITLE: ${{ steps.cb.outputs.title }}
+        run: sh build/build-tools.sh
+
+      - name: build plugins
+        run: sh build/build-plugins.sh
+
+      - name: test
+        run: sh tests/run-tests.sh
+
+      - name: package
+        env:
+          AC_BUILD_TAG: ${{ steps.cb.outputs.tag }}
+        run: sh tools/package.sh "$RUNNER_TEMP/dist"
+
+      - name: release notes
+        env:
+          AC_BUILD_TITLE: ${{ steps.cb.outputs.title }}
+          AC_BUILD_TAG: ${{ steps.cb.outputs.tag }}
+        run: |
+          set -e
+          PREV=$(git tag --list 'CB-*' --sort=-v:refname | head -1)
+          RANGE="${PREV:+$PREV..}HEAD"
+          {
+            echo "$AC_BUILD_TITLE"
+            echo
+            echo "AcetyleneC — a Symbian OS custom IDE and SDK for S60v2 through S60v5."
+            echo "32-bit Windows, built from source on this run."
+            echo
+            echo "## Contents"
+            echo
+            echo "* \`build/bin/AcetyleneC.exe\` — the IDE"
+            echo "* \`build/bin/acetylene-*.exe\` — compiler driver, linker, C++ frontend, E32 fixer, packager, certificate generator, MCP bridge"
+            echo "* \`plugins/\` — autocomplete, image viewer, JSON linter, MCP server"
+            echo "* \`sdk/\` — headers, import libraries and tools for S60v2, S60v30, S60v31, S60v32, S60v5"
+            echo "* \`examples/\`, \`docs/\`"
+            echo
+            echo "## Changes"
+            echo
+            git log "$RANGE" --pretty='* %s' -n 60
+            echo
+            echo "## Running"
+            echo
+            echo "Unzip anywhere and start \`build/bin/AcetyleneC.exe\`. The IDE resolves \`sdk/\` and \`plugins/\`"
+            echo "relative to its own directory, so the tree must stay together."
+            echo
+            echo "## Licensing"
+            echo
+            echo "Main components: iXlinx Open Platform License 1.0 (\`LICENSE\`)."
+            echo "TinyCC, unshield and zlib keep their own licenses; the S60 SDK headers, libraries and"
+            echo "tools remain under Nokia's SDK terms — see \`THIRD_PARTY.md\` before redistributing."
+          } > "$RUNNER_TEMP/notes.md"
+          cat "$RUNNER_TEMP/notes.md"
+
+      - name: publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          AC_BUILD_TAG: ${{ steps.cb.outputs.tag }}
+          AC_BUILD_TITLE: ${{ steps.cb.outputs.title }}
+        run: |
+          set -e
+          gh release create "$AC_BUILD_TAG" \
+            "$RUNNER_TEMP/dist/AcetyleneC-$AC_BUILD_TAG-win32.zip" \
+            "$RUNNER_TEMP/dist/SHA256SUMS.txt" \
+            --title "$AC_BUILD_TITLE" \
+            --notes-file "$RUNNER_TEMP/notes.md" \
+            --latest

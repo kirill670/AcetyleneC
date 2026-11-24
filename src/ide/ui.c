@@ -1,12 +1,17 @@
 #include "ide.h"
 #include "../../include/ac_plugin.h"
+#include "../../include/ac_version.h"
 #include <ctype.h>
 #include <stdarg.h>
+
+#define TREE_ROWS_TOP 58
 
 Ide g_ide;
 
 static void ide_command(int cmd);
 static void ide_set_active_index(int i);
+static int path_exists(const char *p);
+static void path_normalize(const char *in, char *out, int cap);
 
 
 #define C_BG        RGB(24, 26, 30)
@@ -65,7 +70,8 @@ enum {
     CMD_SET_EMU = 350,
     CMD_TOGGLE_OUTPUT = 400,
     CMD_TOGGLE_TREE,
-    CMD_ABOUT = 500
+    CMD_ABOUT = 500,
+    CMD_LICENSE
 };
 
 static const MenuItem k_file[] = {
@@ -113,6 +119,7 @@ static const MenuItem k_view[] = {
 
 static const MenuItem k_help[] = {
     {"About AcetyleneC", "", CMD_ABOUT, 0},
+    {"License", "", CMD_LICENSE, 0},
 };
 
 typedef struct {
@@ -163,20 +170,38 @@ static void frame(HDC dc, RECT r, COLORREF c)
     DeleteObject(p);
 }
 
+static int utf8_to_w(const char *s, int len, wchar_t *out, int max);
+
 static void text_at(HDC dc, int x, int y, const char *s, COLORREF c, HFONT f)
 {
-    HFONT old = SelectObject(dc, f);
+    static wchar_t w[8192];
+    HFONT old;
+    int n;
+    if (!s || !s[0])
+        return;
+    n = utf8_to_w(s, (int)strlen(s), w, (int)(sizeof(w) / sizeof(w[0])));
+    if (n <= 0)
+        return;
+    old = SelectObject(dc, f);
     SetTextColor(dc, c);
     SetBkMode(dc, TRANSPARENT);
-    TextOutA(dc, x, y, s, (int)strlen(s));
+    TextOutW(dc, x, y, w, n);
     SelectObject(dc, old);
 }
 
 static int text_w(HDC dc, const char *s, HFONT f)
 {
+    static wchar_t w[8192];
     SIZE sz;
-    HFONT old = SelectObject(dc, f);
-    GetTextExtentPoint32A(dc, s, (int)strlen(s), &sz);
+    HFONT old;
+    int n;
+    if (!s || !s[0])
+        return 0;
+    n = utf8_to_w(s, (int)strlen(s), w, (int)(sizeof(w) / sizeof(w[0])));
+    if (n <= 0)
+        return 0;
+    old = SelectObject(dc, f);
+    GetTextExtentPoint32W(dc, w, n, &sz);
     SelectObject(dc, old);
     return sz.cx;
 }
@@ -248,6 +273,8 @@ void ide_init(HWND hwnd)
     g_ide.dirty_layout = 1;
     ide_settings_load();
     plugins_load();
+    if (strcmp(AC_BUILD_TAG, "dev") != 0)
+        ide_set_status("%s ready", AC_BUILD_TAG);
 }
 
 void ide_layout(void)
@@ -648,8 +675,19 @@ static void draw_menu_bar(HDC dc, int w)
     }
     {
         char title[256];
+        char tag[64];
         Doc *d = doc_active();
-        snprintf(title, sizeof(title), "AcetyleneC  -  %s%s", d ? d->name : "no file", d && d->modified ? " *" : "");
+        tag[0] = 0;
+        if (strcmp(AC_BUILD_TAG, "dev") != 0) {
+            const char *sp = strchr(AC_BUILD_TAG, ' ');
+            int n = sp ? (int)(sp - AC_BUILD_TAG) : (int)strlen(AC_BUILD_TAG);
+            if (n > (int)sizeof(tag) - 2)
+                n = (int)sizeof(tag) - 2;
+            tag[0] = ' ';
+            memcpy(tag + 1, AC_BUILD_TAG, (size_t)n);
+            tag[n + 1] = 0;
+        }
+        snprintf(title, sizeof(title), "AcetyleneC%s  -  %s%s", tag, d ? d->name : "no file", d && d->modified ? " *" : "");
         text_at(dc, w - text_w(dc, title, g_ide.font_ui) - 14, 5, title, C_DIM, g_ide.font_ui);
     }
     fill(dc, (RECT){0, 25, w, 26}, C_BORDER);
@@ -788,9 +826,11 @@ static void draw_tree(HDC dc)
     y += 20;
     fill(dc, (RECT){r.left + 8, y, r.right - 8, y + 1}, C_BORDER);
     y += 8;
-    for (i = 0; i < g_ide.tree_files.count; i++) {
+    for (i = g_ide.tree_scroll; i < g_ide.tree_files.count; i++) {
         RECT ir = {r.left + 4, y, r.right - 4, y + 20};
         const char *p = g_ide.tree_files.items[i];
+        if (y > r.bottom - 20)
+            break;
         if (i == g_ide.tree_sel)
             fill(dc, ir, C_SEL);
         text_at(dc, r.left + 14, y + 2, ac_basename(p), i == g_ide.tree_sel ? C_TEXT : C_DIM, g_ide.font_ui);
@@ -836,6 +876,31 @@ static COLORREF tok_color(TokKind k)
     case TK_OPERATOR: return C_OP;
     default: return C_TEXT;
     }
+}
+
+static TokKind span_kind(const Span *spans, int nspans, int offset)
+{
+    int s;
+    for (s = 0; s < nspans; s++) {
+        if (offset >= spans[s].start && offset < spans[s].start + spans[s].len)
+            return spans[s].kind;
+    }
+    return TK_PLAIN;
+}
+
+static int cols_between(const char *data, int from, int to)
+{
+    int col = 0;
+    int i = from;
+    while (i < to) {
+        unsigned char c = (unsigned char)data[i];
+        if (c == '\t')
+            col += TAB_WIDTH - (col % TAB_WIDTH);
+        else
+            col++;
+        i += doc_utf8_len(c);
+    }
+    return col;
 }
 
 static void draw_editor(HDC dc)
@@ -888,7 +953,6 @@ static void draw_editor(HDC dc)
         char ln[16];
         Span spans[512];
         int nspans = 0;
-        int k;
         if (line >= d->nlines)
             break;
         start = d->lines[line];
@@ -900,43 +964,49 @@ static void draw_editor(HDC dc)
         if (has_sel && sel_b > start && sel_a < end) {
             int sx = sel_a > start ? sel_a : start;
             int ex = sel_b < end ? sel_b : end;
-            int c1 = 0, c2 = 0;
-            int q;
-            for (q = start; q < sx; q++)
-                c1 += (d->data.data[q] == '\t') ? TAB_WIDTH - (c1 % TAB_WIDTH) : 1;
-            c2 = c1;
-            for (q = sx; q < ex; q++)
-                c2 += (d->data.data[q] == '\t') ? TAB_WIDTH - (c2 % TAB_WIDTH) : 1;
+            int c1 = cols_between(d->data.data, start, sx);
+            int c2 = c1 + cols_between(d->data.data, sx, ex);
             fill(dc, (RECT){x0 + c1 * g_ide.char_w - d->scroll_x, y, x0 + c2 * g_ide.char_w - d->scroll_x, y + g_ide.line_h}, C_SEL);
         }
 
         if (len > 0) {
             int cx = x0 - d->scroll_x;
             int col = 0;
+            int pos = 0;
             doc_highlight(d, line, spans, 512, &nspans);
-            for (k = 0; k < len; k++) {
-                char ch = d->data.data[start + k];
-                int w = 1;
-                if (ch == '\t') {
-                    w = TAB_WIDTH - (col % TAB_WIDTH);
-                    col += w;
+            while (pos < len) {
+                unsigned char first = (unsigned char)d->data.data[start + pos];
+                TokKind kind = span_kind(spans, nspans, pos);
+                int run_col = col;
+                int nchars = 0;
+                char buf[1024];
+                int bl = 0;
+                if (first == '\t') {
+                    col += TAB_WIDTH - (col % TAB_WIDTH);
+                    pos++;
                     continue;
                 }
-                {
-                    TokKind kind = TK_PLAIN;
-                    int s;
-                    for (s = 0; s < nspans; s++) {
-                        if (k >= spans[s].start && k < spans[s].start + spans[s].len) {
-                            kind = spans[s].kind;
-                            break;
-                        }
-                    }
-                    {
-                        char one[2] = {ch, 0};
-                        text_at(dc, cx + col * g_ide.char_w, y, one, tok_color(kind), g_ide.font);
-                    }
+                while (pos < len && bl < (int)sizeof(buf) - 5) {
+                    unsigned char c = (unsigned char)d->data.data[start + pos];
+                    int seq;
+                    if (c == '\t' || span_kind(spans, nspans, pos) != kind)
+                        break;
+                    seq = doc_utf8_len(c);
+                    if (pos + seq > len)
+                        seq = 1;
+                    memcpy(buf + bl, d->data.data + start + pos, (size_t)seq);
+                    bl += seq;
+                    pos += seq;
+                    nchars++;
                 }
-                col++;
+                if (nchars > 0) {
+                    buf[bl] = 0;
+                    text_at(dc, cx + run_col * g_ide.char_w, y, buf, tok_color(kind), g_ide.font);
+                    col += nchars;
+                } else {
+                    pos++;
+                    col++;
+                }
             }
         }
         y += g_ide.line_h;
@@ -1280,14 +1350,54 @@ static void ide_save_dialog(int index)
         ide_save_file(index, 0);
 }
 
+static int tree_index_of(const char *path)
+{
+    int i;
+    if (!path)
+        return -1;
+    for (i = 0; i < g_ide.tree_files.count; i++)
+        if (_stricmp(g_ide.tree_files.items[i], path) == 0)
+            return i;
+    return -1;
+}
+
+static void tree_add_file(const char *path)
+{
+    if (!path || !path[0])
+        return;
+    if (tree_index_of(path) >= 0)
+        return;
+    sv_push(&g_ide.tree_files, path);
+}
+
+static void tree_ensure_visible(void)
+{
+    int rows = (g_ide.rc_tree.bottom - g_ide.rc_tree.top - TREE_ROWS_TOP) / 20;
+    if (rows < 1)
+        rows = 1;
+    if (g_ide.tree_sel < g_ide.tree_scroll)
+        g_ide.tree_scroll = g_ide.tree_sel;
+    else if (g_ide.tree_sel >= g_ide.tree_scroll + rows)
+        g_ide.tree_scroll = g_ide.tree_sel - rows + 1;
+    if (g_ide.tree_scroll < 0)
+        g_ide.tree_scroll = 0;
+}
+
 void ide_open_file(const char *path)
 {
     int i;
     Buf b;
     Doc *d;
+    char norm[MAX_PATH];
+    path_normalize(path, norm, sizeof(norm));
+    path = norm;
     for (i = 0; i < g_ide.ndocs; i++) {
-        if (g_ide.docs[i].path && strcmp(g_ide.docs[i].path, path) == 0) {
+        if (g_ide.docs[i].path && _stricmp(g_ide.docs[i].path, path) == 0) {
             g_ide.active = i;
+            i = tree_index_of(path);
+            if (i >= 0)
+                g_ide.tree_sel = i;
+            tree_ensure_visible();
             return;
         }
     }
@@ -1302,10 +1412,17 @@ void ide_open_file(const char *path)
         d->modified = 0;
     }
     d->lex_lang = ac_has_ext(path, ".c") || ac_has_ext(path, ".h") || ac_has_ext(path, ".cpp");
+    d->caret = 0;
+    d->anchor = 0;
+    d->top_line = 0;
+    d->scroll_x = 0;
     g_ide.active = g_ide.ndocs;
     g_ide.ndocs++;
-    g_ide.tree_sel = g_ide.tree_files.count;
-    sv_push(&g_ide.tree_files, path);
+    tree_add_file(path);
+    i = tree_index_of(path);
+    if (i >= 0)
+        g_ide.tree_sel = i;
+    tree_ensure_visible();
     plugins_fire(1, path);
     ide_set_status("Opened %s", ac_basename(path));
 }
@@ -1753,6 +1870,9 @@ static void run_build_pipeline(void)
     ide_set_status("Build OK: %s", e32_file);
 }
 
+static int output_log_lines(void);
+static int output_max_scroll(void);
+
 void ide_build(void)
 {
     g_ide.building = 1;
@@ -1761,6 +1881,7 @@ void ide_build(void)
     UpdateWindow(g_ide.hwnd);
     run_build_pipeline();
     g_ide.building = 0;
+    g_ide.output_scroll = output_max_scroll();
     InvalidateRect(g_ide.hwnd, NULL, FALSE);
 }
 
@@ -1790,6 +1911,65 @@ void ide_host_run_named(const char *id)
         ide_command(CMD_NEW_PROJECT);
     else if (strcmp(id, "toggle_output") == 0)
         ide_command(CMD_TOGGLE_OUTPUT);
+}
+
+static void msg_utf8(const char *text, const char *caption, UINT flags)
+{
+    wchar_t wtext[4096];
+    wchar_t wcap[128];
+    MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, (int)(sizeof(wtext) / sizeof(wtext[0])));
+    MultiByteToWideChar(CP_UTF8, 0, caption, -1, wcap, (int)(sizeof(wcap) / sizeof(wcap[0])));
+    MessageBoxW(g_ide.hwnd, wtext, wcap, flags);
+}
+
+static int find_license_file(char *out, int cap)
+{
+    char exe[MAX_PATH];
+    int i;
+    GetModuleFileNameA(NULL, exe, sizeof(exe));
+    for (i = (int)strlen(exe); i > 0 && exe[i] != '\\' && exe[i] != '/'; i--)
+        exe[i] = 0;
+    snprintf(out, (size_t)cap, "%sLICENSE", exe);
+    if (path_exists(out))
+        return 1;
+    snprintf(out, (size_t)cap, "%s..\\..\\LICENSE", exe);
+    if (path_exists(out))
+        return 1;
+    snprintf(out, (size_t)cap, "%s..\\LICENSE", exe);
+    return path_exists(out);
+}
+
+static void show_about(void)
+{
+    char text[2600];
+    snprintf(text, sizeof(text),
+             AC_APP_NAME " " AC_APP_VERSION "  \xE2\x80\x94  %s\n\n"
+             AC_BRAND_LINE1 "\n" AC_BRAND_LINE2 "\n\n"
+             AC_COPYRIGHT "\n\n"
+             "License: " AC_LICENSE_NAME "\n"
+             "Help > License opens the full text.\n\n"
+             "%s",
+             AC_BUILD_TITLE, AC_ABOUT_COMPONENTS);
+    msg_utf8(text, "About " AC_APP_NAME, MB_OK | MB_ICONINFORMATION);
+}
+
+static void open_license(void)
+{
+    char path[MAX_PATH];
+    Doc *d;
+    if (!find_license_file(path, sizeof(path))) {
+        msg_utf8("The LICENSE file was not found next to the IDE.\n\n"
+                 "Every build ships it in the package root; the source tree keeps it "
+                 "at the repository root.", "License", MB_OK | MB_ICONWARNING);
+        return;
+    }
+    ide_open_file(path);
+    d = doc_active();
+    if (d) {
+        d->read_only = 1;
+        d->lex_lang = 0;
+    }
+    ide_set_status("License: " AC_LICENSE_NAME);
 }
 
 static void ide_command(int cmd)
@@ -1891,13 +2071,10 @@ static void ide_command(int cmd)
         ide_layout();
         break;
     case CMD_ABOUT:
-        MessageBoxA(g_ide.hwnd,
-                    "AcetyleneC 1.0\n\nUnofficial Symbian S60 SDK IDE (S60v2..S60v5)\n"
-                    "C compiler: inside-tcc (ARM EABI)\n"
-                    "Linker: acetylene-ld\n"
-                    "Signing: acetylene-makekeys / acetylene-sign\n\n"
-                    "Kirill / kirill670",
-                    "About AcetyleneC", MB_OK | MB_ICONINFORMATION);
+        show_about();
+        break;
+    case CMD_LICENSE:
+        open_license();
         break;
     default:
         break;
@@ -2143,6 +2320,7 @@ int ide_key(int vk, int ctrl, int shift, int alt)
             doc_set_caret(d, 0, shift);
         else
             doc_set_caret(d, ls, shift);
+        doc_scroll_to_caret(d);
         return 1;
     }
     case VK_END: {
@@ -2151,19 +2329,29 @@ int ide_key(int vk, int ctrl, int shift, int alt)
             doc_set_caret(d, (int)d->data.len, shift);
         else
             doc_set_caret(d, le, shift);
+        doc_scroll_to_caret(d);
         return 1;
     }
     case VK_PRIOR: {
-        int visible = (g_ide.rc_editor.bottom - g_ide.rc_editor.top) / g_ide.line_h;
+        int visible = (g_ide.rc_editor.bottom - g_ide.rc_editor.top) / (g_ide.line_h ? g_ide.line_h : 16);
+        if (visible < 1)
+            visible = 1;
         d->top_line -= visible;
         if (d->top_line < 0)
             d->top_line = 0;
         return 1;
     }
     case VK_NEXT: {
-        int visible = (g_ide.rc_editor.bottom - g_ide.rc_editor.top) / g_ide.line_h;
-        if (d->top_line + visible < d->nlines)
-            d->top_line += visible;
+        int visible = (g_ide.rc_editor.bottom - g_ide.rc_editor.top) / (g_ide.line_h ? g_ide.line_h : 16);
+        int max;
+        if (visible < 1)
+            visible = 1;
+        max = d->nlines - visible;
+        if (max < 0)
+            max = 0;
+        d->top_line += visible;
+        if (d->top_line > max)
+            d->top_line = max;
         return 1;
     }
     case VK_BACK:
@@ -2256,6 +2444,10 @@ void ide_char(wchar_t ch)
         return;
     if (ch < 32 && ch != '\t')
         return;
+    if (d->read_only) {
+        ide_set_status("%s is read-only", d->name ? d->name : "document");
+        return;
+    }
     if (doc_has_selection(d)) {
         int a, b;
         doc_sel_range(d, &a, &b);
@@ -2355,7 +2547,7 @@ void ide_mouse_down(int x, int y, int shift, int button)
         return;
     }
     if (PtInRect(&g_ide.rc_tree, (POINT){x, y})) {
-        int row = (y - g_ide.rc_tree.top - 56) / 20;
+        int row = (y - g_ide.rc_tree.top - TREE_ROWS_TOP) / 20 + g_ide.tree_scroll;
         if (row >= 0 && row < g_ide.tree_files.count) {
             g_ide.tree_sel = row;
             ide_open_file(g_ide.tree_files.items[row]);
@@ -2439,23 +2631,79 @@ void ide_mouse_move(int x, int y, int buttons)
     }
 }
 
-void ide_wheel(int delta, int ctrl)
+static int output_log_lines(void)
 {
+    int i, n = 0;
+    for (i = 0; i < (int)g_ide.build_log.len; i++)
+        if (g_ide.build_log.data[i] == '\n')
+            n++;
+    return n;
+}
+
+static int output_visible_lines(void)
+{
+    int vis = (g_ide.rc_output.bottom - g_ide.rc_output.top - 40) / 16;
+    return vis < 1 ? 1 : vis;
+}
+
+static int output_max_scroll(void)
+{
+    int total = output_log_lines();
+    int vis = output_visible_lines();
+    return total > vis ? total - vis : 0;
+}
+
+void ide_wheel(int delta, int keys, int x, int y)
+{
+    static int acc;
     Doc *d = doc_active();
-    if (!d)
+    int notch;
+    int lines = 3;
+
+    acc += delta;
+    notch = acc / WHEEL_DELTA;
+    acc -= notch * WHEEL_DELTA;
+    if (notch == 0)
         return;
-    if (ctrl) {
-        d->scroll_x -= delta / 40;
-        if (d->scroll_x < 0)
-            d->scroll_x = 0;
-    } else if (g_ide.show_output && g_ide.nmsgs == 0) {
-        g_ide.output_scroll -= delta / 120;
-        if (g_ide.output_scroll < 0)
-            g_ide.output_scroll = 0;
-    } else {
-        d->top_line -= delta / 120;
-        if (d->top_line < 0)
-            d->top_line = 0;
+
+    if (g_ide.split_x > 0 && x < g_ide.split_x) {
+        int max = g_ide.tree_files.count - 1;
+        if (max < 0)
+            max = 0;
+        g_ide.tree_scroll -= notch * lines;
+        if (g_ide.tree_scroll > max)
+            g_ide.tree_scroll = max;
+        if (g_ide.tree_scroll < 0)
+            g_ide.tree_scroll = 0;
+    } else if (g_ide.show_output && y >= g_ide.rc_output.top && y < g_ide.rc_output.bottom) {
+        if (g_ide.nmsgs == 0) {
+            int max = output_max_scroll();
+            g_ide.output_scroll -= notch * lines;
+            if (g_ide.output_scroll > max)
+                g_ide.output_scroll = max;
+            if (g_ide.output_scroll < 0)
+                g_ide.output_scroll = 0;
+        }
+    } else if (d && y >= g_ide.rc_editor.top) {
+        if (keys & MK_SHIFT) {
+            int unit = g_ide.char_w > 0 ? g_ide.char_w : 8;
+            d->scroll_x -= notch * 4 * unit;
+            if (d->scroll_x < 0)
+                d->scroll_x = 0;
+        } else {
+            int vis = (g_ide.rc_editor.bottom - g_ide.rc_editor.top - 4) / (g_ide.line_h ? g_ide.line_h : 16);
+            int max;
+            if (vis < 1)
+                vis = 1;
+            max = d->nlines - vis;
+            if (max < 0)
+                max = 0;
+            d->top_line -= notch * lines;
+            if (d->top_line > max)
+                d->top_line = max;
+            if (d->top_line < 0)
+                d->top_line = 0;
+        }
     }
     InvalidateRect(g_ide.hwnd, NULL, FALSE);
 }
@@ -2533,8 +2781,13 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         ide_mouse_move((short)LOWORD(lp), (short)HIWORD(lp), (int)wp);
         return 0;
     case WM_MOUSEWHEEL: {
+        POINT pt;
         int delta = GET_WHEEL_DELTA_WPARAM(wp);
-        ide_wheel(delta, (GET_KEYSTATE_WPARAM(wp) & MK_CONTROL) != 0);
+        int keys = GET_KEYSTATE_WPARAM(wp);
+        pt.x = (short)LOWORD(lp);
+        pt.y = (short)HIWORD(lp);
+        ScreenToClient(hwnd, &pt);
+        ide_wheel(delta, keys, pt.x, pt.y);
         return 0;
     }
     case WM_SETCURSOR:
@@ -2668,6 +2921,16 @@ static int path_exists(const char *p)
     return a != INVALID_FILE_ATTRIBUTES && a != 0xFFFFFFFFu;
 }
 
+static void path_normalize(const char *in, char *out, int cap)
+{
+    if (!in || !in[0]) {
+        out[0] = 0;
+        return;
+    }
+    if (!GetFullPathNameA(in, (DWORD)cap, out, NULL))
+        snprintf(out, (size_t)cap, "%s", in);
+}
+
 static void resolve_relative(const char *dir, const char *rel, char *out, int cap)
 {
     char cand[MAX_PATH];
@@ -2704,6 +2967,9 @@ void ide_open_project(const char *path)
 {
     Buf b;
     char *p;
+    char norm[MAX_PATH];
+    path_normalize(path, norm, sizeof(norm));
+    path = norm;
     if (ac_read_file(path, &b) != 0)
         return;
     buf_put(&b, "", 1);
@@ -2712,6 +2978,11 @@ void ide_open_project(const char *path)
     sv_init(&g_ide.proj.sources);
     sv_free(&g_ide.proj.libs);
     sv_init(&g_ide.proj.libs);
+    sv_free(&g_ide.tree_files);
+    sv_init(&g_ide.tree_files);
+    g_ide.tree_sel = -1;
+    g_ide.tree_scroll = 0;
+    g_ide.proj.is_dll = 0;
     p = (char *)b.data;
     while (*p) {
         char *nl = strchr(p, '\n');
@@ -2742,7 +3013,7 @@ void ide_open_project(const char *path)
                 snprintf(projdir, sizeof(projdir), "%s", path);
                 path_dir_of(projdir);
                 resolve_relative(projdir, eq + 1, full, sizeof(full));
-                sv_push(&g_ide.tree_files, full);
+                tree_add_file(full);
             } else if (strcmp(p, "lib") == 0) {
                 sv_push(&g_ide.proj.libs, eq + 1);
             }

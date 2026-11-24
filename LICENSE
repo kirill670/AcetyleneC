@@ -1,21 +1,200 @@
-MIT License
+AcetyleneC — a Symbian OS custom IDE and SDK
+Copyright iXlinx Corporation and Kirill Lavrentiev 2026.
 
-Copyright (c) 2026 Kirill (kirill670)
+The components of this project written by its authors are licensed under the
+iXlinx Open Platform License 1.0 reproduced below. Vendored and imported
+third-party material keeps its own terms; see THIRD_PARTY.md.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+iXlinx Open Platform License 1.0
+================================
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. Definitions
+--------------
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+"Covered Software" means source code, documentation, and other material
+that expressly identifies this License as governing it.
+
+"Covered File" means a source or documentation file that is part of the
+Covered Software.
+
+"Modification" means a change to a Covered File or a new file that is
+substantially derived from a Covered File.
+
+"Port" means a Modification whose purpose includes enabling the Covered
+Software to build, run, integrate, or interoperate on another operating
+system, architecture, runtime, API, or platform.
+
+"Executable Form" means any form other than the preferred form for making
+modifications.
+
+"Larger Work" means a work that combines Covered Software with separate
+material not governed by this License.
+
+"Contributor" means a copyright holder who intentionally submits or
+distributes a Modification under this License.
+
+"Upstream Project" means a pre-existing project expressly identified in
+the Covered Software's provenance metadata as the project from which a
+Covered Software component was derived.
+
+2. Copyright License Grant
+--------------------------
+
+Subject to this License, each Contributor grants every recipient a
+worldwide, royalty-free, non-exclusive copyright license to use,
+reproduce, display, perform, modify, port, compile, execute, distribute,
+and redistribute that Contributor's contribution, in Source Form or
+Executable Form.
+
+These permissions apply on any operating system or platform, including
+iXlinx, Windows, Linux, BSD, macOS, embedded systems, virtual machines,
+and future platforms.
+
+Commercial use, paid distribution, paid support, and internal use are
+permitted.
+
+3. Source Availability for Covered Modifications
+------------------------------------------------
+
+If You distribute Covered Software in Executable Form, You must make the
+corresponding Source Form of the Covered Software and Your Modifications
+available by a reasonable means at no more than the reasonable cost of
+distribution.
+
+The Source Form must be the preferred form for making modifications and
+must include the material reasonably necessary to build the Covered
+portion, excluding generally available system toolchains and System
+Libraries.
+
+4. File-Level Reciprocity and Larger Works
+------------------------------------------
+
+Modified Covered Files remain governed by this License.
+
+A Larger Work may contain files under other licenses, including
+proprietary licenses, provided that:
+(a) recipients retain all rights granted by this License in the Covered
+    Software;
+(b) the Covered Software remains separable and its Source Form remains
+    available as required by Section 3; and
+(c) no additional term is imposed on the Covered Software that removes
+    rights granted by this License.
+
+Mere linking, dynamic linking, inter-process communication, packaging,
+or use of a public API does not by itself cause otherwise independent
+material to become Covered Software.
+
+5. Attribution and Modification Notices
+---------------------------------------
+
+You must:
+(a) preserve existing copyright and license notices in Covered Files;
+(b) preserve any NOTICE file that this License requires to accompany the
+    Covered Software;
+(c) identify material Modifications in source history, a CHANGELOG,
+    CONTRIBUTORS file, patch metadata, or another durable mechanism; and
+(d) not falsely claim authorship of third-party material.
+
+For binary distribution, required notices must be reasonably discoverable
+in accompanying documentation, package metadata, an About/Credits/Licenses
+view, or an equivalent location.
+
+This Section does not require displaying contributor names in the primary
+application user interface.
+
+6. Explicit Permission to Port
+------------------------------
+
+You may create and distribute Ports of Covered Software.
+
+A Port may replace iXlinx-specific interfaces with Windows, Linux, BSD,
+or other platform interfaces. Such a Port does not need separate
+permission from the iXlinx project solely because it targets another
+platform.
+
+Port Modifications to Covered Files remain governed by this License.
+
+7. Upstream Return Grant
+------------------------
+
+To the extent a Contributor owns copyright in a Modification made to a
+component that identifies an Upstream Project, that Contributor also
+grants the copyright holders and maintainers of the identified Upstream
+Project a worldwide, royalty-free, non-exclusive license to reproduce,
+modify, distribute, and incorporate that Contributor-authored Modification
+into the Upstream Project under the license or licenses under which the
+Upstream Project was publicly offered at the time the Modification was
+made.
+
+This grant applies only to rights actually controlled by the Contributor.
+It does not relicense third-party code, firmware, patents, trademarks, or
+other material the Contributor does not have authority to license.
+
+Where technically and operationally reasonable, upstream integration
+should preserve contributor attribution through commit authorship,
+AUTHORS/CONTRIBUTORS, NOTICE, or release history.
+
+8. Patent Grant
+---------------
+
+Each Contributor grants every recipient a worldwide, royalty-free,
+non-exclusive patent license under patent claims necessarily infringed by
+that Contributor's contribution alone or by combination with the Covered
+Software to which the contribution was submitted, to make, use, sell,
+offer for sale, import, and otherwise run the contribution as permitted
+by this License.
+
+If You initiate patent litigation alleging that the Covered Software or a
+Contribution infringes a patent, patent licenses granted to You under
+this Section for the work that is the subject of that litigation terminate
+to the extent permitted by law.
+
+9. Third-Party Material
+-----------------------
+
+This License does not override licenses applicable to third-party
+components.
+
+A package containing Covered Software may also contain code, libraries,
+media, firmware, or other material governed by separate terms. Those
+terms must be preserved and followed.
+
+10. No Trademark Grant
+----------------------
+
+This License grants no rights to use iXlinx, OpenPlatform, project names,
+logos, certification marks, or other trademarks except as reasonably
+necessary for truthful attribution and compatibility description.
+
+11. Disclaimer of Warranty
+--------------------------
+
+THE COVERED SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR
+A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT, TO THE MAXIMUM EXTENT
+PERMITTED BY LAW.
+
+12. Limitation of Liability
+---------------------------
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, NO COPYRIGHT HOLDER OR CONTRIBUTOR
+SHALL BE LIABLE FOR ANY INDIRECT, SPECIAL, INCIDENTAL, CONSEQUENTIAL, OR
+OTHER DAMAGES ARISING FROM USE OR DISTRIBUTION OF THE COVERED SOFTWARE.
+
+13. Termination and Cure
+------------------------
+
+Your rights under this License terminate automatically if You materially
+violate its conditions and fail to cure the violation within 30 days
+after receiving reasonable notice. Rights may be reinstated by the
+affected copyright holder.
+
+14. Acceptance
+--------------
+
+You are not required to accept this License merely to receive or run a
+copy where applicable law does not require acceptance. Exercising rights
+that require permission under copyright or patent law constitutes
+acceptance of the applicable conditions.
+
+END OF LICENSE

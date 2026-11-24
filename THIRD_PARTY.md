@@ -10,7 +10,8 @@
 
 The S60 SDK archives are official Nokia installers; `tools/sdkimport.sh` unpacks them with
 unshield and copies the header, import-library and tool subsets. Redistribution of those files is
-governed by Nokia's EULA, not by this repository's MIT license.
+governed by Nokia's EULA, not by the iXlinx Open Platform License that covers this repository's own
+code (see `LICENSE`).
 
 `vendor/tinycc/tccelf.c` carries one local change: ARM `e_flags` are set to `0x04000010`
 (EABI v4) instead of EABI v5 so objects match the S60 link libraries.

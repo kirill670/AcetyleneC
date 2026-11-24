@@ -151,7 +151,7 @@ static void undo_push(Doc *d, int op, int pos, int len, const char *text, int be
 
 void doc_insert(Doc *d, int pos, const char *text, int len)
 {
-    if (len <= 0)
+    if (len <= 0 || d->read_only)
         return;
     if (pos < 0)
         pos = 0;
@@ -173,7 +173,7 @@ void doc_insert(Doc *d, int pos, const char *text, int len)
 void doc_delete(Doc *d, int pos, int len)
 {
     char *tmp;
-    if (len <= 0)
+    if (len <= 0 || d->read_only)
         return;
     if (pos < 0)
         pos = 0;
@@ -280,16 +280,31 @@ int doc_line_end(Doc *d, int line)
     return e;
 }
 
+int doc_utf8_len(unsigned char c)
+{
+    if (c < 0x80)
+        return 1;
+    if ((c & 0xE0) == 0xC0)
+        return 2;
+    if ((c & 0xF0) == 0xE0)
+        return 3;
+    if ((c & 0xF8) == 0xF0)
+        return 4;
+    return 1;
+}
+
 int doc_col_of(Doc *d, int pos)
 {
     int line = doc_line_of(d, pos);
     int start = d->lines[line];
     int col = 0, i;
-    for (i = start; i < pos && i < (int)d->data.len; i++) {
-        if (d->data.data[i] == '\t')
+    for (i = start; i < pos && i < (int)d->data.len; ) {
+        unsigned char c = (unsigned char)d->data.data[i];
+        if (c == '\t')
             col += TAB_WIDTH - (col % TAB_WIDTH);
         else
             col++;
+        i += doc_utf8_len(c);
     }
     return col;
 }
@@ -299,11 +314,13 @@ int doc_pos_from_col(Doc *d, int line, int col)
     int start = doc_line_start(d, line);
     int end = doc_line_end(d, line);
     int c = 0, i;
-    for (i = start; i < end; i++) {
-        int w = (d->data.data[i] == '\t') ? TAB_WIDTH - (c % TAB_WIDTH) : 1;
+    for (i = start; i < end; ) {
+        unsigned char ch = (unsigned char)d->data.data[i];
+        int w = (ch == '\t') ? TAB_WIDTH - (c % TAB_WIDTH) : 1;
         if (c + w > col)
             return i;
         c += w;
+        i += doc_utf8_len(ch);
     }
     return end;
 }
