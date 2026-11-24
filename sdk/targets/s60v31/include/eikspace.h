@@ -1,0 +1,42 @@
+// EIKSPACE.H
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#if !defined(__EIKSPACE_H__)
+#define __EIKSPACE_H__
+
+#include <AknControl.h>
+
+#if !defined(__GDI_H__)
+#include <gdi.h>
+#endif
+
+class TResourceReader;
+
+class CEikSpacer : public CAknControl
+    {
+public:
+    IMPORT_C CEikSpacer();
+	IMPORT_C CEikSpacer(TInt aWidth,TInt aHeight,TRgb aColor);
+    IMPORT_C ~CEikSpacer();
+	IMPORT_C void SetWidth(TInt aWidth);
+	IMPORT_C void SetHeight(TInt aHeight);
+	IMPORT_C void SetColor(TRgb aColor);
+	IMPORT_C void SetClear(TBool aClear);
+public: // from CCoeControl
+    IMPORT_C void HandlePointerEventL(const TPointerEvent& aPointerEvent);
+private: // from CCoeControl
+    void ConstructFromResourceL(TResourceReader& aReader);
+	void Draw(const TRect& aRect) const;
+private:
+    /**
+    * From CAknControl
+    */
+    IMPORT_C void* ExtensionInterface( TUid aInterface );
+private:
+	TRgb iColor;
+	TBool iClear;
+    };
+
+#endif

@@ -1,0 +1,1360 @@
+/*
+* ============================================================================
+*  Name     : DRMCommon.loc
+*  Part of  : DRM
+*
+*  Description:
+*     This is a localisation file for DRM common strings
+*  -------------------------------------------------------------------
+*  Version:
+*
+*  Copyright (C) 2005 Nokia Corporation.
+*  This material, including documentation and any related 
+*  computer programs, is protected by copyright controlled by 
+*  Nokia Corporation. All rights are reserved. Copying, 
+*  including reproducing, storing,  adapting or translating, any 
+*  or all of this material requires the prior written consent of 
+*  Nokia Corporation. This material also contains confidential 
+*  information which may not be disclosed to others without the 
+*  prior written consent of Nokia Corporation.
+*
+* ============================================================================
+*/
+
+#ifndef __DRMCOMMON_LOC_
+#define __DRMCOMMON_LOC_
+
+//LOCALISATION STRINGS
+
+//d: Text in information note for at least one protected item
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_fl_info_item_discard "Unable to show item(s). One or more items have been discarded."
+
+//d: Text in confirmation query
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_fl_query_restart "Decryption error. Phone will restart. Continue?"
+
+//d: Text in information note
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_not_allowed "Unable to select protected objects"
+
+//d: Text in information note
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_prev_rights_set "Unable to select. Object can only be viewed."
+
+
+//d: Text in information note
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_no_rights_for_some "1 or more objects not activated"
+
+//d: Text in information note
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_gen_rights_exp "Activation key expired for some of the selected objects"
+
+//d: Text in information note
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_prof_rights_missing "Content not activated"
+
+//d: Text for details view
+//l: list_double_pane_2
+//w:
+//r:
+//
+#define qtn_drm_mgr_det_exp "Usage rights have expired"
+
+//d: Text in message query
+//d: %N Number of deleted messages
+//l: popup_query_sat_info_window_1
+//w:
+//r:
+//
+#define qtn_drm_msgs_deleted "%N messages deleted. Activation key for attached objects still available in key list."
+
+//d: Text in message query
+//l: popup_query_sat_info_window_1
+//w:
+//r:
+//
+#define qtn_drm_msg_mos_deleted "Message deleted. Activation key for attached objects still available in key list."
+
+//d: Text in message query
+//d: %U Name of the media object
+//l: popup_query_sat_info_window_1
+//w:
+//r:
+//
+#define qtn_drm_msg_deleted "Message deleted. Activation key for %U still available in key list."
+
+//d: Text in message query
+//l: popup_query_sat_info_window_1
+//w:
+//r:
+//
+#define qtn_drm_app_deleted "Object deleted. Activation key still available in key list."
+
+//d: Text in message query
+//d: %N is number of deleted objects
+//l: popup_query_sat_info_window_1
+//w:
+//r:
+//
+#define qtn_drm_mos_deleted "%N protected objects deleted. Activation keys still available in key list."
+
+//d: Text in message query
+//d: %U is name of the media object
+//l: popup_query_sat_info_window_1
+//w:
+//r:
+//
+#define qtn_drm_mo_deleted "[%U] deleted. Activation key still available in key list."
+
+//d: Text in information note
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_preview_msg "Message contains an object that can only be viewed once"
+
+//d: Text in information note
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_forw_forbid "Unable to forward protected objects"
+
+//d: Text in confirmation query
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_query_send_forbid "Unable to send protected objects. Send unprotected objects only?"
+
+//d: Text in confirmation query for at least one protected item
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_fl_query_send_forbid "Protected items cannot be sent. Send unprotected?"
+
+//d: Text in information note for one protected item
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_send_forbid_1 "Unable to send copyright protected item"
+
+//d: Text in information note for several protected items
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_send_forbid "Unable to send protected objects"
+
+//d: Text in confirmation query for at least one protected item
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_send_wo_rights_misc "Recipient may not be able to use some objects. Continue?"
+
+//d: Text in confirmation query for one protected item
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_send_wo_rights_sd_1 "Recipient may not be able to use object. Continue?"
+
+//d: Text in confirmation query for several SD protected items
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_send_wo_rights_sd "Recipient may not be able to use objects. Continue?"
+
+//d: Text in information note
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_cnt_or_dt_exp_multi "Activation key will expire for some of the selected objects"
+
+//d: Text in confirmation query
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_exp_warn_cnt_and_dt "Activation key will expire soon. View details?"
+
+//d: Text in confirmation query
+//d: %N is number of days left
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_exp_warn_n_days "Activation key will expire in %N days. View details?"
+
+//d: Text in confirmation query
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_exp_warn_1_day "Activation key will expire in 1 day. View details?"
+
+//d: Text in confirmation query
+//d: %N is number of counts left
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_exp_warn_n_counts "Activation key will expire after %N uses. View details?"
+
+//d: Text in confirmation query
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_exp_warn_1_count "Activation key will expire after 1 use. View details?"
+
+//d: Text in confirmation query
+//d: %U is name of the media object
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_use_constr_exist "View activation key details for [%U]?"
+
+//d: Text in confirmation query
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_sd_rights_exp "Activation key expired. Activate content again?"
+
+//d: Text in confirmation query
+//d: %U is name of the media object
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_no_rights "Content not activated for [%U]. Activate now?"
+
+//d: Note displayed when automated content with preview rights are tried to use.
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_prev_rights_use "Unable to use. Object can only be viewed."
+
+//d: Text in confirmation query when content with activated rights is set as automated content.
+//d: %U is expiration date of rights object
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_query_valid_rights_until "Activation key for selected item valid until %U. Continue?"
+
+//d: Text in confirmation query when content with inactive interval rights is set as automated content.
+//d: %U is calculated expiration date of rights object, if rights are activated
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_query_active_rights_until "Selected item is activated. Activation key valid until %U. Continue?"
+
+//d: Text in confirmation query when automated content has 1 day rights left.
+//d: %U is name of the content
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_query_warn_1_day "Activation key for %U valid for 1 more day. View details?"
+
+//d: Text in confirmation query when automated is about to expire soon and it has N days rights left.
+//d: %N is number of days left
+//d: %U is name of the content
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_query_warn_n_days "Activation key for %0U valid for %1N more days. View details?"
+
+//d: Text in information note when non-superdistributable automated content has expired.
+//d: %U is name of the content
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_note_cd_ro_expired "Activation key for %U expired"
+
+//d: Text in confirmation note when superdistributable automated content has expired.
+//d: %U is name of the content
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_note_sd_ro_expired "Activation key for %U expired. Purchase new key?"
+
+//d: Text in information note when usage rights are not yet valid.
+//d: %U is start date of rights object
+//l: popup_note_window_1
+//w:
+//r: 2.6
+//
+#define qtn_drm_note_ro_valid_on_future "Activation key valid from %U"
+
+//d:Possible second line for first entry of Details View listbox
+//l:list_double_pane_2
+//w:
+//r:3.0
+//
+#define qtn_drm_mgr_det_valid "Usage rights are valid"
+
+//d: Text in information note shown when removing device from account failed.
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_remove_fr_account_fail "Removing the device from the account failed"
+
+//d: Text in wait note shown while device is being removed from account.
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_wait_remove_fr_account "Removing device from account"
+
+//d: Text in information note shown when device does not recognize account of DCF file.
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_account_not_recognised "Account is not recognized"
+
+//d: Text in information note shown when rights object for DCF file is received to device.
+//d: %U is name of file to which received rights object is related.
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_act_key_received "Activation key received"
+
+//d: Text in information note shown when getting rights object has failed. 
+//d: Reason is permanent device or server error and there is no possibility to retry.
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_getting_key_failed "Getting activation key failed" 
+
+//d: Text in confirmation note shown when device has been succesfully removed from account.
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_remove_fr_account "Device removed from the account" 
+
+//d: Text in confirmation query shown when user attempts to open MO related to RO that 
+//d: is about to expire. In this case RO contains accumulated time constraint and there
+//d: is less than defined limit value time left. This is shown when there is more than one 
+//d: or less than one minute left. If remaining time period is less than one minute,
+//d: then 0 minutes is displayed.
+//d: %N is number of minutes left
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_n_mins_usage_left "%N minutes usage time left. View details?"
+
+//d: Text in confirmation query shown when user attempts to open MO related to RO that 
+//d: is about to expire. In this case RO contains accumulated time constraint and there
+//d: is one minute of time left. 
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_1_min_usage_left "1 minute usage time left. View details?" 
+
+//d: Text in confirmation query shown when rights object has been received successfully and
+//d: related DCF file was also received successfully or was already in device. 
+//d: %U refers to name of file to which received RO is related
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_key_received_open "Activation key for %U received. Open the file now?"
+
+//d: Text in confirmation query when user is asked about updating account.
+//d: Device is already connected to network, but must upgrade the domain key before rendering,
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_activate_account "Account will be activated. Continue?"
+
+//d: Description text in "Activate or Preview" pop-up window that is shown when user selects to 
+//d: open audio DCF file that has no valid rights but has embedded preview URL.
+//d: Pop-up window layout is like "Location request popup window"
+//l: popup_loc_request_window_2
+//w:
+//r: 3.1
+//
+#define qtn_drm_desc_play_preview_audio "Content not activated but preview available"
+
+//d: Description text in "Activate or Preview" pop-up window that is shown when user selects to 
+//d: open video DCF file that has no valid rights but has embedded preview URL.
+//d: Pop-up window layout is like "Location request popup window"
+//l: popup_loc_request_window_2
+//w:
+//r: 3.1
+//
+#define qtn_drm_desc_play_preview_video "Content not activated but preview available"
+
+//d: Description text in "Activate or Preview" pop-up window that is shown when user selects to 
+//d: open audio DCF file that has no valid rights but has preview URL.
+//d: Pop-up window layout is like "Location request popup window"
+//l: popup_loc_request_window_2
+//w:
+//r: 3.0
+//
+#define qtn_drm_desc_activate_or_prvw "Content not activated but preview available"
+
+//d: Description text in "Activate or Preview" pop-up window that is shown when user selects to 
+//d: open video DCF file that has no valid rights but has preview URL.
+//d: Pop-up window layout is like "Location request popup window"
+//l: popup_loc_request_window_2
+//w:
+//r: 3.1
+//
+#define qtn_drm_desc_act_or_prev_video "Content not activated but preview available"
+
+//d: Heading text in "Activate or Preview" pop-up window that is shown when user selects to open 
+//d: Audio DCF file that has no valid rights but has preview URL.
+//d: Pop-up window layout is like "Location request popup window"
+//l: popup_list_heading_pane_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_prmpt_activate_preview "Activate or preview?"
+
+//d: Text in confirmation query shown in case device is not connected to server and
+//d: user attempts to open or activate SD protected MO related to missing RO.
+//d: %U refers to name of file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_no_ro_connect_activate "Content not activated for %U. Connect to server to activate now?"
+
+//d: Text in confirmation query shown in case device is not connected to server and 
+//d: user attempts to open or activate a superdistributable MO related to an expired RO.
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_exp_ro_connect_activate "Activation key expired. Connect to server to activate content again?"
+
+//d: Text in confirmation query when user is asked about updating account.
+//d: Device is not yet connected to network, and must upgrade the domain key before rendering,
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_connect_to_act_account "Account will be activated. Connect to server?"
+
+//d: Menu entry in Options menu. This entry is present if DCF file includes preview URL and 
+//d: Audio DCF has no valid rights.
+//d: Also as choice in "Activate or Preview" pop-up window that is shown when user selects Open 
+//d: for DCF that has preview URL but no valid rights.
+//l: list_single_popup_menu_pane_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_options_get_preview "Get preview" 
+
+//d: Menu entry in Options menu. This entry is present if DCF file includes preview URL and 
+//d: Video DCF has no valid rights.
+//d: Also as choice in "Activate or Preview" pop-up window that is shown when user selects Open 
+//d: for DCF that has preview URL but no valid rights.
+//l: list_single_popup_menu_pane_1
+//w:
+//r: 3.1
+//
+#define qtn_drm_options_get_prev_video "Get preview" 
+
+//d: Menu entry in Options menu. This entry is present if audio DCF file includes embedded preview.
+//l: list_single_popup_menu_pane_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_options_play_preview "Play preview" 
+
+//d: Menu entry in Options menu. This entry is present if video DCF file includes embedded preview.
+//l: list_single_popup_menu_pane_1
+//w:
+//r: 3.1
+//
+#define qtn_drm_options_play_prev_video "Play preview"
+
+//d: Menu entry in Options menu. When the rights of a MO are missing, Play is replaced by Activate.
+//d: Also as choice in "Activate or Preview" pop-up window that is shown when user selects Open 
+//d: for DCF that has preview URL but no valid rights.
+//l: list_single_popup_menu_pane_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_options_activate "Activate"
+
+//d: Menu entry in Options menu. This entry is present if InfoURL is included in DCF.
+//l: list_single_popup_menu_pane_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_options_more_info "More info online"
+
+//d: Text in information note shown when adding device to new account has failed since account is 
+//d: full.
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_account_is_full "Account is full. No more devices can be added to the account."
+
+//d: Text in confirmation query that is displayed when getting RO has failed due to temporary 
+//d: server error.
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_get_key_failed_retry "Getting activation key failed. Retry?"
+
+//d: Text in wait note shown while device is acquiring RO and possibly completing registration
+//d: protocol with Rights Issuer.
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_wait_getting_key "Getting activation key"
+
+//d: Text in wait note shown while device registration is ongoing with Rights Issuer.
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_wait_registering_device "Registering device"
+
+//d: Text in information note shown when updating account has failed (domain key was being 
+//d: upgraded or device was trying to join to new account).
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_update_domain_fail "Updating the account failed"
+
+//d: Text in confirmation note shown when account has been successfully updated (domain key has
+//d: been upgraded or device has joined to new account).
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_conf_account_updated "Account has been updated"
+
+//d: Text in wait note shown while account is being updated (domain key is upgraded or device is
+//d: joining to new account).
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_wait_updating_account "Updating account"
+
+//d: Text in confirmation query that is displayed when playing embedded preview for video has ended or 
+//d: it has been stopped or paused by the user. Query is shown in case MO is related to RO, 
+//d: which is expired, missing or not valid yet.
+//d: %U is name of DCF file to which embedded preview belongs
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_activate_after_preview "Preview played. Acquire activation key for %U?"
+
+//d: Text in confirmation query that is displayed when playing embedded preview for video has ended or 
+//d: it has been stopped or paused by the user. Query is shown in case MO is related to RO, 
+//d: which is expired, missing or not valid yet.
+//d: %U is name of DCF file to which embedded preview belongs
+//l: popup_note_window_1
+//w:
+//r: 3.1
+//
+#define qtn_drm_activate_after_video_prev "Preview played. Acquire activation key for %U?"
+
+// d: Text in information note for moving one protected item
+// l: popup_note_window_1
+// r: 2.6
+#define qtn_drm_info_move_one_forbid "Unable to move protected object to memory card"
+
+// d: Text in information note for moving several protected items
+// l: popup_note_window_1
+// r: 2.6
+#define qtn_drm_info_move_many_forbid "Unable to move protected objects to memory card"
+
+// d: Text in confirmation query for moving protected and unprotected items
+// l: popup_note_window_1
+// r: 2.6
+#define qtn_drm_query_move_forbidden "Unable to move protected objects. Move unprotected objects only?"
+
+// d: Text in information note for copying one protected item
+// l: popup_note_window_1
+// r: 2.6
+#define qtn_drm_info_copy_one_forbid "Unable to copy protected object to memory card"
+
+// d: Text in information note for copying several protected items
+// l: popup_note_window_1
+// r: 2.6
+#define qtn_drm_info_copy_many_forbid "Unable to copy protected objects to memory card"
+
+// d: Text in confirmation query for copying protected and unprotected items
+// l: popup_note_window_1
+// r: 2.6
+#define qtn_drm_query_copy_forbidden "Unable to copy protected objects. Copy unprotected objects only?"
+
+// d: Text in information note for moving folder containing protected items
+// l: popup_note_window_1
+// r: 2.6
+#define qtn_drm_info_move_folder_forbid "Unable to move folder containing protected objects to memory card"  
+
+// d: Text in information note for copying folder containing protected items
+// l: popup_note_window_1
+// r: 2.6
+#define qtn_drm_info_copy_folder_forbid "Unable to copy folder containing protected objects to memory card"
+
+//d: Text in confirmation query that is displayed when user tries to render MO that is missing RO.
+//d: The waiting time of RO to arrive has not passed yet.
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_waiting_for_ro "Waiting for activation key. Try again later."
+
+//d: Text in confirmation query that is displayed when user tries to render MO that is missing RO.
+//d: The waiting time of RO to arrive has passed, and there is no possibility to get new RO (no rights
+//d: issuer url).
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_ro_late "Activation key not received yet. Expected time of delivery passed."
+
+//d: Text in confirmation query that is displayed when user tries to render MO that is missing RO.
+//d: The waiting time of RO to arrive has passed, and there is possibility to get new RO (rights issuer url exists).
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_ro_late_activate "Activation key not received yet. Expected time of delivery passed. Get new activation key?"
+
+//d: Text in confirmation note that is displayed when device registration is complete.
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_conf_device_registered "Device has been registered"
+
+//d: Text in confirmation note that is displayed when device registration has failed.
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_device_regist_fail "Registering device failed"
+
+//d: Text in confirmation note that is displayed when user attempts to send one
+//d: non-superdistributable DRM protected media object.
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_send_forbid_one "Unable to send protected object"
+
+//d: Text in confirmation note that is displayed when user has selected one or more DRM protected 
+//d: MOs that cannot be sent and some unprotected MOs that can be sent,
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_send_forbid_some "Some objects protected. Unable to send protected objects."
+
+//d: Text in confirmation query shown when rights for calendar alert tone are about to expire in 1 day. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_cal_ton_exp_1_day "Activation key for calendar alert tone %U expires in 1 day. View details?"
+
+//d: Text in confirmation query shown when rights for calendar alert tone are about to expire in n days. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//d: %N is number of days
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_cal_t_exp_n_days "Activation key for calendar alert tone %0U expires in %1N days. View details?"
+
+//d: Text in confirmation query shown when rights for clock alarm tone are about to expire in 1 day. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_clock_alarm_exp_1_day "Activation key for clock alarm %U expires in 1 day. View details?"
+
+//d: Text in confirmation query shown when rights for clock alarm tone are about to expire in n days. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//d: %N is number of days
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_clock_alarm_exp_n_days "Activation key for clock alarm %0U expires in %1N days. View details?"
+
+//d: Text in confirmation query shown when rights for e-mail alert tone are about to expire in 1 day. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_email_tone_exp_1_day "Activation key for e-mail alert tone %U expires in 1 day. View details?"
+
+//d: Text in confirmation query shown when rights for e-mail alert tone are about to expire in n days. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//d: %N is number of days
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_email_tone_exp_n_days "Activation key for e-mail alert tone %0U expires in %1N days. View details?"
+
+//d: Text in confirmation query shown when rights for instant message alert tone are about to expire in 1 day. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_im_tone_exp_1_day "Activation key for IM alert tone %U expires in 1 day. View details?"
+
+//d: Text in confirmation query shown when rights for instant message alert tone are about to expire in n days. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//d: %N is number of days
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_im_tone_exp_n_days "Activation key for IM alert tone %0U expires in %1N days. View details?"
+
+//d: Text in confirmation query shown when rights for message alert tone are about to expire in 1 day. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_msg_tone_exp_1_day "Activation key for message alert tone %U expires in 1 day. View details?"
+
+//d: Text in confirmation query shown when rights for message alert tone are about to expire in n days. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//d: %N is number of days
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_msg_tone_exp_n_days "Activation key for message alert tone %0U expires in %1N days. View details?"
+
+//d: Text in confirmation query shown when rights for ringing tone are about to expire in 1 day. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_r_tone_exp_1_day "Activation key for ringing tone %U expires in 1 day. View details?"
+
+//d: Text in confirmation query shown when rights for ringing tone are about to expire in n days. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//d: %N is number of days
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_r_tone_exp_n_days "Activation key for ringing tone %0U expires in %1N days. View details?"
+
+//d: Text in confirmation query shown when rights for screensaver are about to expire in 1 day. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_screens_exp_1_day "Activation key for screensaver %U expires in 1 day. View details?"
+
+//d: Text in confirmation query shown when rights for screensaver are about to expire in n days. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//d: %N is number of days
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_screen_exp_n_days "Activation key for screensaver %0U expires in %1N days. View details?"
+
+//d: Text in confirmation query shown when rights for wallpaper are about to expire in 1 day. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_wallpap_exp_1_day "Activation key for wallpaper %U expires in 1 day. View details?"
+
+//d: Text in confirmation query shown when rights for wallpaper are about to expire in n days. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//d: %N is number of days
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_wallp_exp_n_days "Activation key for wallpaper %0U expires in %1N days. View details?"
+
+//d: Text in confirmation query shown when rights for theme are about to expire in 1 day. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_theme_exp_1_day "Activation key for theme %U expires in 1 day. View details?"
+
+//d: Text in confirmation query shown when rights for theme are about to expire in n days. 
+//d: Validity of rights is checked, when Idle is activated. 
+//d: %U is the name of the file
+//d: %N is number of days
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_theme_exp_n_days "Activation key for theme %0U expires in %1N days. View details?"
+
+//d: Text in confirmation query that is displayed when rights for calendar alert tone have expired.
+//d: Query is shown when Idle is activated. Activation query is shown only for superdistributable 
+//d: separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_cal_tone_exp_activate "Activation key for calendar alert tone %U expired. Activate?"
+
+//d: Text in information note that that is displayed when rights for calendar alert tone have expired.
+//d: Note is shown when Idle is activated. This info note is shown fore combined delivery object 
+//d: and non-superdistributable separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_calendar_tone_exp "Activation key for calendar alert tone %U expired"
+
+//d: Text in confirmation query that is displayed when rights for clock alarm tone have expired.
+//d: Query is shown when Idle is activated. Activation query is shown only for superdistributable 
+//d: separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_clock_alrm_exp_activate "Activation key for clock alarm tone %U expired. Activate?"
+
+//d: Text in information note that that is displayed when rights for clock alarm tone have expired.
+//d: Note is shown when Idle is activated. This info note is shown fore combined delivery object 
+//d: and non-superdistributable separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_clock_alarm_exp "Activation key for clock alarm tone %U expired"
+
+//d: Text in confirmation query that is displayed when rights for e-mail alert tone have expired.
+//d: Query is shown when Idle is activated. Activation query is shown only for superdistributable 
+//d: separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_email_tone_exp_activate "Activation key for e-mail alert tone %U expired. Activate?"
+
+//d: Text in information note that that is displayed when rights for e-mail alert tone have expired.
+//d: Note is shown when Idle is activated. This info note is shown fore combined delivery object 
+//d: and non-superdistributable separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_email_tone_exp "Activation key for e-mail alert tone %U expired"
+
+//d: Text in confirmation query that is displayed when rights for instant message alert tone have expired.
+//d: Query is shown when Idle is activated. Activation query is shown only for superdistributable 
+//d: separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_im_tone_exp_activate "Activation key for IM alert tone %U expired. Activate?"
+
+//d: Text in information note that that is displayed when rights for instant message alert tone have expired.
+//d: Note is shown when Idle is activated. This info note is shown fore combined delivery object 
+//d: and non-superdistributable separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_im_alert_tone_exp "Activation key for IM alert tone %U expired"
+
+//d: Text in confirmation query that is displayed when rights for message alert tone have expired.
+//d: Query is shown when Idle is activated. Activation query is shown only for superdistributable 
+//d: separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_msg_tone_exp_activate "Activation key for message alert tone %U expired. Activate?"
+
+//d: Text in information note that that is displayed when rights for message alert tone have expired.
+//d: Note is shown when Idle is activated. This info note is shown fore combined delivery object 
+//d: and non-superdistributable separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_msg_tone_exp "Activation key for message alert tone %U expired"
+
+//d: Text in confirmation query that is displayed when rights for ringing tone have expired.
+//d: Query is shown when Idle is activated. Activation query is shown only for superdistributable 
+//d: separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_ring_tone_exp_activate "Activation key for ringing tone %U expired. Activate?"
+
+//d: Text in information note that that is displayed when rights for ringing tone have expired.
+//d: Note is shown when Idle is activated. This info note is shown fore combined delivery object 
+//d: and non-superdistributable separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_ring_tone_exp "Activation key for ringing tone %U expired"
+
+//d: Text in confirmation query that is displayed when rights for screensaver have expired.
+//d: Query is shown when Idle is activated. Activation query is shown only for superdistributable 
+//d: separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_screensave_exp_activate "Activation key for screensaver %U expired. Activate?"
+
+//d: Text in information note that that is displayed when rights for screensaver have expired.
+//d: Note is shown when Idle is activated. This info note is shown fore combined delivery object 
+//d: and non-superdistributable separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_screensaver_exp "Activation key for screensaver %U expired"
+
+//d: Text in confirmation query that is displayed when rights for wallpaper have expired.
+//d: Query is shown when Idle is activated. Activation query is shown only for superdistributable 
+//d: separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_wallpaper_exp_activate "Activation key for wallpaper %U expired. Activate?"
+
+//d: Text in information note that that is displayed when rights for wallpaper have expired.
+//d: Note is shown when Idle is activated. This info note is shown fore combined delivery object 
+//d: and non-superdistributable separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_wallpaper_exp "Activation key for wallpaper %U expired"
+
+//d: Text in confirmation query that is displayed when rights for theme have expired.
+//d: Query is shown when Idle is activated. Activation query is shown only for superdistributable 
+//d: separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_theme_exp_activate "Activation key for theme %U expired. Activate?"
+
+//d: Text in information note that that is displayed when rights for theme have expired.
+//d: Note is shown when Idle is activated. This info note is shown for combined delivery object 
+//d: and non-superdistributable separate delivery object.
+//d: %U is the name of the file
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_theme_exp "Activation key for theme %U expired"
+
+//d: Text in information note shown when updating account has failed
+//d: (device was trying to join to new account).
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_info_registration_failed "Registration failed"
+
+//d: Text in confirmation note shown when account has been successfully updated
+//d: (device has joined to new account).
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_conf_joined_to_domain "Registration complete"
+
+//d: Text in wait note shown while account is being updated
+//d: (device is joining to new account).
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_wait_joining_domain "Registering"
+
+//d: Confirmation query prompt.
+//d: To acquire a valid Rights Issuer context, a phone must complete Registration ROAP protocol.
+//d: Before initiating Registration ROAP protocol, user consent MUST be acquired.
+//d: %U is the <riAlias> element from the registration trigger.
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_register_with_u "Registration with %U needed. Register phone?"
+
+//d: Confirmation query prompt.
+//d: To acquire a valid Rights Issuer context, a phone must complete Registration ROAP protocol.
+//d: Before initiating Registration ROAP protocol, user consent MUST be acquired.
+//l: popup_note_window_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_query_register_with_cp "Registration with content provider needed. Register phone?"
+
+
+//d: Caption of ROAP Application (Title Pane text).
+//d: (ROAP Application handles DRM 2.0 digital rights acquisition,
+//d: via executing one or more ROAP protocols).
+//l: title_pane_1
+//w:
+//r: 3.0
+//
+#define qtn_drm_roap_title "Activation"
+
+
+//d: Text in information note for 1 count left when rendering a non-superdistributable content
+//l: popup_note_window_1
+//w:
+//r: 3.1u
+//
+#define qtn_drm_info_exp_1_use "Activation key will expire after 1 use"
+
+//d: Text in information note for more than 1 counts left when rendering a non-superdistributable content
+//d: %N is number of counts
+//l: popup_note_window_1
+//w:
+//r: 3.1u
+//
+#define qtn_drm_info_exp_n_uses "Activation key will expire after %N uses"
+
+//d: Text in information note for 1 day left when rendering a non-superdistributable content
+//l: popup_note_window_1
+//w:
+//r: 3.1u
+//
+#define qtn_drm_info_exp_1_day "Activation key will expire in 1 day"
+
+//d: Text in information note for more than 1 days left when rendering a non-superdistributable content
+//d: %N is number of days
+//l: popup_note_window_1
+//w:
+//r: 3.1u
+//
+#define qtn_drm_info_exp_n_days "Activation key will expire in %N days"
+
+//d: Text in confirmation query shown for 1 count left when rendering a superdistributable content
+//l: popup_note_window_1
+//w:
+//r: 3.1u
+//
+#define qtn_drm_query_exp_1_use_get_new "Activation key will expire after 1 use. Get new activation key now?"
+
+//d: Text in confirmation query shown for n counts left when rendering a superdistributable content
+//d: %N is number of counts
+//l: popup_note_window_1
+//w:
+//r: 3.1u
+//
+#define qtn_drm_query_exp_n_use_get_new "Activation key will expire after %N uses. Get new activation key now?"
+
+//d: Text in confirmation query shown for 1 day left when rendering a superdistributable content
+//l: popup_note_window_1
+//w:
+//r: 3.1u
+//
+#define qtn_drm_query_exp_1_day_get_new "Activation key will expire in 1 day. Get new activation key now?"
+
+//d: Text in confirmation query shown for n days left when rendering a superdistributable content
+//d: %N is number of days
+//l: popup_note_window_1
+//w:
+//r: 3.1u
+//
+#define qtn_drm_query_exp_n_day_get_new "Activation key will expire in %N days. Get new activation key now?"
+
+//d: Text in confirmation query shown for 1 minute left when rendering a superdistributable content
+//l: popup_note_window_1
+//w:
+//r: 3.1u
+//
+#define qtn_drm_query_exp_1_min_get_new "1 minute usage time left. Get new activation key now?"
+
+//d: Text in confirmation query shown for n minutes left when rendering a superdistributable content
+//d: %N is number of minutes
+//l: popup_note_window_1
+//w:
+//r: 3.1u
+//
+#define qtn_drm_query_exp_n_min_get_new "%N minutes usage time left. Get new activation key now?"
+
+//d: Text in confirmation query shown for multiple constraints when rendering a superdistributable content
+//l: popup_note_window_1
+//w:
+//r: 3.1u
+//
+#define qtn_drm_query_exp_many_constr "Activation key will epxire soon. Get new activation key now?"
+
+//d: Text in information note
+//l: popup_note_window_1
+//w:
+//r:
+//
+#define qtn_drm_info_ro_expired "Usage rights have expired"
+
+//d: Text in confirmation query shown when content cannot be rendered because of wrong SIM card in device
+//l: popup_note_window_1
+//w:
+//r: 3.1
+//
+#define qtn_drm_query_sim_not_allowed "Unable to use this file with current SIM. Get new activation key for this file?"
+
+//d: Text in confirmation query shown when calendar alert tone cannot be used 
+//d: because of wrong SIM card in device
+//l: popup_note_window_1
+//w:
+//r: 3.1
+//
+#define qtn_drm_calendar_tone_wrong_sim "Calendar alert tone %U cannot be used with current SIM. Get new activation key for the file?"
+
+//d: Text in confirmation query shown when clock alarm tone cannot be used 
+//d: because of wrong SIM card in device
+//l: popup_note_window_1
+//w:
+//r: 3.1
+//
+#define qtn_drm_clock_alarm_wrong_sim "Clock alarm tone %U cannot be used with current SIM. Get new activation key for the file?"
+
+//d: Text in confirmation query shown when e-mail alert tone cannot be used 
+//d: because of wrong SIM card in device
+//l: popup_note_window_1
+//w:
+//r: 3.1
+//
+#define qtn_drm_email_alert_wrong_sim "E-mail alert tone %U cannot be used with current SIM. Get new activation key for the file?"
+
+//d: Text in confirmation query shown when message alert tone cannot be used 
+//d: because of wrong SIM card in device
+//l: popup_note_window_1
+//w:
+//r: 3.1
+//
+#define qtn_drm_message_alert_wrong_sim "Message alert tone %U cannot be used with current SIM. Get new activation key for the file?"
+
+//d: Text in confirmation query shown when ringing tone cannot be used 
+//d: because of wrong SIM card in device
+//l: popup_note_window_1
+//w:
+//r: 3.1
+//
+#define qtn_drm_ringing_tone_wrong_sim "Ringing tone %U cannot be used with current SIM. Get new activation key for the file?"
+
+//d: Text in confirmation query shown when screensaver cannot be used 
+//d: because of wrong SIM card in device
+//l: popup_note_window_1
+//w:
+//r: 3.1
+//
+#define qtn_drm_screensaver_wrong_sim "Screensaver %U cannot be used with current SIM. Get new activation key for the file?"
+
+//d: Text in confirmation query shown when theme cannot be used 
+//d: because of wrong SIM card in device
+//l: popup_note_window_1
+//w:
+//r: 3.1
+//
+#define qtn_drm_theme_wrong_sim "Theme %U cannot be used with current SIM. Get new activation key for the file?"
+
+//d: Text in confirmation query shown when wallpaper cannot be used 
+//d: because of wrong SIM card in device
+//l: popup_note_window_1
+//w:
+//r: 3.1
+//
+#define qtn_drm_wallpaper_wrong_sim "Wallpaper %U cannot be used with current SIM. Get new activation key for the file?"
+
+//d: Text in confirmation query shown when other type of automated content 
+//d: cannot be used because of wrong SIM card in device
+//l: popup_note_window_1
+//w:
+//r: 3.1
+//
+#define qtn_drm_automated_wrong_sim "%U cannot be used with current SIM. Get new activation key for the file?"
+
+
+//d: Text in information note shown when user tries to set a non-superdistributable file as automated content, but is not allowed with the current SIM
+//l: popup_info_list_pane_t1
+//w:
+//r: 3.1
+//
+#define qtn_drm_info_sim_not_allowed "Unable to use with current SIM"
+
+//d: Text in info note if trying to use content with wrong SIM
+//d: %U Name of the IMSI bound DRM protected calendar alarm tone
+//l: popup_info_list_pane_t1
+//w:
+//r: 3.1
+//
+#define qtn_drm_non_sd_calend_wrong_sim "Calendar alert tone changed to default tone. %U cannot be used with current SIM."
+
+//d: Text in info note if trying to use content with wrong SIM
+//d: %U Name of the IMSI bound DRM protected clock alarm tone
+//l: popup_info_list_pane_t1
+//w:
+//r: 3.1
+//
+#define qtn_drm_non_sd_clock_wrong_sim "Clock alarm tone changed to default tone. %U cannot be used with current SIM."
+
+//d: Text in info note if trying to use content with wrong SIM
+//d: %U Name of the IMSI bound DRM protected email alarm tone
+//l: popup_info_list_pane_t1
+//w:
+//r: 3.1
+//
+#define qtn_drm_non_sd_email_wrong_sim "E-mail alert tone changed to default tone. %U cannot be used with current SIM."
+
+//d: Text in info note if trying to use content with wrong SIM
+//d: %U Name of the IMSI bound DRM protected message alarm tone
+//l: popup_info_list_pane_t1
+//w:
+//r: 3.1
+//
+#define qtn_drm_non_sd_msg_al_wrong_sim "Message alert tone changed to default tone. %U cannot be used with current SIM."
+
+//d: Text in info note if trying to use content with wrong SIM
+//d: %U Name of the IMSI bound DRM protected ringing tone
+//l: popup_info_list_pane_t1
+//w:
+//r: 3.1
+//
+#define qtn_drm_non_sd_rtone_wrong_sim "Ringing tone changed to default tone. %U cannot be used with current SIM."
+
+//d: Text in info note if trying to use content with wrong SIM
+//d: %U Name of the IMSI bound  DRM protected screensaver
+//l: popup_info_list_pane_t1
+//w:
+//r: 3.1
+//
+#define qtn_drm_non_sd_screen_wrong_sim "Screensaver changed to default. %U cannot be used with current SIM."
+
+//d: Text in info note if trying to use content with wrong SIM
+//d: %U Name of the IMSI bound DRM protected theme
+//l: popup_info_list_pane_t1
+//w:
+//r: 3.1
+//
+#define qtn_drm_non_sd_theme_wrong_sim "Theme changed to default. %U cannot be used with current SIM."
+
+//d: Text in info note if trying to use content with wrong SIM
+//d: %U Name of the IMSI bound DRM protected wallpaper
+//l:popup_info_list_pane_t1
+//w:
+//r: 3.1
+//
+#define qtn_drm_non_sd_wallp_wrong_sim "Wallpaper changed to default. %U cannot be used with current SIM."
+
+//d: Text in info note if trying to use content with wrong SIM
+//d: %U Name of the media object
+//l: popup_info_list_pane_t1
+//w:
+//r: 3.1
+//
+#define qtn_drm_non_sd_gener_wrong_sim "File %U cannot be used with current SIM."
+
+// __DRMCOMMON_LOC_
+#endif
+// End of File

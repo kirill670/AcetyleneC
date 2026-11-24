@@ -1,0 +1,14 @@
+//   mmfControllerImplementationUIDs.hrh
+//
+// Copyright (c) 2002 Symbian Ltd.  All rights reserved.
+//
+
+#ifndef __MMF_CONTROLLERIMPLEMENTATIONUIDS_HRH__
+#define __MMF_CONTROLLERIMPLEMENTATIONUIDS_HRH__
+
+
+// These are the ECOM Implementation UIDs for the controller(s) supplied in Symbian plugins.
+
+#define KMmfUidControllerAudio		0x101F5022
+
+#endif

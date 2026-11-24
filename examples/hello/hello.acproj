@@ -1,0 +1,9 @@
+[project]
+name=hello
+target=s60v5
+uid3=0xE0000001
+caps=None
+heap=65536
+stack=32768
+is_dll=0
+source=examples/hello/hello.c

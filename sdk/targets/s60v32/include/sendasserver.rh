@@ -1,0 +1,17 @@
+// sendasserver.rh
+//
+// Copyright (c) 2005 Symbian Software Ltd.  All rights reserved.
+//
+
+#ifndef __SENDASSERVER_RH__
+#define __SENDASSERVER_RH__
+
+STRUCT SENDAS_RES
+	{
+	LONG version;
+	LONG editUtilsUid;
+	LONG notifierUid;
+	}
+
+// __SENDASSERVER_RH__
+#endif

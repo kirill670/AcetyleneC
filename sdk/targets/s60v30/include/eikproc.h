@@ -1,0 +1,75 @@
+// EIKPROC.H
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#if !defined(__EIKPROC_H__)
+#define __EIKPROC_H__
+
+#if !defined(__APPARC_H__)
+#include <apparc.h>
+#endif
+
+#if !defined(__EIKDEF_H__)
+#include <eikdef.h>
+#endif
+
+class CFileStore;
+class CEikDocument;
+#ifndef SYMBIAN_REMOVE_UI_FRAMEWORKS_V1
+class CApaAppFinder;
+#endif
+
+class CEikProcess : public CApaProcess
+/** The controlling process for an application. 
+
+An instance of this class is created by the Uikon environment. This instance 
+calls CApaProcess::AddNewDocumentL() to load the application DLL and 
+construct the new application which runs in this environment. 
+
+It also provides services related to an application's main (non-embedded) document, 
+including: 
+- saving the main document to a direct file store
+- providing the name of the most recently accessed file
+- getting the name of the application DLL associated with a document.
+
+@publishedAll 
+@released */
+	{
+public:
+	/** Used as a parameter by CEikProcess::SetLastUsedFileL() and LastUsedFileL() 
+	to indicate whether the function relates to the last opened or last created file.*/
+	enum TLastUsedFile
+		{
+		/** Last opened file.*/
+		ELastOpenFile,
+		/** Last created file. */
+		ELastCreatedFile
+		};
+public:
+	static CEikProcess* NewL(const RFs& aFs, TProcessId aProcessId=KNullProcessId);
+	IMPORT_C TPtrC CommandTailEnd() const;
+	IMPORT_C TFileName MainDocFolder() const;
+	IMPORT_C void SetLastUsedFileL(TLastUsedFile aType,const TDesC& aFileName) const;
+	IMPORT_C TFileName LastUsedFileL(TLastUsedFile aType) const;
+	IMPORT_C void SetMainStore(CFileStore* aMainStore);
+	IMPORT_C CFileStore* MainStore() const;
+	IMPORT_C void AppFromDocL(TDes& aLibraryName,const TDesC& aDocumentName) const;
+	IMPORT_C void SaveToDirectFileStoreL(CEikDocument* aDoc,const TFileName* aNewFileName=NULL);
+	IMPORT_C void SaveToDirectFileStoreL(CEikDocument* aDoc,const TFileName* aNewFileName,TBool aReopen,TFileName* aTempFile=NULL);
+	IMPORT_C ~CEikProcess();
+private:
+#ifndef SYMBIAN_REMOVE_UI_FRAMEWORKS_V1
+	CEikProcess(const RFs& aFs,CApaAppFinder& aAppFinder);
+#else
+	CEikProcess(const RFs& aFs);
+#endif
+	void GetLibraryNameL(TDes& aLibraryName,const CFileStore& aDocStore,const CStreamDictionary& aStreamDic) const;
+	void OpenNewFileL(const TFileName* aNewFileName,const TParse& aNewFilePath);
+	CDictionaryStore* OpenMainAppIniFileLC() const;
+private:
+	TPtrC iCommandTailEnd;
+	CFileStore* iMainStore;
+	};
+
+#endif

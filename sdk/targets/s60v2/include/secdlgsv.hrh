@@ -1,0 +1,14 @@
+// secdlgsv.h 
+
+#define E_Security_Dialog_Title_String 0
+#define E_Security_Dialog_Prompt_String 1 
+#define E_Security_Dialog_Yes_String 2
+#define E_Security_Dialog_No_String 3
+#define E_Alert_Dialog_Title_String 4
+#define E_Alert_Dialog_Prompt_String 5
+#define E_Alert_Dialog_Yes_String 6
+#define E_Alert_Dialog_No_String 7
+#define E_Password_Dialog_Title_String 8
+#define E_Password_Dialog_Prompt_String 9
+#define E_Password_Dialog_Yes_String 10
+#define E_Password_Dialog_No_String 11

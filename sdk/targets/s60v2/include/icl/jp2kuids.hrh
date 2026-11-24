@@ -1,0 +1,32 @@
+/*
+* ==============================================================================
+*  Name        : JP2KUids.hrh
+*  Part of     : JPEG2000 ICL plugin
+*  Interface   :  
+*  Description : Resource header file for JPEG2000 plugin.
+*  Version     : 
+*
+*  Copyright (c) 2003, 2004 Nokia Corporation.
+*  This material, including documentation and any related 
+*  computer programs, is protected by copyright controlled by 
+*  Nokia Corporation. All rights are reserved. Copying, 
+*  including reproducing, storing, adapting or translating, any 
+*  or all of this material requires the prior written consent of 
+*  Nokia Corporation. This material also contains confidential 
+*  information which may not be disclosed to others without the 
+*  prior written consent of Nokia Corporation.
+* ==============================================================================
+*/
+
+#ifndef JP2KUIDS_HRH
+#define JP2KUIDS_HRH
+
+#define KJ2KCodecDllUidValue                    0x101F862D // DLL UID 
+#define KJ2KDecoderImplementationUid            0x101F8649 // Main codec UID
+#define KJ2KDecoderImplementationUidValueFileFormat     0x101F862E // File format UID
+#define KJ2KDecoderImplementationUidValueCodeStream     0x101F862F // Codestream UID    
+#define KImageTypeJ2KUid                    0x101F8630 // Image type UID
+
+#endif
+
+// End of File

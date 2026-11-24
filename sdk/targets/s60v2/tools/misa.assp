@@ -1,0 +1,7 @@
+# MISA ASSP - SA1100, used for Brutus and Assabet
+
+ABI     ARM4
+ASSPABI ARM4
+
+SINGLE  SISA
+

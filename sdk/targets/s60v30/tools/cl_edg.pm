@@ -1,0 +1,899 @@
+# Cl_edg;
+#
+# Copyright (c) 2004-2005 Symbian Ltd.  All rights reserved.
+#
+
+package Cl_edg;
+
+require Exporter;
+@ISA=qw(Exporter);
+@EXPORT=qw(
+	PMHelp_Mmp
+	PMStartBldList
+	PMBld
+	PMStartSrcList
+	PMStartSrc
+	PMSrcDepend
+	PMSrcBldDepend
+	PMEndSrcBld
+	PMEndSrc
+	PMEndSrcList
+);
+use cl_generic;
+use Genutl;
+use File::Path;
+use Cwd;
+
+sub PMHelp_Mmp {
+	print "// No additional keywords for this platform\n";
+}
+
+my $epocroot = $ENV{EPOCROOT};
+$epocroot=~ s-\\$--;            # chop trailing \\
+my $Makecmd;
+sub PMStartBldList($) {
+	($Makecmd) = @_;
+	my $BasicTrgType=&main::BasicTrgType;
+	my @BldList=&main::BldList;
+	my @ChopRTWSysIncPaths=&main::Path_Chop(&main::Path_RltToWork(&main::SysIncPaths));
+	my @ChopRTWUserIncPaths=&main::Path_Chop(&main::Path_RltToWork(&main::UserIncPaths));
+	my $RelPath="$epocroot\\EPOC32\\RELEASE";
+	my $RPath = &main::Path_RltToWork($RelPath);
+	my @MacroList=&main::MacroList();
+	my $VariantFile=&main::VariantFile();
+	my $Trg=&main::Trg;
+	my $DPath = &main::Path_RltToWork($epocroot);
+	my $DefFile = &main::DefFile;
+	my $EABIDefFile = &main::EABIDef;
+
+	&Generic_Header(1,$Makecmd);	# define standard things using relative paths
+
+	&main::Output(
+		"GXPTRGUDEB = $RPath\\EDG\\UDEB\n",
+		"GXPTRGUREL = $RPath\\EDG\\UREL\n\n",
+		"DEFFILE = $DefFile\n\n",
+        "EABIDEFFILE = $EABIDefFile\n\n"
+	);
+
+	&main::Output(
+		"INCDIR ="
+	);
+	foreach (@ChopRTWUserIncPaths) {
+		&main::Output(
+			" --include_directory \"$_\""
+		);
+	}
+
+	&main::Output(
+		"\n"
+	);
+
+	&main::Output(
+		"SYSINCDIR ="
+	);
+	foreach (@ChopRTWSysIncPaths) {
+		&main::Output(
+			" --sys_include \"$_\""
+		);
+	}
+	&main::Output(
+		"\n",
+		"\n"
+	);
+
+	my $preinclude =   "--preinclude \$(EPOCINC)\\edg_sym.h";
+	&main::Output( 
+		"GCCFLAGS = --wchar_t_keyword --no_code_gen --exceptions --no_warnings",
+		" ${preinclude}",
+		"\n"
+	);
+
+	&main::Output(
+		"GCCDEFS = -D __MARM_THUMB__ -D __MARM_INTERWORK__ -D __ARMCC__ -D __EPOC32__ -D __MARM__ -D __EABI__ -D __ARMCC_2__ -D __ARMCC_2_2__ -D __SUPPORT_CPP_EXCEPTIONS__ -D __softfp="
+	);
+	foreach(@MacroList) {
+		&main::Output(
+			" -D $_"
+		);
+	}
+	if($VariantFile){
+	    &main::Output(" -D __PRODUCT_INCLUDE__=\\\"${VariantFile}\\\"");
+	}
+	&main::Output(
+		" \$(USERDEFS)\n",
+		"\n"
+	);
+
+	foreach (@BldList) {
+		&main::Output(
+			"GCC$_ = cpfe"
+		);
+		
+		&main::Output(
+			' $(GCCFLAGS)'
+		);
+		foreach (&main::MacroList($_)) {
+			&main::Output(
+				" -D $_"
+			);
+		}
+                
+		&main::Output(
+			" \$(GCCDEFS)\n"
+		);
+	}
+	&main::Output(
+		"\n",
+		"\n"
+	);
+	
+	&main::Output(
+			"LIBRARY:\n",
+			"\t\@echo Nothing to do\n"
+	);
+
+	&main::Output(
+		"RESOURCEUREL:\n",
+		"\t\@echo Nothing to do\n"
+	);
+
+	&main::Output(
+		"RESOURCEUDEB:\n",
+		"\t\@echo Nothing to do\n\n\n"
+	);
+
+	foreach (@BldList) {
+		&main::Output(
+			"$_ :"
+		);
+
+		if ($BasicTrgType !~ /IMPLIB/io) {
+			my $TrgBase = &main::Path_Split('base',$Trg);           
+			&main::Output (
+			" \\\n\t",
+			&Generic_Quote("\$(GXPTRG$_)\\$TrgBase.gxp")
+			);
+		}
+		&main::Output(
+			"\n",
+			"\n"
+		);
+	}
+}
+
+# DumpToFile
+sub DumpMMPToFile
+{
+	my $rfiFileList;
+	my @rfiFiles;
+	if(scalar @_) # if an argument has been passed then it is a reference to the list of .RFI files.
+	{
+		($rfiFileList) = @_;
+		@rfiFiles = @$rfiFileList;
+	}
+
+	my $BldPath=&main::BldPath;
+	my $Target = &main::Trg; 
+	my $TargetBase = &main::Path_Split('Base', $Target); 
+	my $Gxpurel="$epocroot\\epoc32\\release\\edg\\urel";
+	my $Gxpudeb="$epocroot\\epoc32\\release\\edg\\udeb";
+	unless (-d $BldPath) {
+		mkpath([$BldPath]);
+	}
+	unless (-d $Gxpurel) {
+		mkpath([$Gxpurel]);
+	}
+	unless (-d $Gxpudeb) {
+		mkpath([$Gxpudeb]);	
+	}
+    $BldPath = (&main::Path_StepDirs($BldPath))[-2];
+    my $FileName = $BldPath.$TargetBase.".mmp.xml";
+    open FILE,"> $FileName" or die "Cannot open mmp info dump file $FileName: $!";
+    print FILE "<?xml version=\"1.0\"?>\n<mmpInfo>\n"; 
+   
+    my $Path = &main::RelPath();
+    my $MmpFile = &main::MmpFile();  
+    my $TrgType = &main::TrgType(); 
+    my $TrgPath = &main::TrgPath(); 
+    print FILE "\t<mmp path=\"$MmpFile\"/>\n"; 
+	print FILE "\t<target name=\"$Target\" type=\"$TrgType\" ";
+    
+	if(not $TrgPath eq '') 
+	{
+		print FILE "path=\"$TrgPath\""; 
+	}
+	print FILE "/>\n";
+	# insert current working directory
+	my $WorkPath = &main::Path_WorkPath();
+	print FILE "\t<cwd path=\"$WorkPath\"/>\n";
+    
+    my $ABI = &main::ABI; 
+    print FILE "\t<abi type=\"$ABI\"/>\n"; 
+    my $LinkAs = &main::LinkAs;
+    print FILE "\t<linkAs name=\"$LinkAs\"/>\n"; 
+    my $LinkAsBase = &main::LinkAsBase;
+    print FILE "\t<linkAsBase name=\"$LinkAsBase\"/>\n"; 
+    
+    # Uids
+    my @UidList=&main::UidList;
+    my $count = 0;
+    print FILE "\t<uids";
+    foreach my $uid(@UidList)
+    {
+		print FILE " u$count=\"$uid\"" ;
+		$count++; 
+    }
+    print FILE "/>\n";
+    
+    # Versioning 
+    my %Version = &main::Version; 
+    print FILE "\t<version";
+    foreach my $var (sort keys %Version)
+    {
+        print FILE " $var=\"$Version{$var}\"";
+    }
+    print FILE "/>\n";
+    
+    # Capabilities
+    my $Capability = &main::Capability;
+    print FILE "\t<capability id=\"$Capability\"/>\n"; 
+    
+	# DefFile
+	my $DefFile = &main::DefFile;
+	print FILE "\t<defFile path=\"$DefFile\" type=\"GCC\"/>\n"; 
+
+	# EABIDefFile
+	my $EABIDefFile = &main::EABIDef;
+	print FILE "\t<defFile path=\"$EABIDefFile\" type=\"EABI\"/>\n";
+        
+    # Handle All types of libraries
+    my $FirstLib = &main::FirstLib; 
+    my @LibList = &main::LibList;
+    my @ASSPLibList = &main::ASSPLibList;
+    my @StatLibList = &main::StatLibList;;    
+    print FILE "\t<libs>\n"; 
+    
+	#first
+    print FILE "\t\t<lib name=\"$FirstLib\" type=\"First\"/>\n"; 
+    
+    #  normal
+    foreach my $lib (@LibList)
+    {
+        print FILE "\t\t<lib name=\"$lib\"/>\n"; 
+    }
+    # ASSP Specific
+    foreach my $lib (@ASSPLibList)
+    {
+        print FILE "\t\t<lib name=\"$lib\" type=\"ASSP\"/>\n"; 
+    }
+    
+    # Static Libraries
+    foreach my $lib (@StatLibList)
+    {
+        print FILE "\t\t<lib name=\"$lib\" type=\"Static\"/>\n"; 
+    }
+    print FILE "\t</libs>\n";
+
+    # Resources
+    print FILE "\t<resources>\n";
+    my $rfiFile;
+    foreach $rfiFile (@rfiFiles)
+    {
+	    print FILE "\t\t<resource name=\"$rfiFile\"/>\n";
+    }
+    print FILE "\t</resources>\n";
+    
+    close FILE;
+}
+	
+sub PMBld {
+	my @ASSPLibList=&main::ASSPLibList;
+	my @SrcList=&main::SrcList;
+	my $BaseTrg=&main::BaseTrg;
+	my $Bld=&main::Bld;
+	my $ChopBldPath=&main::Path_Chop(&main::BldPath);
+	my $EPOCIncPath=&main::EPOCIncPath;
+	my $BasicTrgType=&main::BasicTrgType;
+	my $ChopRelPath=&main::Path_Chop(&main::RelPath);
+	my $RelPath=&main::RelPath;
+	my $Trg=&main::Trg;
+	my $TrgType=&main::TrgType;
+	my @UidList=&main::UidList;
+	# DefFile
+	my $DefFile = &main::DefFile;
+	# EABIDefFile
+	my $EABIDefFile = &main::EABIDef;
+
+	my $rfiList = GatherResourceInformation();
+	my @RfiFiles = @$rfiList;
+
+	DumpMMPToFile(\@RfiFiles);
+
+	# REAL TARGETS
+	#-------------
+	&main::Output(
+		"# REAL TARGET - BUILD VARIANT $Bld\n",
+		"\n"
+	);
+
+	&main::Output(
+		"WHAT$Bld : WHATGENERIC\n",
+		"\n",
+		"CLEAN$Bld : CLEANBUILD$Bld CLEANRELEASE$Bld\n",
+		"\n",
+		"CLEANBUILD$Bld : \n",
+		"\t\@perl -S ermdir.pl \"\$(EPOCBLD$Bld)\"\n",
+		"\n",
+		"CLEANRELEASE$Bld : CLEANGENERIC\n",
+		"\n"
+	);
+	my @releaseables;
+	&Generic_WhatCleanTargets($Bld, "WHAT$Bld", "CLEANRELEASE$Bld", @releaseables);
+	&Generic_MakeWorkDir("MAKEWORK$Bld",$ChopBldPath);
+	&Generic_MakeWorkDir("MAKEWORK$Bld",$ChopRelPath);
+
+	&main::Output(
+		"\n",
+		"\n"
+	);
+
+	# XML Stuff
+	&main::Output(
+				&Generic_Quote("\$(GXPTRG$Bld)\\$BaseTrg.gxp"), " : ",
+				&Generic_Quote("\$(EPOCBLD$Bld)\\$BaseTrg.gxp"),
+				"\n\tcopy \$(EPOCBLD$Bld)\\$BaseTrg.gxp \$@"
+	); 
+	
+	&main::Output(
+		"\n",
+		"\n"
+	);
+        
+	# TARGET *.GXP
+	#------------
+	if (scalar @SrcList >150) {
+		# deal with very long lists by splitting them into 150 file pieces, which allows
+		# about 200 bytes per filename if the underlying max size is 32K
+		#
+        
+		my $counter1=150;	# i.e. trigger new variable immediately
+		my $counter2=0;
+		my @objvarlist=();
+		foreach (@SrcList) {
+			if ($counter1==150) {
+				$counter1=0;
+				$counter2++;
+				my $objvar = "OBJECTS$Bld$counter2";
+				push @objvarlist, " \$($objvar)";
+				&main::Output(
+					"\n",
+					"$objvar="
+				);
+			}
+			my $BaseSrc = &main::Path_Split('Base', $_);
+			my $Ext = &main::Path_Split('Ext', $_);
+			$BaseSrc.='_' if (lc($Ext) eq '.cia');
+			&main::Output(
+				" \\\n\t", &Generic_Quote("\$(EPOCBLD$Bld)\\$BaseSrc.txt")
+			);
+			$counter1++;
+		}
+		&main::Output(
+			" \\\n\t\$(EPOCBLD)\\$BaseTrg.mmp.xml",
+			"\n",
+			"\n",
+			&Generic_Quote("\$(EPOCBLD$Bld)\\$BaseTrg.gxp"), " : ", @objvarlist,"\n",
+			"\tif exist \"\$\@\" del \"\$\@\"\n"
+		);
+		foreach (@objvarlist) {
+			&main::Output(
+				"\tzip -j \$\@$_\n"
+			);
+		}
+		&main::Output(
+			"\tif exist \$(EABIDEFFILE) zip -j \$\@ \$(EABIDEFFILE)\n",
+			"\n\n"
+		);
+	} else {
+		# shorter lists remain unchanged
+		#
+		&main::Output(
+			"OBJECTS$Bld="
+		);
+		&main::Output("\$(EPOCBLD)\\$BaseTrg.mmp.xml"); 
+        foreach (@SrcList) {
+			my $BaseSource = &main::Path_Split('Base', $_);
+			my $Ext = &main::Path_Split('Ext', $_);
+			$BaseSource.='_' if (lc($Ext) eq '.cia');
+			&main::Output(
+			" \\\n\t", &Generic_Quote("\$(EPOCBLD$Bld)\\$BaseSource.txt")
+			);
+		}       
+		
+		&main::Output(
+			"\n",
+			"\n"
+		);
+
+		&main::Output("RESOURCEINFO$Bld=");
+		foreach (@RfiFiles)
+		{
+			&main::Output(" \\\n\t\$(EPOCBLD)\\$_");
+		}
+		&main::Output("\n\n");
+		
+		&main::Output(
+            
+			&Generic_Quote("\$(EPOCBLD$Bld)\\$BaseTrg.gxp"), " : \$(OBJECTS$Bld) \$(EABIDEFFILE) \$(RESOURCEINFO$Bld)\n",
+            
+			"\tif exist \"\$\@\" del \"\$\@\"\n",
+			"\tzip -j \$\@ \$^ \$(EABIDEFFILE) \$(RESOURCEINFO$Bld)\n",
+			"\n\n"
+		);
+	}
+}
+
+
+sub PMStartSrcList {
+
+	&main::Output(
+		"# SOURCES\n",
+		"\n"
+	);
+}
+
+sub PMStartSrc {
+	my $Src=&main::Src;
+
+	&main::Output(
+		"# Source $Src\n",
+		"\n"
+	);
+}
+
+sub PMSrcDepend {
+	my @BldList=&main::BldList;	
+	my @DepList=&main::DepList;
+	my $BaseSrc=&main::BaseSrc;
+	my $ExtSrc=&main::ExtSrc;
+	my $cia = (lc($ExtSrc) eq '.cia') ? "_" : "";
+
+	return if (@DepList == 0);
+
+	foreach (@BldList) {
+		&main::Output(
+			&Generic_Quote("\$(EPOCBLD$_)\\$BaseSrc$cia.lis"), " ",
+			&Generic_Quote("\$(EPOCBLD$_)\\$BaseSrc$cia.txt"), " \\\n",
+		);
+	}
+	&main::Output(
+		":"
+	);
+	foreach (@DepList) {
+		&main::Output(
+		" \\\n\t", &Generic_Quote($_)
+		);
+	}
+	&main::Output(
+		"\n",
+		"\n"
+	);
+}
+
+sub PMSrcBldDepend {
+	my $Bld=&main::Bld;
+	my @DepList=&main::DepList;
+	my $BaseSrc=&main::BaseSrc;
+	my $ExtSrc=&main::ExtSrc;
+	my $cia = (lc($ExtSrc) eq '.cia') ? "_" : "";
+
+	return if (@DepList == 0);
+
+	&main::Output(
+		&Generic_Quote("\$(EPOCBLD$Bld)\\$BaseSrc$cia.lis"), " ",
+		&Generic_Quote("\$(EPOCBLD$Bld)\\$BaseSrc$cia.txt"), " :",
+	);
+	foreach (@DepList) {
+		&main::Output(
+			" \\\n\t", &Generic_Quote($_)
+		);
+	}
+	&main::Output( 
+		"\n",
+		"\n"
+	);
+}
+
+my %sources;
+
+sub PMEndSrcBld {
+	my $ABI=&main::ABI;
+	my $BaseSrc=&main::BaseSrc;
+	my $Bld=&main::Bld;
+	my $Src=ucfirst lc &main::Src;
+	my $SrcPath=&main::SrcPath;
+	my $Ext = &main::Path_Split('Ext', $Src);
+	my $Cia = (lc($Ext) eq '.cia') ? 1 : 0;
+
+	my $RTWSrcPath=&main::Path_Chop(&main::Path_RltToWork($SrcPath));
+
+	# add source path, source file and build type to hashmap. 
+    $sources{$SrcPath}{$Src}{$Bld}=1;
+   
+	# Use GCC trick to get assembler source files preprocessed with CPP
+	$Src =~ s/\.s$/.S/i;
+
+	if ($Cia) {
+		&main::Output(
+			&Generic_Quote("\$(EPOCBLD$Bld)\\$BaseSrc\_.txt"), " : ",
+			&Generic_Quote("$SrcPath$Src"), "\n",
+			"\t\$(GCC$Bld) -D __CIA__ --include_directory \"$RTWSrcPath\" \$(INCDIR) --xref \"\$\@\" \"$RTWSrcPath\\$Src\"\n",
+			"\n",
+		);
+	} else {
+		&main::Output(
+			&Generic_Quote("\$(EPOCBLD$Bld)\\$BaseSrc.txt"), " : ",
+			&Generic_Quote("$SrcPath$Src"), "\n",
+			"\t\$(GCC$Bld) --include_directory \"$RTWSrcPath\" \$(INCDIR) \$(SYSINCDIR) --xref \"\$\@\" \"$RTWSrcPath\\$Src\"\n",
+			"\n",
+		);
+	}
+}
+
+sub PMEndSrc {
+	&main::Output(
+		"\n",
+		"\n"
+	);
+}
+
+sub PMEndSrcList {
+        my $BldPath=&main::BldPath;
+        my $Target = &main::Trg; 
+        my $TargetBase = &main::Path_Split('Base', $Target);
+        my $FileName = $BldPath.$TargetBase.".mmp.xml";
+        open FILE,">> $FileName" or die "Cannot open mmp info dump file $FileName: $!";
+		my $path;
+        foreach $path (keys %sources)
+        {
+            my %thing =  %{$sources{$path}}; # {"UREL"}; 
+            my $file;
+            foreach $file (keys %thing)
+            {
+                if( defined $thing{$file}{"UREL"})
+                {
+                    if( defined  $thing{$file}{"UDEB"} )
+                    {
+                        print FILE "\t<sourceFile name=\"$file\" path=\"$path\"/>\n";
+                    }
+                    else
+                    {
+                        print FILE "\t<sourceFile name=\"$file\" path=\"$path\" type=\"UREL\"/>\n";
+                    }
+                }
+                else
+                {
+                    if(defined $thing{$file}{"UDEB"})
+                    {
+                        print FILE "\t<sourceFile name=\"$file\" path=\"$path\" type=\"UDEB\"/>\n";
+                    }
+                    else
+                    {
+                        die "Should Never Get HERE!";
+                    }
+                }
+                
+            }
+        }
+                
+		print FILE "</mmpInfo>\n\n";
+		close FILE; 
+
+		&Generic_End;
+}
+
+sub GetRelDir
+{
+	my ($fileName) = @_;
+	$fileName = CleanPath($fileName); # make sure that /'s are use rather than \ or \\
+	if($fileName!~m-\/-) # no directory, just a file name, so return ./
+	{
+		return "./";
+	}
+	elsif($fileName=~m-^(.*\/)[^\/]+$-) # return directory
+	{
+		return $1;
+	}
+	else # don't know how could get here
+	{
+		return "./";
+	}
+}
+
+
+sub SearchMmpFile
+{
+	my ($mmpFileName, $bldInfDirectory) = @_;
+	my @rfiFiles;
+	my $SourcePath = "./";
+	my @SystemIncludes = ();
+	my @UserIncludes = ();
+	if(-e $mmpFileName) # if file referenced exists
+	{
+		open MMPFILE, $mmpFileName;
+		while(my $line = <MMPFILE>)
+		{
+			if($line =~ /^\s*systeminclude\s+(.*)$/i)
+			{
+				my $newSystemIncludes = RecordSystemIncludes(CleanPath($1));
+				push @SystemIncludes, @$newSystemIncludes;
+			}
+			elsif($line =~ /^\s*userinclude\s+(.*)$/i)
+			{
+				my $newUserIncludes = RecordUserIncludes(CleanPath($1));
+				push @UserIncludes, @$newUserIncludes;
+			}
+		}
+		close MMPFILE;
+		# Search the mmp file again for the resources, the Developer Library is unclear
+		# on whether user/system includes that come after resource statements are 
+		# relevant to that resource. Assume they are for completeness sake. 
+		open MMPFILE, $mmpFileName;
+		while(my $line = <MMPFILE>)
+		{
+			if($line =~ /^\s*sourcepath\s+(.*)$/i)
+			{
+				$SourcePath = RecordSourcePath(CleanPath($1));
+			}
+			elsif($line =~ /^\s*(start\s+)?resource\s+(\S+)(\s*\/\/.*)*$/i) 
+			# matches resource statements
+			{
+				my $resource = $SourcePath.$2;
+				push @rfiFiles, AnalyseResourceFile($resource, \@SystemIncludes, \@UserIncludes, $bldInfDirectory);
+			}	
+		}
+		# ResetIncludesAndSourcePath();
+		close MMPFILE;
+	} 
+	return \@rfiFiles;
+}
+
+sub AnalyseResourceFile
+{ # when get to here $rssFile should be fully qualified relative to mmp file location (i.e. base: .../name.rss)
+	my ($rssFile, $systemIncludeList, $userIncludeList, $bldInfDirectory) = @_;
+	my @resourceRelatedFiles = ($rssFile);
+	my $baseFile = 0; #flag to indicate whether this is the base file which the rfi file is named after
+	my $rssItem;
+	my $containerFile;
+	foreach $rssItem (@resourceRelatedFiles) #@resourceRelatedFiles is added to during this foreach loop as included files are found
+	{
+		$rssItem = CleanPath($rssItem);
+		if( ! ($baseFile) )
+		{
+			$baseFile = 1; # set to non-zero so that setting up the rfi file is only done once
+			if($rssItem =~m-\/-)
+			{
+				if($rssItem =~m-^\S*\/([^\/]+)$-) # just extracts file name
+				{
+					$containerFile = $1 . ".rfi";
+				}
+			}
+			else
+			{
+				$containerFile = $rssItem . ".rfi";
+			}
+			open CONTAINER, ">$containerFile";
+		}
+		OutputHeader($rssItem);
+		my $resourceFiles = ReadFile($rssItem, \@resourceRelatedFiles, $systemIncludeList, $userIncludeList, $bldInfDirectory);
+		@resourceRelatedFiles = @$resourceFiles;
+	}
+	close CONTAINER;
+	return $containerFile;
+}
+
+sub CheckForInclude
+{ # check whether the passed line from the resource type file is a #include line, if it is then store it to be added to the rfi file
+	my ($line, $dir, $resourceFiles, $systemIncludeList, $userIncludeList, $bldInfDirectory) = @_;
+	my @resourceFiles = @$resourceFiles;
+	if($line =~ /^\s*\#include\s+([\<\"])(\S+)([\>\"])(\s+\/\/.*)?/)
+	{
+		if( ($1 eq "\"") and ($3 eq "\"") )
+		{
+			my $possibleAddition = SearchDirectories($2, "quoted", $dir, $systemIncludeList, $userIncludeList, $bldInfDirectory);
+			if($possibleAddition ne "")
+			{
+				push @resourceFiles, $possibleAddition;
+			}
+		}
+		elsif( ($1 eq "\<") and ($3 eq "\>") )
+		{
+			my $possibleAddition = SearchDirectories($2, "angle", $dir, $systemIncludeList, $userIncludeList, $bldInfDirectory);
+			if($possibleAddition ne "")
+			{
+				push @resourceFiles, $possibleAddition;
+			}
+		}
+	}
+	return \@resourceFiles;
+}
+
+sub ReadFile
+{ # copy the passed file into the rfi file and check it for included files
+	my ($fileName, $resourceFiles, $systemIncludeList, $userIncludeList, $bldInfDirectory) = @_;
+	my $dir = GetRelDir($fileName);
+
+	open RESOURCE, $fileName or die "Can't open file $fileName from " . cwd() . "\n";
+	my $line;
+	foreach $line (<RESOURCE>)
+	{
+		print CONTAINER $line;
+		$resourceFiles = CheckForInclude($line, $dir, $resourceFiles, $systemIncludeList, $userIncludeList, $bldInfDirectory);
+	}
+	close RESOURCE;
+	return $resourceFiles;
+}
+
+sub OutputHeader
+{
+	my ($fileName) = @_;
+	print CONTAINER "\n\n/* GXP ***********************\n";
+	if($fileName =~m-\/-)
+	{ # remove path as only want to store file name
+		if($fileName =~m-^\S*\/([^\/]+)$-)
+		{
+			print CONTAINER " * $1\n";
+		}
+	}
+	else
+	{
+		print CONTAINER " * $fileName\n";
+	}
+	print CONTAINER " ****************************/\n\n";
+}
+
+
+sub RecordSystemIncludes
+{
+	my ($line) = @_;
+	my @terms = split(/ /, $line);
+	my $term;
+	my @systemIncludes = ();
+	foreach $term (@terms)
+	{
+		if($term!~m/\/\//) # if term is not the start of a c++ style comment
+		{
+			push @systemIncludes, $term;
+		}
+		else
+		{
+			last;
+		}
+	}
+	return \@systemIncludes;
+}
+
+sub RecordUserIncludes
+{
+	my ($line) = @_;
+	my @terms = split(/ /, $line);
+	my $term;
+	my @userIncludes = ();
+	foreach $term (@terms)
+	{
+		if($term!~m/\/\//) # if term is not the start of a c++ style comment
+		{
+			push @userIncludes, $term;
+		}
+		else
+		{
+			last;
+		}
+	}
+	return \@userIncludes;
+}
+
+sub CleanPath # change \ and \\ in path to /
+{
+	my ($fileName) = @_;
+	$fileName =~ s-\\\\-\/-og;
+	$fileName =~ s-\\-\/-og;
+	return $fileName;
+}
+
+sub RecordSourcePath
+{
+	my ($line) = @_;
+	my $sourcePath;
+	if($line=~/^(\S+)/) # in case of comments at end of line
+	{
+		$sourcePath = $1; 
+		$sourcePath = CleanPath($sourcePath);
+		if($sourcePath !~ m/\/$/)
+		{
+			$sourcePath .= "\/";
+		}
+	}
+	return $sourcePath;
+}
+
+sub SearchDirectories
+{
+	my ($fileName, $includeType, $base, $systemIncludeList, $userIncludeList, $bldInfDirectory) = @_;
+	my @systemIncludes = @$systemIncludeList;
+	my @userIncludes = @$userIncludeList;
+
+	$fileName = CleanPath($fileName);
+	
+	if(-e $base.$fileName)
+	{
+		return $base.$fileName;
+	}
+	if($includeType eq "quoted")
+	{
+		# search through the user includes and return dir + file name if found
+		my $directory;
+		foreach $directory (@userIncludes)
+		{
+			my $qualifiedFileName = $bldInfDirectory . "/" . $directory . "/" . $fileName;
+			if(-e $qualifiedFileName)
+			{
+				return $qualifiedFileName;
+			}
+		}		
+	}
+
+	# search through the system includes
+	my $directory;
+	foreach $directory (@systemIncludes)
+	{
+		my $qualifiedFileName = $bldInfDirectory . "/" . $directory . "/" . $fileName;
+		if(-e $qualifiedFileName)
+		{
+			return $qualifiedFileName;
+		}
+	}
+	return "";	
+}
+
+
+sub GatherResourceInformation
+{
+	my $BldPath=&main::BldPath;
+	unless (-d $BldPath) {
+		mkpath([$BldPath]);
+	}
+	$BldPath = (&main::Path_StepDirs($BldPath))[-2];
+	my $bldInfDirectory = cwd(); # store current directory so can return to it later
+	my $MmpFile = &main::MmpFile();  
+	$MmpFile = CleanPath($MmpFile);
+	my $MmpFileDir = "./";
+	my $MmpFileName = $MmpFile;
+	if($MmpFile=~m-\/-)
+	{
+		if($MmpFile=~m-^(.*)\/([^\/]*)$-)
+		{
+			$MmpFileDir = $1;
+			$MmpFileName = $2;
+		}
+	}
+	chdir($MmpFileDir) or die "Error: Could not change to MMP file directory: $MmpFileDir\n";
+
+	my $tempMmpFile = "output.temp"; # create a temporary file to store the output of passing the mmp file through cpp
+
+	system("cpp -C $MmpFileName $tempMmpFile");
+	
+	my $rfiFileList = SearchMmpFile($tempMmpFile, $bldInfDirectory); # analyse the mmp file for resource files
+	unlink($tempMmpFile);
+	
+	my @RfiFiles = @$rfiFileList;
+	foreach (@RfiFiles) # copy the rfi files to the BldPath and delete them from temporary locations
+	{
+		system("copy $_ $BldPath$_");
+		unlink $_;
+	}
+	chdir($bldInfDirectory); # return to the orignial directory
+	
+	return \@RfiFiles; # return list of rfi files to be added to .mmp.xml file
+}
+1;

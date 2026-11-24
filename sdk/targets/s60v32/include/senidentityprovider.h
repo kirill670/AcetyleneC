@@ -1,0 +1,457 @@
+/*
+* ==============================================================================
+*  Name        : SenIdentityProvider.h
+*  Part of     : Web Services Description
+*  Interface   : 
+*  Description : Class describes some IdentityProvider service
+*  Version     : 
+*
+*  Copyright © 2002-2005 Nokia. All rights reserved.
+*  This material, including documentation and any related 
+*  computer programs, is protected by copyright controlled by 
+*  Nokia. All rights are reserved. Copying, including 
+*  reproducing, storing, adapting or translating, any 
+*  or all of this material requires the prior written consent of 
+*  Nokia. This material also contains confidential 
+*  information which may not be disclosed to others without the 
+*  prior written consent of Nokia.
+* ==============================================================================
+*/
+
+#ifndef SEN_IDENTITY_PROVIDER_H
+#define SEN_IDENTITY_PROVIDER_H
+
+//  INCLUDES
+#include <SenXmlServiceDescription.h>
+
+// CONSTANTS
+const TInt KSenAuthMaxUsernameLength = 32;
+const TInt KSenAuthMaxPasswordLength = 16;
+
+_LIT8(KIdentityProvider8, "IdentityProvider");
+_LIT8(KFakeIMEI8, "012345678901234");
+_LIT8(KContract8, "urn:liberty:as:2004-04");
+_LIT8(KImei, "IMEI");
+_LIT8(KType, "type");
+_LIT8(KAuthzID8, "AuthzID");
+_LIT8(KAdvisoryAuthnID8, "AdvisoryAuthnID");
+_LIT8(KPassword8, "Password");
+_LIT8(KProviderID8, "ProviderID");
+
+// DATA TYPES
+class TSenAuthentication
+	{
+	public:
+		TBuf8<KSenAuthMaxUsernameLength> iUsername;
+		TBuf8<KSenAuthMaxPasswordLength> iPassword;
+	};
+
+// FORWARD DECLARATIONS
+class MSenIdentityManager;
+class CSenHttpChannel;
+
+// CLASS DECLARATION
+
+/**
+*  Class describes some IdentityProvider service
+*  Class is intented to be used when registrating
+*  information about some identity providing service.
+*  I case of ID-WSF framework, the IdentityProvider
+*  and Authentication Service are behind same endpoint.
+*  Typically, ID-WSF service consumers call both
+*  RegisterIdentityProviderL() and 
+*  RegisterServiceDescriptionL() methods as defined
+*  in Service Management API (CSenServiceManager).
+*  Basic Web Service consumers use this class to register
+*  BASIC-AUTH credentials to certain pre-known service endpoint.
+*  
+*  
+*/
+class CSenIdentityProvider : public CSenXmlServiceDescription
+{
+    public:  // Constructors and destructor
+        
+		/**
+		* Two-phased constructor.
+		* Note: contract defaults here to "urn:liberty:as:2004-04"
+		* 
+		* @param aEndpoint the service endpoint. Note that endpoint cannot 
+		*        include characters which are illegal in XML. If endpoint
+		*        is an URL which contains illegal characters (like '&'-char),
+		*        those need to be encoded into XML entity form (like &amp;).
+		*        EncodeHttpCharactersLC() method from XmlUtils can be used
+		*        for encoding of basic XML entities.
+		* @return a new CSenIdentityProvider
+		*/
+		IMPORT_C static CSenIdentityProvider* NewL( const TDesC8& aEndpoint );
+
+		/**
+		* Two-phased constructor.
+		* Note: contract defaults here to "urn:liberty:as:2004-04"
+		* 
+		* @param aEndpoint the service endpoint. Note that endpoint cannot 
+		*        include characters which are illegal in XML. If endpoint
+		*        is an URL which contains illegal characters (like '&'-char),
+		*        those need to be encoded into XML entity form (like &amp;).
+		*        EncodeHttpCharactersLC() method from XmlUtils can be used
+		*        for encoding of basic XML entities.
+		* @return a new CSenIdentityProvider, which pointer is left on
+		*         cleanup stack.
+		*/
+		IMPORT_C static CSenIdentityProvider* NewLC( const TDesC8& aEndpoint );
+
+		/**
+		* Two-phased constructor.
+		* 
+		* @param aEndpoint the service endpoint. Note that endpoint cannot 
+		*        include characters which are illegal in XML. If endpoint
+		*        is an URL which contains illegal characters (like '&'-char),
+		*        those need to be encoded into XML entity form (like &amp;).
+		*        EncodeHttpCharactersLC() method from XmlUtils can be used
+		*        for encoding of basic XML entities.
+		* @param aContract identifies the service type. Typically some URN.
+		*        Default is Liberty ID-WSF Authentication Service contract:
+		*		 -- urn:liberty:as:2004-04
+		* @return a new CSenIdentityProvider
+		*/
+		IMPORT_C static CSenIdentityProvider* NewL( const TDesC8& aEndpoint,
+													const TDesC8& aContract );
+
+		/**
+		* Two-phased constructor.
+		* 
+		* @param aEndpoint the service endpoint. Note that endpoint cannot 
+		*        include characters which are illegal in XML. If endpoint
+		*        is an URL which contains illegal characters (like '&'-char),
+		*        those need to be encoded into XML entity form (like &amp;).
+		*        EncodeHttpCharactersLC() method from XmlUtils can be used
+		*        for encoding of basic XML entities.
+		* @param aContract identifies the service type. Typically some URN.
+		*        Default is Liberty ID-WSF Authentication Service contract:
+		*		 -- urn:liberty:as:2004-04
+		* @return a new CSenIdentityProvider, which pointer is left on
+		*         cleanup stack.
+		*/
+		IMPORT_C static CSenIdentityProvider* NewLC(const TDesC8& aEndpoint,
+													const TDesC8& aContract );
+        
+		/**
+		* Two-phased constructor.
+		* 
+		* @param aEndpoint the service endpoint. Note that endpoint cannot 
+		*        include characters which are illegal in XML. If endpoint
+		*        is an URL which contains illegal characters (like '&'-char),
+		*        those need to be encoded into XML entity form (like &amp;).
+		*        EncodeHttpCharactersLC() method from XmlUtils can be used
+		*        for encoding of basic XML entities.
+		* @param aContract identifies the service type. Typically some URN.
+		*        Default is Liberty ID-WSF Authentication Service contract:
+		*		 -- urn:liberty:as:2004-04
+		* @param aProviderID is identifier of this IdentityProvider. It is a
+		*        unique key pointing to some known endpoint.
+		* @return a new CSenIdentityProvider
+		*/
+		IMPORT_C static CSenIdentityProvider* NewL(	const TDesC8& aEndpoint,
+													const TDesC8& aContract,
+													const TDesC8& aProviderID);
+
+		/**
+		* Two-phased constructor.
+		* 
+		* @param aEndpoint the service endpoint. Note that endpoint cannot 
+		*        include characters which are illegal in XML. If endpoint
+		*        is an URL which contains illegal characters (like '&'-char),
+		*        those need to be encoded into XML entity form (like &amp;).
+		*        EncodeHttpCharactersLC() method from XmlUtils can be used
+		*        for encoding of basic XML entities.
+		* @param aContract identifies the service type. Typically some URN.
+		*        Default is Liberty ID-WSF Authentication Service contract:
+		*		 -- urn:liberty:as:2004-04
+		* @param aProviderID is identifier of this IdentityProvider. It is a
+		*        unique key pointing to some known endpoint. Required only
+		*        for ID-WSF framework.
+		* @return a new CSenIdentityProvider, which pointer is left on
+		*         cleanup stack.
+		*/
+		IMPORT_C static CSenIdentityProvider* NewLC(const TDesC8& aEndpoint,
+													const TDesC8& aContract,
+													const TDesC8& aProviderID);
+
+		/**
+		* Two-phased constructor.
+		* 
+		* @param aEndpoint the service endpoint. Note that endpoint cannot 
+		*        include characters which are illegal in XML. If endpoint
+		*        is an URL which contains illegal characters (like '&'-char),
+		*        those need to be encoded into XML entity form (like &amp;).
+		*        EncodeHttpCharactersLC() method from XmlUtils can be used
+		*        for encoding of basic XML entities.
+		* @param aContract identifies the service type. Typically some URN.
+		*        Default is Liberty ID-WSF Authentication Service contract:
+		*		 -- urn:liberty:as:2004-04
+		* @param aProviderID is identifier of this IdentityProvider. It is a
+		*        unique key pointing to some known endpoint. Required only
+		*        for ID-WSF framework.
+		* @param aServiceID is a unique contract to some invocable service.
+		*        Typically some URN. If this IDP is registered to ID-WSF 
+		*        framework, this ServiceID will be appended into list of
+		*        services which trust this IDP, and the actual IDP "knows".
+		* @return a new CSenIdentityProvider
+		*/
+		IMPORT_C static CSenIdentityProvider* NewL( const TDesC8& aEndpoint,
+													const TDesC8& aContract,
+													const TDesC8& aProviderID,
+													const TDesC8& aServiceID);
+
+		/**
+		* Two-phased constructor.
+		* 
+		* @param aEndpoint the service endpoint. Note that endpoint cannot 
+		*        include characters which are illegal in XML. If endpoint
+		*        is an URL which contains illegal characters (like '&'-char),
+		*        those need to be encoded into XML entity form (like &amp;).
+		*        EncodeHttpCharactersLC() method from XmlUtils can be used
+		*        for encoding of basic XML entities.
+		* @param aProviderID is identifier of this IdentityProvider. It is a
+		*        unique key pointing to some known endpoint. Required only
+		*        for ID-WSF framework.
+		* @param aContract identifies the service type. Typically some URN.
+		*        Default is Liberty ID-WSF Authentication Service contract:
+		*		 -- urn:liberty:as:2004-04
+		* @param aServiceID is a unique contract to some invocable service.
+		*        Typically some URN. If this IDP is registered to ID-WSF 
+		*        framework, this ServiceID will be appended into list of
+		*        services which trust this IDP, and the actual IDP "knows".
+		* @return a new CSenIdentityProvider, which pointer is left on
+		*         cleanup stack.
+		*/
+		IMPORT_C static CSenIdentityProvider* NewLC(const TDesC8& aEndpoint,
+													const TDesC8& aContract,
+													const TDesC8& aProviderID,
+													const TDesC8& aServiceID);
+
+		/**
+		* Destructor.
+		*/
+		IMPORT_C virtual ~CSenIdentityProvider();
+
+        // New functions
+
+		/**
+		* A getter.
+		* 
+		* @return a pointer to authorization id
+		*/
+		IMPORT_C virtual TPtrC8 AuthzID();
+
+		/**
+		* A getter.
+		* 
+		* @return a pointer to advisory authentication id
+		*/
+		IMPORT_C virtual TPtrC8 AdvisoryAuthnID();
+
+		/**
+		* A getter.
+		* 
+		* @return a pointer to provider id
+		*/
+		IMPORT_C TPtrC8 ProviderID();
+
+		/**
+		* A getter.
+		* 
+		* @return a pointer to password
+		*/
+		IMPORT_C virtual TPtrC8 Password();
+
+		/**
+		* A getter.
+		* 
+		* @return a pointer to IMEI
+		*/
+		IMPORT_C const TDesC8& IMEI();
+
+		/**
+		* A getter.
+		* 
+		* @return a pointer to username
+		*/
+		IMPORT_C TPtrC8 UserName();
+
+		/**
+		* Setter
+		* 
+		* @param aProviderID the set id
+		* @return KErrNone or other system-wide Symbian error codes.
+		*/
+		IMPORT_C TInt SetProviderID( const TDesC8& aProviderID );
+
+		/**
+		* Setter for ServiceID. ServiceID is the contract of some
+		* invocable service, typically some URN.
+		* Note, that when registering an IDP the possibly existing
+		* list of ServiceIDs is not cleared, but the ServiceID set
+		* via this method is added as new entry into that list, if
+		* it was non-existent.
+		* 
+		* @param aServiceID the set id
+		* @return KErrNone or other system-wide Symbian error codes.
+		*/
+		IMPORT_C TInt SetServiceID( const TDesC8& aServiceID );
+
+		/**
+		* 
+		* @param aServiceDescription the service description to check
+		* @return   ETrue if the ServiceDescription, i.e. its endpoint
+		* 				  or contract, is associated to this IdentityProvider.
+		*                 Or if the ServiceDescription is about this
+		* 				  IdentityProvider.
+		*           EFalse otherwise
+		*/
+		IMPORT_C TBool IsTrustedByL( MSenServiceDescription& aServiceDescription );
+
+		/**
+		* 
+		* @param aProviderID	provider ID to check
+		* @return   ETrue if the ServiceDescription, i.e. its endpoint
+		* 				  or contract, is associated to this IdentityProvider.
+		*                 Or if the ServiceDescription is about this
+		* 				  IdentityProvider.
+		*           EFalse otherwise
+		*/
+		IMPORT_C TBool IsTrustedByL( const TDesC8& aProviderID );
+
+		/**
+		* Checks if this identity provider is set as default .
+		* 
+		* @return ETrue if default-attribute was set, EFalse otherwise
+		*/
+		IMPORT_C TBool IsDefault();
+
+		/**
+		* Sets the user information.
+		*   Status codes:
+		*   KErrNone		ok
+		*   Other codes are system error codes.
+		* 
+		* @param aAuthzID Authorization id.
+		* @param aAdvisoryAuthnID Advisory authorization id.
+		* @param aPassword Password.
+		* @return status/error code.
+		*/
+		IMPORT_C TInt SetUserInfoL(const TDesC8& aAuthzID,
+								   const TDesC8& aAdvisoryAuthnID,
+								   const TDesC8& aPassword );
+
+		/**
+		* Creates http-credentials by making password-username pair and encoding
+		* it with BASE-64.
+		* 
+		* @param	aIdMgr	Identitymanager which is used to obtain a password
+		*					if no password for this identityprovider was set.
+		* @return	a newly allocated credentialbuffer. Ownership is transferred 
+		*			to the caller.
+		*/
+		IMPORT_C HBufC8* HttpCredentialsL(MSenIdentityManager& aIdMgr);
+    
+        // Functions from base classes
+	
+		// From CSenXmlServiceDescription
+		
+		/**
+		* 
+		* @return Descriptor containing service description local name
+		*                    for this service description.
+		* 					 This is the localname of the element, when this class is
+		* 					 represented as an XML element. 
+		*/
+		IMPORT_C const TDesC8& NewElementName();
+
+    protected:  
+	
+		/*
+		  C++ default constructor
+		*/
+		IMPORT_C CSenIdentityProvider(TDescriptionClassType aType);
+        
+
+        // Functions from base classes
+    
+		// From CSenXmlServiceDescription
+		
+		/**
+		* Standard 2nd phase constructor.	
+		* 
+		* @param aEndpoint the service endpoint. Note that endpoint cannot 
+		*        include characters which are illegal in XML. If endpoint
+		*        is an URL which contains illegal characters (like '&'-char),
+		*        those need to be encoded into XML entity form (like &amp;).
+		*        EncodeHttpCharactersLC() method from XmlUtils can be used
+		*        for encoding of basic XML entities.
+		*/
+		IMPORT_C void ConstructL(const TDesC8& aEndPoint);
+		
+		/**
+		* 
+		* @param aEndpoint the service endpoint. Note that endpoint cannot 
+		*        include characters which are illegal in XML. If endpoint
+		*        is an URL which contains illegal characters (like '&'-char),
+		*        those need to be encoded into XML entity form (like &amp;).
+		*        EncodeHttpCharactersLC() method from XmlUtils can be used
+		*        for encoding of basic XML entities.
+		* @param aContract identifies the service type. Typically some URN.
+		* 		 Default contract is Liberty ID-WSF Authentication Service
+		*        - "urn:liberty:as:2004-04".
+		*/
+		IMPORT_C void ConstructL(const TDesC8& aEndPoint,
+								 const TDesC8& aContract);
+
+		/**
+		* 
+		* @param aEndpoint the service endpoint. Note that endpoint cannot 
+		*        include characters which are illegal in XML. If endpoint
+		*        is an URL which contains illegal characters (like '&'-char),
+		*        those need to be encoded into XML entity form (like &amp;).
+		*        EncodeHttpCharactersLC() method from XmlUtils can be used
+		*        for encoding of basic XML entities.
+		* @param aContract identifies the service type. Typically some URN.
+		* 		 Default contract is Liberty ID-WSF Authentication Service
+		*        - "urn:liberty:as:2004-04".
+		* @param aProviderID is identifier of this IdentityProvider. It is a
+		*        unique key pointing to some known endpoint. Required only
+		*        for ID-WSF framework.
+		*/
+		IMPORT_C void ConstructL(const TDesC8& aEndPoint,
+								 const TDesC8& aContract,
+								 const TDesC8& aProviderID);
+
+		/**
+		* 
+		* @param aEndpoint the service endpoint. Note that endpoint cannot 
+		*        include characters which are illegal in XML. If endpoint
+		*        is an URL which contains illegal characters (like '&'-char),
+		*        those need to be encoded into XML entity form (like &amp;).
+		*        EncodeHttpCharactersLC() method from XmlUtils can be used
+		*        for encoding of basic XML entities.
+		* @param aContract identifies the service type. Typically some URN.
+		* 		 Default contract is Liberty ID-WSF Authentication Service
+		*        - "urn:liberty:as:2004-04".
+		* @param aProviderID is identifier of this IdentityProvider. It is a
+		*        unique key pointing to some known endpoint. Required only
+		*        for ID-WSF framework.
+		* @param aServiceID is a unique contract to some invocable service.
+		*        Typically some URN. If this IDP is registered to ID-WSF 
+		*        framework, this ServiceID will be appended into list of
+		*        services which trust this IDP, and the actual IDP "knows".
+		*/
+		IMPORT_C void ConstructL(const TDesC8& aEndPoint,
+								 const TDesC8& aContract,
+								 const TDesC8& aProviderID,
+							 	const TDesC8& aServiceID);
+};
+
+// SEN_IDENTITY_PROVIDER_H
+#endif
+
+// End of File

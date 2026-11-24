@@ -1,0 +1,53 @@
+/*
+* ============================================================================
+*  Name     : EikClockCtrl.hrh
+*  Part of  : EikCtl
+*
+*  Description:
+*         
+*  Version:
+*
+*  Copyright (C) 2002 Nokia Corporation.
+*  This material, including documentation and any related 
+*  computer programs, is protected by copyright controlled by 
+*  Nokia Corporation. All rights are reserved. Copying, 
+*  including reproducing, storing,  adapting or translating, any 
+*  or all of this material requires the prior written consent of 
+*  Nokia Corporation. This material also contains confidential 
+*  information which may not be disclosed to others without the 
+*  prior written consent of Nokia Corporation.
+*
+* ============================================================================
+*/
+
+enum
+    {
+    EEikLocaleConformantClockTypeChangesFormatAccordingToLocale,
+    EEikLocaleConformantClockTypeDigital,
+    EEikLocaleConformantClockTypeAnalog,
+    EEikLocaleConformantClockTypeAmPm,
+    EEikUsesDefaultSystemColors
+    };
+
+enum
+    {
+    EEikResourceConstructedClockTextJustificationLeft,
+    EEikResourceConstructedClockTextJustificationCenter,
+    EEikResourceConstructedClockTextJustificationRight
+    };
+
+enum
+    {
+    EEikResourceConstructedClockAnalogDisplayHandOneRevPer12Hours,
+    EEikResourceConstructedClockAnalogDisplayHandOneRevPerHour,
+    EEikResourceConstructedClockAnalogDisplayHandOneRevPerMinute
+    };
+
+enum
+    {
+    EEikResourceConstructedClockAnalogDisplayHandFeatureLine,
+    EEikResourceConstructedClockAnalogDisplayHandFeaturePolyLine,
+    EEikResourceConstructedClockAnalogDisplayHandFeatureCircle
+    };
+
+// End of file

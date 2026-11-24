@@ -1,0 +1,20 @@
+// Mda\Common\Resource.hrh
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#ifndef __MDA_COMMON_RESOURCE_HRH__ 
+#define __MDA_COMMON_RESOURCE_HRH__
+
+#include <Mda\Common\Port.hrh>
+
+#define KUidMdaFileResLocDefine					268450124
+#define KUidMdaDesResLocDefine					268450125
+#define KUidMdaUrlResLocDefine					268450134//NEEDS REAL UID
+
+#define KUidMdaClipLocationDefine				268450128
+#define KUidMdaClipFormatDefine					268450129
+
+#define KUidMdaStreamDeviceDefine				268450132
+
+#endif

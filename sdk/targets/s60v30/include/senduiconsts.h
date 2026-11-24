@@ -1,0 +1,96 @@
+/*
+* ============================================================================
+*  Name        : SendUiConsts.h
+*  Part of     : SendUi
+*  Interface   : 
+*  Description : Uid definitions for SendUI services.
+*  Version     : 1.0
+*
+*  Copyright © 2002-2004 Nokia. All rights reserved.
+*  This material, including documentation and any related 
+*  computer programs, is protected by copyright controlled by 
+*  Nokia. All rights are reserved. Copying, including 
+*  reproducing, storing, adapting or translating, any 
+*  or all of this material requires the prior written consent of 
+*  Nokia. This material also contains confidential 
+*  information which may not be disclosed to others without the 
+*  prior written consent of Nokia.
+*
+* ============================================================================
+*/
+
+#ifndef SENDUICONSTS_H
+#define SENDUICONSTS_H
+
+//  CONSTANTS 
+#define KSenduiMtmSmtpUidValue              0x10001028
+#define KSenduiMtmImap4UidValue             0x1000102A
+#define KSenduiMtmPop3UidValue              0x10001029
+#define KSenduiMtmSmsUidValue               0x1000102C
+#define KSenduiMtmMmsUidValue               0x100058E1
+#define KSenduiMtmIrUidValue                0x100053A4
+#define KSenduiMtmBtUidValue                0x10009ED5
+#define KSenduiMtmPushMtm1UidValue          0x10009158
+#define KSenduiMtmPushMtm2UidValue          0x10009158
+#define KSenduiMtmPushMtm3UidValue          0x10009158
+#define KSenduiMtmPushMtmUidValue           0x10009158
+#define KSenduiMtmBioUidValue               0x10001262
+#define KSenduiMailEditorUidValue           0x101F4CD6
+#define KSenduiMMSEditorUidValue            0x100058DE
+#define KSenduiMMSNotificationUidValue      0x100059C8
+#define KSenduiMtmFaxUidValue               0x1000102B
+#define KSenduiMtmSyncMLEmailUidValue       0x101f7c5c
+#define KMmsUploadService1                  0x101F8835
+#define KMmsUploadService2                  0x101F8836
+#define KMmsUploadService3                  0x101F8837
+#define KMmsUploadService4                  0x101F8838
+#define KSenduiMtmRoUidValue                0x101F6DC2
+#define KSenduiMtmPostcardUidValue          0x10207245
+#define KDrmLinkSenderValue                 0x10207388
+#define KSenduiMtmAudioMessageUidValue		0x1020745B
+
+// MTMs
+const TUid KSenduiMtmSmtpUid            = { KSenduiMtmSmtpUidValue         };
+const TUid KSenduiMtmImap4Uid           = { KSenduiMtmImap4UidValue        };
+const TUid KSenduiMtmPop3Uid            = { KSenduiMtmPop3UidValue         };
+const TUid KSenduiMtmSmsUid             = { KSenduiMtmSmsUidValue          };
+const TUid KSenduiMtmMmsUid             = { KSenduiMtmMmsUidValue          };
+const TUid KSenduiMtmIrUid              = { KSenduiMtmIrUidValue           };
+const TUid KSenduiMtmBtUid              = { KSenduiMtmBtUidValue           };
+const TUid KSenduiMtmPushMtm1Uid        = { KSenduiMtmPushMtm1UidValue     };
+const TUid KSenduiMtmPushMtm2Uid        = { KSenduiMtmPushMtm2UidValue     };
+const TUid KSenduiMtmPushMtm3Uid        = { KSenduiMtmPushMtm3UidValue     };
+const TUid KSenduiMtmPushMtmUid         = { KSenduiMtmPushMtmUidValue      };
+const TUid KSenduiMtmFaxUid             = { KSenduiMtmFaxUidValue          };
+const TUid KSenduiMtmSyncMLEmailUid     = { KSenduiMtmSyncMLEmailUidValue  };
+const TUid KSenduiMtmBioUid             = { KSenduiMtmBioUidValue          };
+const TUid KSenduiMtmRoUid              = { KSenduiMtmRoUidValue           };
+const TUid KSenduiMMSNotificationUid    = { KSenduiMMSNotificationUidValue };
+const TUid KSenduiMtmPostcardUid        = { KSenduiMtmPostcardUidValue     };
+const TUid KSenduiMtmAudioMessageUid    = { KSenduiMtmAudioMessageUidValue };
+
+
+
+// ECom services
+const TUid KMmsDirectUpload             = { 0x101F87F5                     };
+const TUid KMmsIndirectUpload           = { 0x101F87F7                     };
+const TUid KMmsUploadService1Id         = { KMmsUploadService1             };
+const TUid KMmsUploadService2Id         = { KMmsUploadService2             };
+const TUid KMmsUploadService3Id         = { KMmsUploadService3             };
+const TUid KMmsUploadService4Id         = { KMmsUploadService4             };
+const TUid KMeetingRequestSender        = { 0x101FD69A                     };
+const TUid KDrmLinkSender               = { KDrmLinkSenderValue            };
+
+
+// Message data types
+const TUid KSenduiMsgDataBase           = { 0x101FD695                     };
+const TUid KSenduiMsgDataMeetingRequest	= { 0x101FD696                     };
+
+
+// Editors
+const TUid KSenduiMailEditorUid         = { KSenduiMailEditorUidValue      };
+const TUid KSenduiMMSEditorUid          = { KSenduiMMSEditorUidValue       };
+
+#endif      // SENDUICONSTS_H
+
+// End of File

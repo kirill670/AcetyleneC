@@ -1,0 +1,92 @@
+/*
+* ============================================================================
+*  Name       : PtiUids.hrh
+*  Part of    : PtiEngine
+*  Description: Uid definitions for PtiEngine.
+*  Version:
+*
+*  Copyright © 2005 Nokia Corporation.
+*  This material, including documentation and any related 
+*  computer programs, is protected by copyright controlled by 
+*  Nokia Corporation. All rights are reserved. Copying, 
+*  including reproducing, storing,  adapting or translating, any 
+*  or all of this material requires the prior written consent of 
+*  Nokia Corporation. This material also contains confidential 
+*  information which may not be disclosed to others without the 
+*  prior written consent of Nokia Corporation.
+* ============================================================================
+*/
+#ifndef _PTIUIDS_HRH
+#define _PTIUIDS_HRH
+
+// Language implementation uids.
+// There are several set of these (one for each core object).
+// These are core specific, but defined in PtiEngine module to
+// speed up language detection (see CPtiLanguageDatabase::CreateMappingTableL
+// method for details).
+
+#define	EPtiLangImplUidEnglish    0x1020719A
+#define EPtiLangImplUidFrench     0x1020719B
+#define EPtiLangImplUidGerman     0x1020719C
+#define EPtiLangImplUidSpanish    0x1020719D
+#define EPtiLangImplUidItalian    0x1020719E
+#define EPtiLangImplUidSwedish    0x1020719F
+#define EPtiLangImplUidDanish     0x102071A0
+#define EPtiLangImplUidNorwegian  0x102071A1
+#define EPtiLangImplUidFinnish    0x102071A2
+#define EPtiLangImplUidPortuguese 0x102071A3
+#define EPtiLangImplUidTurkish    0x102071A4
+#define EPtiLangImplUidIcelandic  0x102071A5
+#define EPtiLangImplUidRussian    0x102071A6
+#define EPtiLangImplUidHungarian  0x102071A7
+#define EPtiLangImplUidDutch      0x102071A8
+#define EPtiLangImplUidCzech      0x102071A9
+#define EPtiLangImplUidSlovak     0x102071AA
+#define EPtiLangImplUidPolish     0x102071AB
+#define	EPtiLangImplUidSlovenian  0x102071AC
+#define EPtiLangImplUidJapanese   0x102071B0
+#define EPtiLangImplUidThai       0x102071B1
+#define EPtiLangImplUidArabic     0x102071B2
+#define EPtiLangImplUidTagalog    0x102071B3
+#define EPtiLangImplUidCroatian   0x102071B4
+#define EPtiLangImplUidEstonian   0x102071B5
+#define EPtiLangImplUidGreek      0x102071B6
+#define EPtiLangImplUidHebrew     0x102071B7
+#define EPtiLangImplUidHindi      0x102071B8
+#define EPtiLangImplUidIndonesian 0x102071B9
+#define EPtiLangImplUidLatvian    0x102071BA
+#define EPtiLangImplUidLithuanian 0x102071BB
+#define EPtiLangImplUidMalay      0x102071BC
+#define EPtiLangImplUidRomanian   0x102071BD
+#define EPtiLangImplUidSerbian    0x102071BE
+#define EPtiLangImplUidUkrainian  0x102071BF
+#define EPtiLangImplUidVietnamese 0x102071EE
+#define	EPtiLangImplUidBulgarian  0x102071C9
+#define EPtiLangImplUidPrcChinese 0x102071AF
+#define EPtiLangImplUidHongKongChinese  0x102071AE
+#define EPtiLangImplUidTaiwanChinese    0x102071AD
+
+#define	EPtiLangImplUidEnglish2    0x102071FD
+#define EPtiLangImplUidFinnish2    0x1020730C
+#define EPtiLangImplUidGerman2     0x1020730E
+#define EPtiLangImplUidFrench2     0x10207310
+#define EPtiLangImplUidDanish2     0x10207312
+#define EPtiLangImplUidHindi2      0x10207314
+#define EPtiLangImplUidRussian2    0x10207316
+#define EPtiLangImplUidArabic2     0x10207318
+#define EPtiLangImplUidHebrew2     0x1020731A
+#define EPtiLangImplUidSwedish2    0x1020731C
+#define EPtiLangImplUidEstonian2   0x1020731E
+#define EPtiLangImplUidIcelandic2  0x10207320
+#define EPtiLangImplUidItalian2    0x10207322
+#define EPtiLangImplUidCroatian2   0x10207324
+#define EPtiLangImplUidHungarian2  0x10207326              
+#define EPtiLangImplUidNorwegian2  0x10207328
+#define EPtiLangImplUidDutch2      0x1020732A  
+#define EPtiLangImplUidChinesePrc2 0x102071FF
+#define EPtiLangImplUidChineseTW2  0x10207201
+#define EPtiLangImplUidChineseHK2  0x10207203
+
+#endif // _PTIUIDS_HRH
+
+// End of file

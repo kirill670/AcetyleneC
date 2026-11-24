@@ -1,0 +1,90 @@
+// SpriteAnimation.h
+//
+// Copyright (c) Symbian Software Ltd. 2004-2005. All rights reserved.
+//
+
+#ifndef __SPRITEANIMATION_H__
+#define __SPRITEANIMATION_H__
+
+#include "Animation.h"
+
+#include <e32base.h>
+#include <w32std.h>
+
+#include "AnimationConfig.h"
+#include "SpriteAnimationClient.h"
+
+class CAnimationDataProvider;
+class CCoeControl;
+
+/**
+Implementation of CAnimation for sprite based animations.
+
+A sprite animation displays the image using a sprite, which is a server side
+graphic object.  This is likely to be more efficient than a basic animation,
+and requires slightly less work in the client application.  However, it also
+provides less control over the actual rendering of the image.
+
+A sprite animation must be associated with an RWindow.  However, no redraw
+events will be generated for it by the animation, and the client application
+does not need to take any action once the animation has started.  Holding the
+animation when the sprite is not visible is handled automatically on the server
+side.
+
+@see CAnimationDataProvider
+@publishedAll
+@released
+*/
+class CSpriteAnimation : public CAnimation, public MAnimationDataProviderObserver
+	{
+public:
+	IMPORT_C static CSpriteAnimation* NewL(CAnimationDataProvider* aDataProvider, const TPoint& aPoint, RWsSession& aWsSession, RWindow& aWindow, MAnimationObserver* aObserver = 0);
+	IMPORT_C static CSpriteAnimation* NewL(CAnimationDataProvider* aDataProvider, const TPoint& aPoint, RWsSession& aWsSession, RWindow& aWindow, const TDesC8& aDataType, MAnimationObserver* aObserver = 0);
+	IMPORT_C ~CSpriteAnimation();
+	
+	/** Provides an CSpriteAnimation DataProvider interface to the client application.
+	@return iDataProvider A CAnimationDataProvider */
+	inline CAnimationDataProvider* DataProvider() { return iDataProvider; }
+	// From CAnimationBase:
+	virtual void Start(const TAnimationConfig& aConfig);
+	virtual void Stop();
+	virtual void Pause();
+	virtual void Resume();
+	virtual void Hold();
+	virtual void Unhold();
+	virtual void SetPosition(const TPoint& aPoint);
+	virtual void Freeze();
+	virtual void Unfreeze();	
+public:
+	IMPORT_C virtual void SetHostL(CCoeControl* aHost);
+protected:
+	CSpriteAnimation();
+	CSpriteAnimation(CAnimationDataProvider* aDataProvider, RWsSession& aWsSession);
+	void ConstructL(const TPoint& aPoint, RWindow& aWindow, const TDesC8& aDataType, MAnimationObserver* aObserver);
+	virtual void CSpriteAnimation_Reserved2();
+private:
+	TInt iCSpriteAnimation_Reserved;
+private:
+	CSpriteAnimation(const CSpriteAnimation&);	// no implementation
+	CSpriteAnimation& operator=(const CSpriteAnimation&);			// no implementation
+	void InitializeL();
+	void Reset();
+	// from MAnimationDataProviderObserver
+	virtual void DataProviderEventL(TInt aEvent, TAny* aData, TInt aDataSize);
+private:
+	enum TFlags 
+		{
+		EAnimationInitialized = 0x1	// Is the animation initialized?
+		};
+private:
+	MAnimationObserver* iObserver;
+	CAnimationDataProvider* iDataProvider;
+	RWsSession* iWsSession;
+	RWsSprite* iWsSprite;
+	RAnimDll iAnimDll;
+	RSpriteAnimationClient* iClient;
+	CCoeControl* iHost;
+	TInt iFlags;
+	};
+
+#endif

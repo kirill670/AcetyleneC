@@ -1,0 +1,94 @@
+// MTMTOOL.RH
+//
+// Copyright (c) 2000-2004 Symbian Software Ltd.  All rights reserved.
+//
+
+#ifndef __MTMTOOL_RH__
+#define __MTMTOOL_RH__
+
+#include <badef.rh>
+#include <msvstd.hrh>
+#ifdef __MESSAGING_API_V2__
+#include <e32capability.h> // this special header can be included in resource files
+#endif // __MESSAGING_API_V2__
+
+#ifdef __REMOVE_MESSAGING_API_V1__
+#undef __HIDE_MESSAGING_API_V1__
+#define __HIDE_MESSAGING_API_V1__ // forcibly hide the API
+#undef __SUPPORT_MESSAGING_API_V1__ // forcibly turn off support
+#endif //  __REMOVE_MESSAGING_API_V1__
+
+#ifdef __SUPPORT_MESSAGING_API_V1__
+#undef __HIDE_MESSAGING_API_V1__
+#endif // __SUPPORT_MESSAGING_API_V1__
+
+
+#ifndef __HIDE_MESSAGING_API_V1__
+
+STRUCT VERSION
+	{
+	WORD major;
+	WORD minor;
+	WORD build;
+	}
+
+STRUCT MTM_COMPONENT
+	{
+	LTEXT human_readable_name = "";
+	LONG component_uid;
+	LONG specific_uid;
+	WORD entry_point;
+	STRUCT version;
+	}
+
+#endif // __HIDE_MESSAGING_API_V1__
+
+#ifdef __MESSAGING_API_V2__
+
+STRUCT VERSION_V2
+	{
+	// Default version values are always provided
+	WORD major = KMtmComponentCurrentMajorVersionNumber;
+	WORD minor = KMtmComponentCurrentMinorVersionNumber;
+	WORD build = KMtmComponentCurrentBuildVersionNumber;
+	}
+
+STRUCT MTM_COMPONENT_V2
+	{
+	LTEXT human_readable_name = "";
+	LONG component_uid;
+	LONG specific_uid_v2 = KUidMtmDefaultSpecificVal; // label name change forces clients to update
+	WORD entry_point;
+	STRUCT version;
+	LTEXT filename(KMsvMaxFilenameLength);
+	}
+
+#endif // __MESSAGING_API_V2__
+
+STRUCT MTM_INFO_FILE
+	{
+	LONG mtm_type_uid;
+	LONG technology_type_uid;
+	STRUCT components[];
+	}
+
+STRUCT MTM_CAPABILITIES
+	{
+	BYTE send_capability;
+	BYTE body_capability;
+	}
+
+#ifdef __MESSAGING_API_V2__
+
+// Note that once __REMOVE_MESSAGING_API_V1__ is defined, a resource of this 
+// type *must* be in the MTM resource file (at position 3), even if that MTM
+// requires no additional capabilities to be defined
+STRUCT MTM_SECURITY_CAPABILITY_SET
+	{
+	LONG version = KMsvCurrentSecurityCapabilitySetVersion;
+	LONG capabilities[];
+	}
+
+#endif // __MESSAGING_API_V2__
+
+#endif

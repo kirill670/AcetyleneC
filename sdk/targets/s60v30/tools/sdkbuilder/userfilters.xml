@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="windows-1250"?>
+
+<filters>
+    <filter operation="exclude" location="/epoc32/release/*/z/PLATTEST/" groups="other" recursive="true">*</filter>
+    <filter operation="exclude" location="/epoc32/release/*/z/PLATTEST_*/" groups="other" recursive="true">*</filter>
+    <filter operation="include" location="/epoc32/release/wins/" groups="other" recursive="true">*.dll</filter>
+    <filter operation="include" location="/epoc32/release/winscw/" groups="other" recursive="true">*.dll</filter>
+    <filter operation="include" location="/epoc32/release/wins/" groups="other" recursive="true">*.exe</filter>
+    <filter operation="include" location="/epoc32/release/winscw/" groups="other" recursive="true">*.exe</filter>
+    <filter operation="include" location="/epoc32/stubs/" groups="other" recursive="true">*</filter>
+    <filter operation="include" location="/epoc32/cshlpcmp_template/" groups="other" recursive="true">*</filter>
+    <filter operation="include" location="/epoc32/cwplugins/" groups="other" recursive="true">*</filter>
+    <filter operation="exclude" location="/epoc32/data/" groups="other" recursive="true">plattest_*</filter> 
+    <filter operation="include" location="/epoc32/data/" groups="other" recursive="true">*</filter>
+    <filter operation="include" location="/epoc32/gcc/" groups="other" recursive="true">*</filter>
+    <filter operation="include" location="/epoc32/tools/" groups="other" recursive="true">*</filter> 
+    <filter operation="include" location="/epoc32/release/" groups="other" recursive="true">*.pdd</filter>
+    <filter operation="exclude" location="/epoc32/build" groups="other" recursive="true">*.*</filter>
+    <filter operation="exclude" location="/epoc32/engdoc/" groups="other" recursive="true">*</filter>
+    <filter operation="exclude" location="/epoc32/KSA/" groups="other" recursive="true">*</filter>
+    <filter operation="exclude" location="/epoc32/localisation/" groups="other" recursive="true">*</filter>
+    <filter operation="exclude" location="/epoc32/relinfo/" groups="other" recursive="true">*</filter>
+    <filter operation="exclude" location="/epoc32/rom/" groups="other" recursive="true">*</filter>
+    <filter operation="exclude" location="/sdkeng-bin/" groups="other" recursive="true">*</filter>
+    <filter operation="exclude" location="/epoc32/include/" groups="other" recursive="true">*plattest_*</filter>
+    <filter operation="exclude" location="/epoc32/wins*/*/plattest/" groups="other" recursive="true">*</filter>
+    <filter operation="exclude" location="/epoc32/" groups="other" recursive="true">plattest.*</filter>
+    <filter operation="exclude" location="/epoc32/release/" groups="other" recursive="true">*.dll</filter>
+    <filter operation="exclude" location="/epoc32/release/" groups="other" recursive="true">*.exe</filter>
+    <filter operation="exclude" location="/epoc32/release/" groups="other" recursive="true">*.dll.map</filter>
+    <filter operation="exclude" location="/epoc32/release/" groups="other" recursive="true">*.def</filter>
+    <filter operation="exclude" location="/epoc32/release/" groups="other" recursive="true">*.exp</filter>   
+</filters>
+    

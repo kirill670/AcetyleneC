@@ -1,0 +1,10 @@
+build/
+.cache/
+*.o
+*.obj
+*.log
+*.e32
+*.sis
+*.sisx
+*.suo
+*.user

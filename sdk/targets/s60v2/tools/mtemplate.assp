@@ -1,0 +1,17 @@
+# MTEMPLATE ASSP
+
+# TO DO: (mandatory)
+#
+# Create a new file based on this one, and fill in the appropriate values.
+#
+# The choices are:
+#	
+#   ABI     <xxx>           # specify ABI for generic code                     [default = ARMI]
+#   ASSPABI <xxx>           # specify ABI for device-specific code             [default = ARM4]
+#
+#   SINGLE  <yyy>           # Add corresponding single-process ASSP called yyy [optional]
+#   
+
+ABI	ARMI
+ASSPABI	ARM4
+

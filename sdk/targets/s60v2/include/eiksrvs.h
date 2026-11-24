@@ -1,0 +1,111 @@
+// EIKSRVS.H
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#if !defined(__EIKSRVS_H__)
+#define __EIKSRVS_H__
+
+#if !defined(__EIKAPPUI_H__)
+#include <eikappui.h>
+#endif
+
+#if !defined(__EIKENV_H__)
+#include <eikenv.h>
+#endif
+
+#if !defined(__EIKSRV_PAN__)
+#include <eiksrv.pan>
+#endif
+
+#if !defined(__APGTASK_H__)
+#include <apgtask.h>
+#endif
+
+#if !defined(__EIKSRV_H__)
+#include <eiksrv.h>
+#endif
+
+class CDictionaryFileStore;
+
+/**
+@publishedPartner
+@released
+*/
+#if defined(__SECURE_BIN__) // a bit of an abuse of this macro, but it saves creating a new macro
+_LIT(EIKAPPUI_SERVER_NAME,"!EikAppUiServer");
+#else
+_LIT(EIKAPPUI_SERVER_NAME,"EikAppUiServer");
+#endif
+
+/**
+@publishedPartner
+@released
+*/
+
+/**
+@publishedPartner
+@released
+*/
+_LIT(EIKAPPUI_SERVER_SEMAPHORE,"EikAppUiServerStartSemaphore");
+
+/**
+@internalComponent
+*/
+const TUint KEikSrvDefaultHeapSize=0x10000; 
+
+
+
+/**
+@internalComponent
+*/
+enum TEikUiOpCode
+    {
+	EEikAppUiNotifyAlarmServerOfTaskChange,
+	EEikAppUiLaunchTaskList,
+	EEikAppUiCycleTasks,
+	EEikAppUiAddToStack,
+	EEikAppUiRemoveFromStack,
+	EEikAppUiExecuteD,
+	EEikAppUiSetStatusPaneFlags,
+	EEikAppUiSetStatusPaneLayout,
+	EEikAppUiNotifer,
+	EEikAppUiBlankScreen,
+	EEikAppUiUnblankScreen,
+	EEikAppUiShutdownApps,
+	EEikAppUiEnableTaskList,
+	EEikAppUiSetSgcParams,
+	EEikAppUiBlockServerStatusPaneRedraws,
+	EEikAppUiRedrawServerStatusPane,
+	EEikAppUiPrepareForAppExit,
+	EEikAppUiSetSystemFaded,
+	EEikAppUiIsSystemFaded
+	};
+enum TEikAppUiServPanic
+	{
+	EEikSrvDefault,
+	EEikSrvSvrCreateServer,
+	EEikSrvSvrStartServer,
+	EEikSrvSrvNotFound
+	};
+	
+struct SStartThreadArg
+	{
+	//empty
+	};
+
+
+/**
+function to panic the server
+
+@internalComponent
+*/
+GLREF_C void PanicServer(TEikAppUiServPanic aPanic);
+
+class TLaunchServer
+	{
+public:
+	virtual void LaunchL(RLibrary* aLibrary)=0;
+	};
+      
+#endif

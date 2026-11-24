@@ -1,0 +1,48 @@
+/*
+* ============================================================================
+*  Name     : PbkIconInfo.rh
+*  Part of  : Phonebook\View\Rss
+*
+*  Description:
+*   	Phonebook icon info resource structure.
+*  Version:
+*
+*  Copyright (C) 2002 Nokia Corporation.
+*  This material, including documentation and any related 
+*  computer programs, is protected by copyright controlled by 
+*  Nokia Corporation. All rights are reserved. Copying, 
+*  including reproducing, storing,  adapting or translating, any 
+*  or all of this material requires the prior written consent of 
+*  Nokia Corporation. This material also contains confidential 
+*  information which may not be disclosed to others without the 
+*  prior written consent of Nokia Corporation.
+* ============================================================================
+*/
+
+/**
+ * Phonebook icon info resource structure header.
+ * Not useful and cannot be used outside Phonebook.
+ * @deprecated
+ */
+
+//  STRUCTURE DEFINITIONS
+
+#include "AknsConstants.hrh"
+
+STRUCT PBK_ICON_INFO
+    {
+    // unique phonebook icon id
+    BYTE pbkIconInfoId;
+    // Mbm file name
+    LTEXT mbmFileName;
+    // icon bitmap
+    LONG iconId;
+    // mask bitmap
+    LONG maskId;
+    // Major skin id of the icon
+    LONG skinIdMajor = EAknsMajorNone;
+    // Minor skin id of the icon
+    LONG skinIdMinor = EAknsMinorNone;
+    }
+
+// End of File

@@ -1,0 +1,270 @@
+/*
+* ==============================================================================
+*  Name        : MSenServiceDescription.h
+*  Part of     : Web Services Description
+*  Interface   : 
+*  Description : Interface (abstract) class for subclasses implementing the 
+*                most common value objects used in WSF, which are used to
+*                describe some invocable service. 
+*  Version     : 
+*
+*  Copyright © 2002-2005 Nokia. All rights reserved.
+*  This material, including documentation and any related 
+*  computer programs, is protected by copyright controlled by 
+*  Nokia. All rights are reserved. Copying, including 
+*  reproducing, storing, adapting or translating, any 
+*  or all of this material requires the prior written consent of 
+*  Nokia. This material also contains confidential 
+*  information which may not be disclosed to others without the 
+*  prior written consent of Nokia.
+* ==============================================================================
+*/
+
+#ifndef M_SEN_SERVICE_DESCRIPTION_H
+#define M_SEN_SERVICE_DESCRIPTION_H
+
+//  INCLUDES
+#include <e32base.h>
+#include <e32des8.h>	// HBufC8
+#include <s32strm.h>    // RWriteStream
+
+// CONSTANTS
+_LIT8(KSenFacetValFalse, "false");
+_LIT8(KSenFacetValTrue,	"true");
+_LIT8(KCompleteMessagesFacet, "urn:nokia.com.serene:complete-messages");
+
+// FORWARD DECLARATIONS
+class CSenFacet;
+
+// DATA TYPES
+typedef RPointerArray<CSenFacet> RFacetArray;
+
+// CLASS DECLARATION
+
+/**
+* Interface (abstract) class for subclasses implementing the  most common value
+* objects used in WSF, which are used to describe some invocable service. 
+* All of the subclasses are capable of representing themselves in XML.
+* 
+* 
+*/
+class MSenServiceDescription
+    {
+	public: 
+		
+		/**
+		* DescriptionClassType enumeration.
+		*/
+		enum TDescriptionClassType
+			{
+			ERoot = 0,
+			EBaseServiceDescription,
+			EXmlServiceDescription,
+			EIdentityProvider,
+			EServicePattern,
+			EServiceSession,
+			EWebServiceSession,
+			EBasicWebServiceSession,
+			EIdWSFServiceSession,
+			EIdWsfServiceInstance,
+			ECoreServiceConsumer,
+			ESenInternalServiceConsumer,
+			EIdWsfAuthenticationServiceClient,
+			EIdWsfDiscoveryServiceClient
+			};
+
+	    // New functions
+	
+		/**
+		* The DescriptionClassType() method is used to resolve the real
+		* subclass type in cases where instance of that class is seen
+		* through one of its superclass interfaces.	
+		* 
+		* @return TDescriptionClassType enumeration identifying the class.
+		*/
+		virtual TDescriptionClassType DescriptionClassType() = 0;
+
+		/**
+		* Method returns ETrue if this service description matches the given 
+		* pattern.
+		* The bits of information that are in the pattern are read and compared
+		* to corresponding fields in this service description. Note that a pattern
+		* may have far fewer fields and that only the non-null and non-zero-length
+		* fields are compared.
+		* For example, assume that a pattern with only a contract was defined;
+		* with  the contract set to "urn:example.com:service". Each
+		* service description with the same contract will match the pattern,
+		* even if such a service description has non-null/non-zero-length fields
+		* for other aspects.
+		* 
+		* @param	aPattern is a Service Description, typically with partial
+		*			information.
+		* @return TBool	ETrue if match, EFalse otherwise. If the value is
+		* not found from current instance, it is not used in comparison
+		* (even if offered in the given pattern).
+		*/
+		virtual TBool Matches(MSenServiceDescription& aPattern) = 0;
+
+		/**
+		* Getter for contract, which is typically some URI.
+		* 
+		* @return the Contract
+		*/
+		virtual TPtrC8 Contract() = 0;
+
+		/**
+		* Method for checking if service description has a certain facet.
+		* 
+		* @param aURI		the facet to check, typically some URI.
+		* @param aHasFacet	is ETrue if facet is found and EFalse, if not.
+		* @return		KErrNone or other system-wide Symbian error codes.
+		*/
+		virtual TInt HasFacetL(const TDesC8& aURI, TBool& aHasFacet) = 0;
+
+		/*
+		* Method for getting a facet value  from the service description 
+		* 
+		* @param aURI			the facet to get
+		* @param aValueTo		a ref-to-pointer into which the value will
+		*                       be allocated, which ownership is transferred
+		*                       to the caller.
+		* @return		KErrNone 
+		*				KErrNoMemory value couldn't be allocated due to lack 
+		*				of memory
+		*				KErrNotFound if the wanted facet was not found.
+		*				Other system-wide Symbian error codes.
+		*/
+		virtual TInt FacetValue(TDesC8& aURI, HBufC8*& aValueTo) = 0;
+
+		/**
+		* Method for adding a facet. Will NOT override an already
+		* existing facet with a same name.
+		* 
+		* @param		aFacet is the one to be added. A copy of the 
+		* 				the original facet instance will be added.
+		* @return		KErrNone or other system-wide Symbian error codes.
+		*				KErrAlreadyExists if a facet with same name exists
+		*/
+		virtual TInt AddFacetL(const CSenFacet& aFacet) = 0;
+
+		/**
+		* Method for setting a facet.Adds a new facet, if non-existent.
+		* But, if a facet with same name exists, it will be overridden.
+		* 
+		* @param		aFacet to be set. A copy of the original will be
+		*				created.
+		* @return		KErrNotFound if facet can not be found
+		*          		KErrNone     if facet was found
+		*          		KErrNoMemory if no memory could be allocated for the value
+		*				Other system-wide Symbian error codes.
+		*/
+		virtual TInt SetFacetL(const CSenFacet& aFacet) = 0;
+
+		/**
+		* Removes a characteristic (Facet) from the description
+		* 
+		* @param		aURI of the facet to be removed. 
+		* @return		KErrNone     if a Facet was successfully removed
+		*				KErrNotFound if a Facet could not be found
+		*				Other system-wide Symbian error codes.
+		*/
+		virtual TInt RemoveFacet(const TDesC8& aURI) = 0;
+
+		/**
+		* Method for getting all facets. Copies characteristics (Facets)
+		* from the description into array. For each characteristic (Facet)
+		* found in array the HasFacetL() method should return "ETrue".
+		* 
+		* @param		aFacetArray is typically an empty array, into where 
+		*	 			copies of facets will be added.	Ownership of the 
+		* 				items in this array is transferred to the caller.
+		* @return		KErrNone or other system-wide Symbian error codes.
+		*/
+		virtual TInt FacetsL(RFacetArray& aFacetArray) = 0;
+
+		/**
+		* Method returns a positive integer if this ServiceDescription matches 
+		* the given pattern in at least one aspect. Higher numbers mean a
+		* closer match.
+		* The bits of information that are in the pattern are read and compared
+		* to corresponding fields in this ServiceDescription. Note that a pattern
+		* may have far fewer fields and that only the non-null fields are compared.
+		* For example, assume that a pattern with only a contract was defined;
+		* with the contract set to "urn:example.com:service". 
+		* Each ServiceDescription with the same contract will match the pattern,
+		* even if such a ServiceDescription has non-null fields for other aspects.
+		* 
+		* @param	aPattern a ServiceDescription, typically with partial
+		*			information.
+		* @return the score. If nothing matches, returns 0
+		*/
+		virtual TInt ScoreMatchL(MSenServiceDescription& aPattern) = 0;
+
+		/**
+		* Getter for endpoint.
+		* 
+		* @return The endpoint.
+		*/
+		virtual TPtrC8 Endpoint() = 0;
+
+		/**
+		* Getter for the framework ID.
+		* 
+		* @return The framework ID or KNullDesC8 if no framework is set
+		*/
+		virtual TPtrC8 FrameworkId() = 0;
+
+		/**
+		* Getter for the framework version.
+		* 
+		* @return The framework version or KNullDesC8 if not set.
+		*/
+		virtual TPtrC8 FrameworkVersion() = 0;
+
+		/**
+		* Setter for contract.
+		* 
+		* @param aContract	the contract to be set.
+		*/
+		virtual void SetContractL(const TDesC8& aContract) = 0;
+
+		/**
+		* Setter for endpoint.
+		* 
+		* @param aEndpoint to the service. Note that endpoint cannot 
+		*        include characters which are illegal in XML. If endpoint
+		*        is an URL which contains illegal characters (like '&'-char),
+		*        those need to be encoded into XML entity form (like &amp;).
+		*        EncodeHttpCharactersLC() method from XmlUtils can be used
+		*        for encoding of basic XML entities.
+		*/
+		virtual void SetEndPointL(const TDesC8& aEndPoint) = 0;
+
+		/**
+		* Gets the service description as XML fragment in UTF-8 format.
+		* 
+		* @return the service description as XML, which ownership is
+		*         transferred to the caller.
+		*/
+		virtual HBufC8* AsXmlL() = 0;
+
+		/**
+		* Gets the service description as XML, in Unicode (UCS-2)
+		* 
+		* @return the service description as XML, which ownership is
+		*         transferred to the caller.
+		*/
+		virtual HBufC* AsXmlUnicodeL() = 0;
+
+		/**
+		* Writes this service description as XML, in UTF-8 form to a stream
+		* 
+		* @param aWriteStream	to write into.
+		*/
+		virtual void WriteAsXMLToL(RWriteStream& aWriteStream) = 0;
+	};
+
+// M_SEN_SERVICE_DESCRIPTION_H
+#endif
+
+// End of File

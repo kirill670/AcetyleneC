@@ -1,0 +1,177 @@
+/*
+* ==============================================================================
+*  Name        : SourceDopplerBase.h
+*  Part of     : Effects Framework
+*  Description : This is the definition of the source Doppler effect class.
+*
+*  Version     : 1
+*
+*  Copyright © 2004 Nokia Corporation.
+*  This material, including documentation and any related
+*  computer programs, is protected by copyright controlled by
+*  Nokia Corporation. All rights are reserved. Copying,
+*  including reproducing, storing, adapting or translating, any
+*  or all of this material requires the prior written consent of
+*  Nokia Corporation. This material also contains confidential
+*  information which may not be disclosed to others without the
+*  prior written consent of Nokia Corporation.
+* ==============================================================================
+*/
+
+#ifndef CSOURCEDOPPLERBASE_H
+#define CSOURCEDOPPLERBASE_H
+
+// INCLUDES
+
+#include <e32base.h>
+#include <DopplerBase.h>
+#include <MCustomInterface.h>
+
+const TUid KUidSourceDopplerEffect = {0x10207B15};
+
+// FORWARD DELCARATION
+class CMdaAudioConvertUtility;
+class CMdaAudioPlayerUtility;
+class CMdaAudioRecorderUtility;
+class CMdaAudioInputStream;
+class CMdaAudioOutputStream;
+class CMdaAudioToneUtility;
+class CCustomCommandUtility;
+class CCustomInterfaceUtility;
+class CMMFDevSound;
+class CMidiClientUtility;
+
+
+// CLASS DECLARATION
+
+/**
+*  This is the source Doppler effect class for managing source Doppler settings.
+*
+*  @lib SourceDopplerEffect.lib
+*  @since 3.0
+*/
+
+class CSourceDoppler : public CDoppler
+	{
+
+	public:		// Constructors and Destructor
+
+	    /**
+        * Factory function for creating the listener Doppler object.
+        * @since 3.0
+        * @param aUtility A reference to a convert utility
+        * @return pointer to CSourceDoppler object
+        */
+		IMPORT_C static CSourceDoppler* NewL( CMdaAudioConvertUtility& aUtility );
+
+	    /**
+        * Factory function for creating the listener Doppler object.
+        * @since 3.0
+        * @param aUtility A reference to an audio input stream utility
+        * @return pointer to CSourceDoppler object
+        */
+		IMPORT_C static CSourceDoppler* NewL( CMdaAudioInputStream& aUtility );
+
+	    /**
+        * Factory function for creating the listener Doppler object.
+        * @since 3.0
+        * @param aUtility A reference to an audio output stream utility
+        * @return pointer to CSourceDoppler object
+        */
+		IMPORT_C static CSourceDoppler* NewL( CMdaAudioOutputStream& aUtility );
+
+	    /**
+        * Factory function for creating the listener Doppler object.
+        * @since 3.0
+        * @param aUtility A reference to an audio player utility
+        * @return pointer to CSourceDoppler object
+        */
+		IMPORT_C static CSourceDoppler* NewL( CMdaAudioPlayerUtility& aUtility );
+
+	    /**
+        * Factory function for creating the listener Doppler object.
+        * @since 3.0
+        * @param aUtility A reference to an audio record utility
+        * @param aRecordStream ETrue if the effect is to be applied to the recording,
+        *                      EFalse if the effect is to be applied only to the playback
+        * @return pointer to CSourceDoppler object
+        */
+		IMPORT_C static CSourceDoppler* NewL( CMdaAudioRecorderUtility& aUtility, TBool aRecordStream );
+
+	    /**
+        * Factory function for creating the listener Doppler object.
+        * @since 3.0
+        * @param aUtility A reference to an audio tone utility
+        * @return pointer to CSourceDoppler object
+        */
+		IMPORT_C static CSourceDoppler* NewL( CMdaAudioToneUtility& aUtility );
+
+	    /**
+        * Factory function for creating the listener Doppler object.
+        * @since 3.0
+        * @param aDevSound A reference to a DevSound instance
+        * @return pointer to CSourceDoppler object
+        */
+		IMPORT_C static CSourceDoppler* NewL( CMMFDevSound& aDevSound );
+
+	    /**
+        * Factory function for creating the listener Doppler object.
+        * @since 3.0
+        * @param aUtility A reference to a custom command utility
+        * @return pointer to CSourceDoppler object
+        */
+		IMPORT_C static CSourceDoppler* NewL( CCustomCommandUtility* aUtility );
+
+		/**
+        * Factory function for creating the listener Doppler object.
+        * @since 3.0
+        * @param aCustomInterface A reference to a custom interface
+        * @return pointer to CSourceDoppler object
+        */
+		IMPORT_C static CSourceDoppler* NewL( MCustomInterface& aCustomInterface );
+
+		/**
+        * Factory function for creating the listener Doppler object.
+        * @since 3.0
+        * @param aUtility A reference to a CMidiClientUtility
+        * @return pointer to CSourceDoppler object
+        */
+
+		IMPORT_C static CSourceDoppler* NewL( CMidiClientUtility& aUtility );
+
+		/**
+        *
+        * Destructor
+        */
+		IMPORT_C virtual ~CSourceDoppler();
+
+	public: // functions from base class
+
+		/*
+		* From CAudioEffect
+        * Get the unique identifier of the audio effect
+        * @since 3.0
+        * @return Unique identifier
+        */
+		IMPORT_C TUid Uid() const;
+
+ 	protected:
+
+		/**
+		* Private C++ constructor for this class.
+        * @since	3.0
+        * @param	aEffectObserver	reference to event observer object
+        * @return	-
+        */
+		IMPORT_C CSourceDoppler();
+
+    protected:    // Friend classes
+
+		friend class CSourceDopplerMessageHandler;
+
+	};
+
+// of CSOURCEDoppler_H
+#endif
+
+// End of File

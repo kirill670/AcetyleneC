@@ -1,0 +1,39 @@
+[Settings]
+NumFields=4
+=
+
+[Field 1]
+Type=label
+Text=
+Left=0
+Right=-1
+Top=1
+Bottom=11
+
+[Field 2]
+Type=checkbox
+Text=&Active Perl v5.6.1 build 633
+Left=0
+Right=-1
+Top=25
+Bottom=35
+State=0
+
+
+[Field 3]
+Type=checkbox
+Text=&Java runtime 1.4.2_08
+Left=0
+Right=-1
+Top=44
+Bottom=52
+State=0
+
+[Field 4]
+Type=label
+Text=
+Left=0
+Right=-1
+Top=113
+Bottom=124
+

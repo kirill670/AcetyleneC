@@ -1,0 +1,112 @@
+// XmlFrameworkErrors.h
+// Copyright (c) 2003 Symbian Ltd.  All rights reserved.
+//
+
+/**
+This file contains allocated error codes and
+generic Panic error messages and the Panic function
+
+The XmlFramework has been allocated error codes in the range:
+-17550 to -17599 
+
+@publishedAll
+@released
+*/
+
+#ifndef __XMLFRAMEWORKERRORS_H__
+#define __XMLFRAMEWORKERRORS_H__
+
+#include <e32base.h>
+
+namespace Xml
+{
+
+// Leave Codes
+
+// ECom related
+
+const TInt KErrXmlStringDictionaryPluginNotFound	= -17550;
+const TInt KErrXmlParserPluginNotFound				= -17551;
+const TInt KErrXmlGeneratorPluginNotFound			= -17552;
+const TInt KErrXmlPluginNotFound					= -17553;
+
+// CCharSetConverter
+
+const TInt KErrXmlBadCharacterConversion			= -17554;
+const TInt KErrXmlUnsupportedCharacterSet			= -17555;
+const TInt KErrXmlUnavailableCharacterSet			= -17556;
+
+// MStringDictionary
+
+const TInt KErrXmlUnsupportedElement				= -17557;
+const TInt KErrXmlUnsupportedAttribute				= -17558;
+const TInt KErrXmlUnsupportedAttributeValue			= -17559;
+const TInt KErrXmlMissingStringDictionary			= -17560;
+
+// General
+
+const TInt KErrXmlUnsupportedDocumentVersion		= -17561;
+const TInt KErrXmlDocumentCorrupt					= -17562;
+const TInt KErrXmlStringPoolTableNotFound			= -17563;
+const TInt KErrXmlBadIndex							= -17564;
+const TInt KErrXmlUnsupportedExtInterface			= -17566;
+
+const TInt KErrXmlFirst                             = -17550;
+const TInt KErrXmlLast                              = -17599;
+
+// Panic Codes
+
+enum TXmlFrameworkPanic
+/**
+Indicates various Panic error conditions within the framework.
+
+@internalTechnology
+@interim This is the first drop of this component.
+	*/
+	{
+	/**
+	Indicates that a leave code other than that expected was received.
+	*/
+	EXmlFrameworkPanicUnexpectedLeaveCode		= 0,
+
+	/**
+	Indicates that a state other than that expected was reached.
+	*/
+	EXmlFrameworkPanicUnexpectedState			= 1,
+
+	/**
+	Indicates that logic other than that expected was reached.
+	*/
+	EXmlFrameworkPanicUnexpectedLogic			= 2,
+
+	/**
+	Indicates that internal document positioning has gone beyond EOF and has failed.
+	*/
+	EXmlFrameworkPanicPositionMisallignment		= 3,
+
+	/**
+	Indicates that a reference count has reached a negative value.
+	*/
+	EXmlFrameworkPanicReferenceCountNegative	= 4,
+
+	/**
+	Pointer is null, cannot dereference.
+	*/
+	EXmlFrameworkPanicNullPointer				= 5,
+
+	};
+
+/**
+This method panics the thread
+
+@internalTechnology
+
+@param				aError the reason for the panic
+*/
+void Panic(TXmlFrameworkPanic aError);
+
+
+}
+
+
+#endif // __XMLFRAMEWORKERRORS_H__

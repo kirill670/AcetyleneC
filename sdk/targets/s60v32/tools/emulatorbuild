@@ -1,0 +1,155 @@
+#!perl
+#
+# emulatorbuild
+#
+# Copyright (c) 2006 Symbian Software Ltd.  All rights reserved.
+#
+
+use Getopt::Long;
+use File::Spec;
+use File::Basename;
+
+my $verbose      = 0;
+my @obyFiles     = ();
+my $restore      = 0;
+my $help         = 0;
+my $RelToolsPath =
+  File::Spec->catdir( "apps", "reltools" );    #dummy path for reltools
+
+BEGIN {
+
+# Search the path from the ENV{PATH} list
+    my @pathArray = split( /\;/, $ENV{PATH} );
+    foreach my $path (@pathArray) {
+
+# check for an example cbr tool existence in each of the directories listed in env path
+        my @files = grep( /getenv\.bat$/i, glob("$path/*\.bat") );
+        if (@files) {
+            $RelToolsPath = $path;
+            last;
+        }
+    }
+    die "Error: Cannot find cbrtools path in path environment variable..\n"
+      if !-e $RelToolsPath;
+}
+
+use lib $RelToolsPath;
+use Utils;
+use FindBin;
+use lib "$FindBin::Bin";
+use EmulatorBuild;
+
+##############
+#
+# Main()
+#
+##############
+my $emulatorBuild = undef;
+
+{
+    ProcessCommandLine();
+    if (@obyFiles) {
+        $emulatorBuild = EmulatorBuild->new( \@obyFiles, $verbose );
+        $emulatorBuild->ParseObyData();
+        $emulatorBuild->AddEmulatorFilesToList();
+        $emulatorBuild->RemoveHardwareSpecificFiles();
+        $emulatorBuild->ReplaceARMToWINSCW();
+        $emulatorBuild->CheckFileExistence();
+        $emulatorBuild->ArchiveFiles();
+        print "Emulator Environment - Configured Successfully\n";
+    }
+    elsif ($restore) {
+        $emulatorBuild = EmulatorBuild->new($verbose);
+        $emulatorBuild->RestorePreviousConfiguration();
+        print "Emulator Environment - Restored Successfully\n";
+    }
+}
+
+sub ProcessCommandLine {
+    Getopt::Long::Configure("bundling");
+    GetOptions(
+        "h"   => \$help,
+        "v"   => \$verbose,
+        "r"   => \$restore
+    );
+
+    if ($#ARGV >= 0) {
+	(@obyFiles) = (@ARGV);
+    }
+
+    if ( $verbose and !@obyFiles and !$restore ) {
+        print "Verbose option is valid only with oby file inputs or -r options\n";
+        $help = 1;
+    }
+    if ( !@obyFiles and !$restore and !$help ) {
+        print "Argument/Options required required for processing\n";
+        $help = 1;
+    }
+    elsif ( @obyFiles and $restore ) {
+        print "Invalid bundling of option sets\n";
+        $help = 1;
+    }
+    if ($help) {
+        Usage();
+        exit 1;
+    }
+
+    if (@obyFiles) {
+        @obyFiles = split( /,/, join( ',', @obyFiles ) );
+        my @tempArray = ();
+        foreach my $obyFile (@obyFiles) {
+            die "Error: The input file should be a .oby file\n"
+              if ( $obyFile !~ /\.oby$/i );
+
+            if ( !-f $obyFile ) {
+                $obyFile = File::Spec->catfile( Utils::EpocRoot() . 'epoc32',
+                    'rom', basename($obyFile) );
+                push @tempArray, $obyFile;
+                die "Error: The input file does not exist\n"
+                  if ( !-f $obyFile );
+            }
+            else {
+                push @tempArray, $obyFile;
+            }
+        }
+        @obyFiles = @tempArray;
+    }
+}
+
+sub Usage {
+
+    #........1.........2.........3.........4.........5.........6.........7.....
+    print <<USAGE_EOF;
+
+Usage:
+	emulatorbuild [options] [obyfiles]
+
+Configures and restores the user file system according to the specification 
+defined by specified by pre-processed OBY file generated during buildrom process 
+for particular cut-off ROM
+
+User can specify more than a single OBY file input. This is provided to support composite rofs images
+
+The obyfile parameter specifies a file via a search path: if the
+filename is not matched or if nor path is specified, then buildrom will look in \\epoc32\\rom.
+
+The tool defaults to building an emulator environment configured when oby file names are inputted
+in the command line and when -r or -h is not used in the command line.
+
+The emulatorbuild identifies the unwanted binaries and data files not required for 
+the cut-off ROM environment and archives respective files from the users file system 
+to make sure that only mandatory files that are required for the emulator is made available
+
+The available special options are
+
+   -r			-- restores the configured emulator environment back to the previous configuration
+			   This option does not require any file name inputs
+   -v			-- verbose information displayed
+   -h			-- displays usage information
+
+P.S.:	Option -r cannot take any values
+	Option -v to be used with oby file inputs or -r option
+	For rofs images, input nand.oby and one or more nand.rofs[x].oby file names separated by white spaces
+
+USAGE_EOF
+}

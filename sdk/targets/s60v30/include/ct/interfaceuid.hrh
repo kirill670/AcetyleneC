@@ -1,0 +1,17 @@
+// InterfaceUID.hrh
+//
+// Copyright (c) 2001 Symbian Software Ltd. All rights reserved.
+//
+/**
+ * @file
+ *
+ * @publishedPartner
+ * @released
+ */
+
+#ifndef __INTERFACEUID_H__
+#define __INTERFACEUID_H__
+
+#define CT_INTERFACE_UID 0x101f4346
+
+#endif // __INTERFACEUID_H__

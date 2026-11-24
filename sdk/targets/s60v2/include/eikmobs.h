@@ -1,0 +1,88 @@
+// EIKMOBS.H
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#if !defined(__EIKMOBS_H__)
+#define __EIKMOBS_H__
+
+#include <eikcmobs.h>
+#include <w32std.h>
+#include <coedef.h>
+
+class CCoeControl;
+class CEikMenuPane;
+class CEikMenuBar;
+class CEikHotKeyTable;
+class TPoint;
+
+class MEikMenuObserver : public MEikCommandObserver
+/** Menu observer interface.
+
+Menu observers cooperate with menu bars and menu panes, initialising them 
+before display and responding to menu events appropriately. CEikAppUi implements 
+MEikMenuObserver, so these functions may be implemented on an application's 
+App UI.
+
+@publishedAll
+@released */
+	{
+public:
+	/** Menu types */
+	enum TMenuType
+		{
+		/** Menu pane. */
+		EMenuPane,
+		/** Menu bar. */
+		EMenuBar
+		};
+public:
+	IMPORT_C virtual void HandleAttemptDimmedSelectionL(TInt aCommandId);
+	IMPORT_C virtual TBool CheckHotKeyNotDimmedL(TInt aCommandId);
+	IMPORT_C virtual void RestoreMenuL(CCoeControl* aMenuControl,TInt aResourceId,TMenuType aType);
+	IMPORT_C virtual void DynInitMenuPaneL(TInt aResourceId,CEikMenuPane* aMenuPane);
+	IMPORT_C virtual void DynInitMenuBarL(TInt aResourceId,CEikMenuBar* aMenuBar);
+	IMPORT_C virtual void HandleSideBarMenuL(TInt aResourceId,const TPoint& aPos,TInt aModifiers,const CEikHotKeyTable* aTable);
+	IMPORT_C virtual void OfferKeyToAppL(const TKeyEvent& aKeyEvent,TEventCode aType);
+	/** Called by the Uikon framework to handle the emphasising or de-emphasising of 
+	a menu window. 
+	
+	CEikMenuBar objects call this on their observer to emphasise 
+	themselves when they are displayed, and de-emphasise themselves when they 
+	stop displaying.
+	
+	@param aMenuControl The menu control.
+	@param aEmphasis ETrue to emphasize the menu, EFalse otherwise. */
+	virtual void SetEmphasis(CCoeControl* aMenuControl,TBool aEmphasis)=0;
+private:
+	IMPORT_C virtual void Reserved_1_MenuObserver();
+	};
+
+
+class MEikAutoMenuObserver : public MEikMenuObserver
+/** Provides additional functionality to an auto menu title, in the form of an 
+OfferHotKeyL() method, which is not required in the normal MEikMenuObserver.
+ 
+Auto menu titles are used to ensure that some menu panes appear in every menu 
+constructed for an application. 
+
+@publishedAll 
+@released */
+	{
+public:
+	/** Offers the specified hot key to the auto menu title.
+	
+	Implement this function if you expect to handle any events from an auto menu. 
+	
+	@param aKeyEvent The key event.
+	@param aType The type of key event.
+	@return The auto menu title's response. */
+	virtual TKeyResponse OfferHotKeyL(const TKeyEvent& aKeyEvent,TEventCode aType)=0;
+public: // from MEikMenuObserver
+	IMPORT_C void SetEmphasis(CCoeControl* aMenuControl,TBool aEmphasis);
+private:
+	IMPORT_C virtual void Reserved_1_MenuObserver();
+	};
+
+
+#endif

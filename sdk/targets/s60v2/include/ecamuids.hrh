@@ -1,0 +1,19 @@
+// ECamUids.hrh
+//
+// Copyright (c) 2003-2005 Symbian Ltd.  All rights reserved.
+//
+
+#ifndef __ECAMUIDS_HRH__
+#define __ECAMUIDS_HRH__
+
+#define KSharedLibraryUidDefine  268435597
+#define KUidOnboardCameraLibrary 270513347
+
+#define	KUidOnboardCameraPlugin		0x1020707F
+#define KUidOnboardCameraInfoPlugin 0x10207080
+#define KUidOnboardCameraStubDll	0x10207081
+#define KUidOnboardCameraStubPlugin 0x10207082
+#define KUidOnboardCameraStubInfo	0x10207083
+
+#endif
+

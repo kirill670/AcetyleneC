@@ -1,0 +1,12 @@
+* text=auto
+*.exe binary
+*.dll binary
+*.lib binary
+*.dso binary
+*.a binary
+*.e32 binary
+*.sis binary
+*.sisx binary
+*.hrh text
+*.mmp text
+*.pkg text

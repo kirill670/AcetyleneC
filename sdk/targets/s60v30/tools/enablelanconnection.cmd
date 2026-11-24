@@ -1,0 +1,1 @@
+call configchange.pl --config ethernetWithCommDB --kernel EKA2 --target winscw --variant UDEB

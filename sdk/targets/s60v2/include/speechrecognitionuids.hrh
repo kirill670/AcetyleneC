@@ -1,0 +1,19 @@
+// SpeechRecognitionUids.hrh
+//
+// Copyright (c) 2003 Symbian Ltd.  All rights reserved.
+//
+#ifndef __SPEECHRECOGNITIONUIDS_HRH__
+#define __SPEECHRECOGNITIONUIDS_HRH__
+
+#define KUidASRSharedLibraryDefine 0x101F4549
+
+#define KSpeechRecognitionUtilityLibraryUidDefine 		0x101F8C9A					
+#define KSpeechRecognitionCustomCommandsLibraryUidDefine 	0x101F8C9B
+#define KSpeechRecognitionDataLibraryUidDefine 			0x101F8C9E
+
+#define KUidMediaTypeASRDefine					0x101F8CAD
+
+#endif __SPEECHRECOGNITIONUIDS_HRH__
+
+
+                    

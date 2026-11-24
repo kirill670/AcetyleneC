@@ -1,0 +1,177 @@
+/*
+* ==============================================================================
+*  Name        : SourceOrientationBase.h
+*  Part of     : Effects Framework
+*  Description : This is the definition of the source orientation effect class.
+*
+*  Version     : 1
+*
+*  Copyright © 2004 Nokia Corporation.
+*  This material, including documentation and any related
+*  computer programs, is protected by copyright controlled by
+*  Nokia Corporation. All rights are reserved. Copying,
+*  including reproducing, storing, adapting or translating, any
+*  or all of this material requires the prior written consent of
+*  Nokia Corporation. This material also contains confidential
+*  information which may not be disclosed to others without the
+*  prior written consent of Nokia Corporation.
+* ==============================================================================
+*/
+
+#ifndef CSOURCEORIENTATION_H
+#define CSOURCEORIENTATION_H
+
+// INCLUDES
+
+#include <e32base.h>
+#include <OrientationBase.h>
+#include <MCustomInterface.h>
+
+const TUid KUidSourceOrientationEffect = {0x10203834};
+
+// FORWARD DELCARATION
+class CMdaAudioConvertUtility;
+class CMdaAudioPlayerUtility;
+class CMdaAudioRecorderUtility;
+class CMdaAudioInputStream;
+class CMdaAudioOutputStream;
+class CMdaAudioToneUtility;
+class CCustomCommandUtility;
+class CCustomInterfaceUtility;
+class CMMFDevSound;
+class CMidiClientUtility;
+
+
+// CLASS DECLARATION
+
+/**
+*  This is the source orientation effect class for managing source orientation settings.
+*
+*  @lib SourceOrientationEffect.lib
+*  @since 3.0
+*/
+
+class CSourceOrientation : public COrientation
+	{
+
+	public:		// Constructors and Destructor
+
+	    /**
+        * Factory function for creating the listener orientation object.
+        * @since 3.0
+        * @param aDevSound A reference to a DevSound instance
+        * @return pointer to CSourceOrientation object
+        */
+		IMPORT_C static CSourceOrientation* NewL( CMMFDevSound& aDevSound );
+
+	    /**
+        * Factory function for creating the listener orientation object.
+        * @since 3.0
+        * @param aUtility A reference to a convert utility
+        * @return pointer to CSourceOrientation object
+        */
+		IMPORT_C static CSourceOrientation* NewL( CMdaAudioConvertUtility& aUtility );
+
+	    /**
+        * Factory function for creating the listener orientation object.
+        * @since 3.0
+        * @param aUtility A reference to an audio input stream utility
+        * @return pointer to CSourceOrientation object
+        */
+		IMPORT_C static CSourceOrientation* NewL( CMdaAudioInputStream& aUtility );
+
+	    /**
+        * Factory function for creating the listener orientation object.
+        * @since 3.0
+        * @param aUtility A reference to an audio output stream utility
+        * @return pointer to CSourceOrientation object
+        */
+		IMPORT_C static CSourceOrientation* NewL( CMdaAudioOutputStream& aUtility );
+
+	    /**
+        * Factory function for creating the listener orientation object.
+        * @since 3.0
+        * @param aUtility A reference to an audio player utility
+        * @return pointer to CSourceOrientation object
+        */
+		IMPORT_C static CSourceOrientation* NewL( CMdaAudioPlayerUtility& aUtility );
+
+	    /**
+        * Factory function for creating the listener orientation object.
+        * @since 3.0
+        * @param aUtility A reference to an audio record utility
+        * @param aRecordStream ETrue if the effect is to be applied to the recording,
+        *                      EFalse if the effect is to be applied only to the playback
+        * @return pointer to CSourceOrientation object
+        */
+		IMPORT_C static CSourceOrientation* NewL( CMdaAudioRecorderUtility& aUtility, TBool aRecordStream );
+
+	    /**
+        * Factory function for creating the listener orientation object.
+        * @since 3.0
+        * @param aUtility A reference to an audio tone utility
+        * @return pointer to CSourceOrientation object
+        */
+		IMPORT_C static CSourceOrientation* NewL( CMdaAudioToneUtility& aUtility );
+
+	    /**
+        * Factory function for creating the listener orientation object.
+        * @since 3.0
+        * @param aUtility A reference to a custom command utility
+        * @return pointer to CSourceOrientation object
+        */
+		IMPORT_C static CSourceOrientation* NewL( CCustomCommandUtility* aUtility );
+
+		/**
+        * Factory function for creating the listener orientation object.
+        * @since 3.0
+        * @param aCustomInterface A reference to a custom interface
+        * @return pointer to CSourceOrientation object
+        */
+		IMPORT_C static CSourceOrientation* NewL( MCustomInterface& aCustomInterface );
+
+		/**
+        * Factory function for creating the listener orientation object.
+        * @since 3.0
+        * @param aUtility A reference to a CMidiClientUtility
+        * @return pointer to CSourceOrientation object
+        */
+		IMPORT_C static CSourceOrientation* NewL( CMidiClientUtility& aUtility );
+
+		/**
+        *
+        * Destructor
+        */
+		IMPORT_C virtual ~CSourceOrientation();
+
+
+	public: // functions from base class
+
+		/*
+		* From CAudioEffect
+        * Get the unique identifier of the audio effect
+        * @since 3.0
+        * @return Unique identifier
+        */
+		IMPORT_C TUid Uid() const;
+
+	protected:
+
+		/**
+		* Private C++ constructor for this class.
+        * @since	3.0
+        * @param	aEffectObserver	reference to event observer object
+        * @return	-
+        */
+		IMPORT_C CSourceOrientation();
+
+    protected:    // Friend classes
+
+		friend class CSourceOrientationMessageHandler;
+
+	};
+
+// of CSOURCEORIENTATION_H
+#endif
+
+// End of File

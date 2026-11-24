@@ -1,0 +1,15 @@
+// CSY.RH
+//
+// Copyright (c) 1998-2005 Symbian Ltd.  All rights reserved.
+//
+
+// PLEASE NOTE: This file is part of Version 1 of C32 - that is, the single-threaded version.
+// The multi-threaded C32 version of this file is in c32\INC
+
+
+/** @file CSY.RH */
+
+STRUCT CSY_INFORMATION
+	{
+	LTEXT humanreadablename;
+	}

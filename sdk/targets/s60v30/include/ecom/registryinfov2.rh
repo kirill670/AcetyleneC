@@ -1,0 +1,45 @@
+// RegistryInfoV2.rh
+//
+// Copyright (c) 2003-2005 Symbian Ltd.  All rights reserved.
+//
+
+#define RESOURCE_FORMAT_VERSION_2 0x101FB0B9
+#define CUSTOM_RESOLVER_INTERFACE_UID 0x10009D90
+
+#ifdef SYMBIAN_SECURE_ECOM	
+UID2 0x101F747D
+#endif // SYMBIAN_SECURE_ECOM
+
+STRUCT IMPLEMENTATION_INFO
+	{
+	LONG	implementation_uid;
+	BYTE	version_no;
+	LTEXT	display_name;
+	LTEXT8	default_data;
+	LTEXT8	opaque_data;
+	BYTE	rom_only;
+	}
+
+STRUCT BINARY_IMPLEMENTATION_INFO
+	{
+	LONG	implementation_uid;
+	BYTE	version_no;
+	LTEXT	display_name;
+	LEN BYTE BYTE	default_data[];
+	LEN BYTE BYTE	opaque_data[];
+	BYTE	rom_only;
+	}
+
+STRUCT INTERFACE_INFO
+	{
+	LONG	interface_uid;
+	STRUCT	implementations[];
+	}
+
+STRUCT REGISTRY_INFO
+	{
+	LONG	resource_format_version;
+	LONG	dll_uid;
+	STRUCT	interfaces[];
+	}
+
