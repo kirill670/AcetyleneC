@@ -13,7 +13,7 @@ Studio: project tree, tabbed editor with C/C++ syntax highlighting, build pipeli
 | `vendor/tinycc` built as ARM cross compiler (`build/bin/acetylene-cc.exe`) | works | Emits ARM ELF32 objects, EABI v4, soft-float ABI, Symbian-compatible `e_flags`. |
 | `acetylene-ld` — ARM ELF linker | works | Resolves against the SDK's own `.lib` import libraries, applies ARM relocations, keeps `.directive` sections and `#<DLL>` import markers, emits `.rel.text`. |
 | E32 image | works via `elf2e32` | The official Symbian post-linker is bundled per target and driven by the IDE. Header, code section, relocation and CRC are produced by Symbian's own tool. |
-| E32 **import table** | **not generated** | This is the honest gap: the 2005/2007 `elf2e32` versions in the SDKs only build imports from the V2 "directive" flow of the original GCCE linker. Our linker reproduces the stub code and directives, but the produced E32 ends up with `Dll ref table count: 0`. Calls into OS DLLs will not bind on device yet. Static code, data and entry point are correct. |
+| E32 **import table** | **not generated** | The one functional gap. Our linker reproduces the stub code, `.directive` sections and `#<DLL>` markers, but `elf2e32` still emits `Dll ref table count: 0`. Every tested input shape and both `elftran` builds failed — the full log of attempts, the exact Carbide link recipe and the missing header-CRC search are in `docs/E32-IMPORTS.md`. Code, data, entry point and relocation tables are correct. |
 | SIS / SISX packaging | works via platform `makesis` | `acetylene-sis` validates the `.pkg`, invokes the target's `makesis.exe` (same as Carbide does) and produces a real SISX (verified: `7a 1a 20 10` header, 380-byte package from the test pkg). |
 | Certificate generator | works | `acetylene-makekeys` generates RSA keys, self-signed X.509 v3 certs, PEM/PKCS#1 output. Verified independently with a Python DER/RSA verifier. |
 | Signing with those certs | **not accepted by `signsis`** | The SDK's `signsis.exe` only parses its own PEM profile and rejects ours. Sign with keys produced by the bundled `makekeys.exe` for now. |
@@ -73,7 +73,8 @@ built from them without checking those terms.
 
 ## Known gaps, stated plainly
 
-* E32 import tables are not emitted (see above). Fixing this needs either the original GCCE
-  `-shared` link flow reproduced exactly, or a from-scratch E32 writer with a verified Idata layout.
+* E32 import tables are not emitted; `docs/E32-IMPORTS.md` records exactly what was tried and what
+  the next attempt needs (reproduce the GCCE `-shared` link product for `elftran`, or recover the
+  header CRC to splice an Idata table into the `elf2e32` output).
 * `signsis` rejects our generated certificates; the SDK `makekeys` path works.
 * C++ relies on the bundled GCCE compiler, not on an MIT-licensed frontend.
