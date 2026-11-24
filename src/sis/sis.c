@@ -218,7 +218,7 @@ int main(int argc, char **argv)
             if (dot)
                 *dot = 0;
         }
-        strncat(derived, ".sisx", sizeof(derived) - strlen(derived) - 1);
+        strncat(derived, ".sis", sizeof(derived) - strlen(derived) - 1);
         out_path = derived;
     }
     if (!sdk) {
