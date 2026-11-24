@@ -1125,9 +1125,15 @@ static void run_build_pipeline(void)
     }
     (void)compiled;
 
-    snprintf(cmd, sizeof(cmd),
-             "\"%s\" -o \"%s\" -L \"%s/sdk/targets/%s/lib\" %s -lecrt0 -lestlib -leuser -ldrtaeabi -lusrt2_2",
-             ld, elf_file, root, g_ide.proj.target, objects);
+    if (g_ide.proj.is_dll) {
+        snprintf(cmd, sizeof(cmd),
+                 "\"%s\" -o \"%s\" -L \"%s/sdk/targets/%s/lib\" -e E32Dll %s -lestlib -leuser -ldrtaeabi -lusrt2_2",
+                 ld, elf_file, root, g_ide.proj.target, objects);
+    } else {
+        snprintf(cmd, sizeof(cmd),
+                 "\"%s\" -o \"%s\" -L \"%s/sdk/targets/%s/lib\" %s -lecrt0 -lestlib -leuser -ldrtaeabi -lusrt2_2",
+                 ld, elf_file, root, g_ide.proj.target, objects);
+    }
     buf_put(&g_ide.build_log, cmd, strlen(cmd));
     buf_u8(&g_ide.build_log, 10);
     ide_set_status("Linking...");
@@ -1139,10 +1145,23 @@ static void run_build_pipeline(void)
         return;
     }
 
-    snprintf(cmd, sizeof(cmd),
-             "\"%s\" --elfinput=\"%s\" --output=\"%s\" --targettype=EXE --uid1=0x1000007A --uid2=0x100039CE "
-             "--uid3=%s --sid=%s --heap=%d --stack=%d --uncompressed",
-             elf2e32, elf_file, e32_file, g_ide.proj.uid3, g_ide.proj.uid3, g_ide.proj.heap, g_ide.proj.stack);
+    if (g_ide.proj.is_dll) {
+        char def_file[768];
+        char dso_file[768];
+        char linkas[768];
+        snprintf(def_file, sizeof(def_file), "%s/%s.def", build_dir, g_ide.proj.name);
+        snprintf(dso_file, sizeof(dso_file), "%s/%s.dso", build_dir, g_ide.proj.name);
+        snprintf(linkas, sizeof(linkas), "%s{000a0000}[%s].dll", g_ide.proj.name, g_ide.proj.uid3);
+        snprintf(cmd, sizeof(cmd),
+                 "\"%s\" --elfinput=\"%s\" --output=\"%s\" --targettype=DLL --uid1=0x10000079 --uid2=0x1000008D "
+                 "--uid3=%s --sid=%s --dlldata --uncompressed --defoutput=\"%s\" --dso=\"%s\" --linkas=\"%s\"",
+                 elf2e32, elf_file, e32_file, g_ide.proj.uid3, g_ide.proj.uid3, def_file, dso_file, linkas);
+    } else {
+        snprintf(cmd, sizeof(cmd),
+                 "\"%s\" --elfinput=\"%s\" --output=\"%s\" --targettype=EXE --uid1=0x1000007A --uid2=0x100039CE "
+                 "--uid3=%s --sid=%s --heap=%d --stack=%d --uncompressed",
+                 elf2e32, elf_file, e32_file, g_ide.proj.uid3, g_ide.proj.uid3, g_ide.proj.heap, g_ide.proj.stack);
+    }
     buf_put(&g_ide.build_log, cmd, strlen(cmd));
     buf_u8(&g_ide.build_log, 10);
     ide_set_status("Post-linking (elf2e32)...");
@@ -1901,6 +1920,8 @@ void ide_open_project(const char *path)
                 g_ide.proj.heap = (int)strtol(eq + 1, NULL, 0);
             else if (strcmp(p, "stack") == 0)
                 g_ide.proj.stack = (int)strtol(eq + 1, NULL, 0);
+            else if (strcmp(p, "is_dll") == 0)
+                g_ide.proj.is_dll = (int)strtol(eq + 1, NULL, 0);
             else if (strcmp(p, "source") == 0) {
                 sv_push(&g_ide.proj.sources, eq + 1);
                 {

@@ -1,0 +1,9 @@
+[project]
+name=plugin
+target=s60v5
+uid3=0xE0000004
+caps=None
+heap=65536
+stack=32768
+is_dll=1
+source=examples/dll/plugin.c
