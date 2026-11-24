@@ -17,7 +17,7 @@ Studio: project tree, tabbed editor with C/C++ syntax highlighting, build pipeli
 | SIS / SISX packaging | works via platform `makesis` | `acetylene-sis` validates the `.pkg`, invokes the target's `makesis.exe` (same as Carbide does) and produces a real SISX (verified: `7a 1a 20 10` header, 380-byte package from the test pkg). |
 | Certificate generator | works | `acetylene-makekeys` generates RSA keys, self-signed X.509 v3 certs, PEM/PKCS#1 output. Verified independently with a Python DER/RSA verifier. |
 | Signing with those certs | **not accepted by `signsis`** | The SDK's `signsis.exe` only parses its own PEM profile and rejects ours. Sign with keys produced by the bundled `makekeys.exe` for now. |
-| C++ | via bundled GCCE g++ | `sdk/gcce/bin/arm-none-symbianelf-g++.exe` (the official Symbian toolchain that ships in the SDK distribution, GPL). The originally planned MIT C++ frontend was **not** delivered — a half-working transpiler was removed rather than shipped as a stub. |
+| C++ | works (subset) | `acetylene-cxx`, MIT, our own front-end: classes, fields, methods, constructors, member access, out-of-line definitions, Itanium mangling (`_ZN7Counter3GetEv`). It transpiles to C and then goes through TCC. Rejects inheritance, virtuals, destructors, references and templates with an explicit error. The bundled GCCE `g++` is still available for full C++. |
 | C headers/libs from all SDKs | yes | `sdk/targets/{s60v2,s60v30,s60v31,s60v32,s60v5}/{include,lib,tools}` — imported from the official archives. |
 | IDE | works | Tree, tabs, highlighting, editing with undo/redo, find/goto, build to `.e32`, error list, output log. |
 

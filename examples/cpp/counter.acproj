@@ -1,0 +1,9 @@
+[project]
+name=counter
+target=s60v5
+uid3=0xE0000002
+caps=None
+heap=65536
+stack=32768
+is_dll=0
+source=examples/cpp/counter.cpp

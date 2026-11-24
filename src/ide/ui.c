@@ -228,7 +228,7 @@ void ide_init(HWND hwnd)
     sv_init(&g_ide.tree_files);
     buf_init(&g_ide.build_log);
     strcpy(g_ide.proj.name, "untitled");
-    strcpy(g_ide.proj.target, "s60v3");
+    strcpy(g_ide.proj.target, "s60v30");
     strcpy(g_ide.proj.uid3, "0xE0000001");
     strcpy(g_ide.proj.caps, "None");
     g_ide.proj.heap = 0x10000;
@@ -903,6 +903,8 @@ static void run_build_pipeline(void)
     int i;
     int code;
 
+    if (strcmp(g_ide.proj.target, "s60v3") == 0)
+        snprintf(g_ide.proj.target, sizeof(g_ide.proj.target), "s60v30");
     GetModuleFileNameA(NULL, exe_dir, sizeof(exe_dir));
     for (i = (int)strlen(exe_dir); i > 0 && exe_dir[i] != '\\' && exe_dir[i] != '/'; i--)
         exe_dir[i] = 0;
@@ -929,13 +931,24 @@ static void run_build_pipeline(void)
     snprintf(e32_file, sizeof(e32_file), "%s/%s.e32", build_dir, g_ide.proj.name);
 
     if (ac_has_ext(d->path, ".cpp") || ac_has_ext(d->path, ".cc")) {
-        char gpp[768];
-        char inc[768];
-        snprintf(gpp, sizeof(gpp), "%s/sdk/gcce/bin/arm-none-symbianelf-g++.exe", root);
-        snprintf(inc, sizeof(inc), "%s/sdk/targets/%s/include", root, g_ide.proj.target);
+        char cxx[768];
+        char gen_c[768];
+        snprintf(cxx, sizeof(cxx), "%s/acetylene-cxx.exe", exe_dir);
+        snprintf(gen_c, sizeof(gen_c), "%s/%s.gen.c", build_dir, g_ide.proj.name);
+        snprintf(cmd, sizeof(cmd), "\"%s\" \"%s\" -o \"%s\"", cxx, src_abs, gen_c);
+        buf_put(&g_ide.build_log, cmd, strlen(cmd));
+        buf_u8(&g_ide.build_log, 0x0a);
+        ide_set_status("Translating C++...");
+        UpdateWindow(g_ide.hwnd);
+        code = run_capture(cmd, NULL, 0);
+        if (code != 0) {
+            add_msg("C++ frontend failed (exit %d)", code);
+            ide_set_status("C++ FAILED");
+            return;
+        }
         snprintf(cmd, sizeof(cmd),
-                 "\"%s\" -I\"%s\" -march=armv5t -mthumb-interwork -mapcs -fno-exceptions -fno-rtti -fno-builtin -c \"%s\" -o \"%s\"",
-                 gpp, inc, src_abs, obj_file);
+                 "\"%s\" -I\"%s/sdk/include\" -I\"%s/sdk/include/tcc\" -c \"%s\" -o \"%s\"",
+                 tcc, root, root, gen_c, obj_file);
     } else {
         snprintf(cmd, sizeof(cmd),
                  "\"%s\" -I\"%s/sdk/include\" -I\"%s/sdk/include/tcc\" -c \"%s\" -o \"%s\"",
