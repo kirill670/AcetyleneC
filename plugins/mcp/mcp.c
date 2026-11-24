@@ -589,6 +589,11 @@ static char *call_tool(const char *ps, const char *pe)
         Job *j;
         if (!as || !obj_get(as, ae, "path", &vs, &ve) || !as_string(vs, ve, path, sizeof(path)))
             return tool_text_ex("missing path", 1);
+        if (GetFileAttributesA(path) == INVALID_FILE_ATTRIBUTES) {
+            char msg[1200];
+            snprintf(msg, sizeof(msg), "no such file: %.1000s", path);
+            return tool_text_ex(msg, 1);
+        }
         j = (Job *)calloc(1, sizeof(Job));
         if (!j)
             return tool_text_ex("out of memory", 1);
