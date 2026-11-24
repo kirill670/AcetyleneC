@@ -235,14 +235,24 @@ int main(int argc, char **argv)
             fprintf(stderr, "acetylene-sis: %s not found\n", makesis);
             return 1;
         }
-        snprintf(args, sizeof(args), "\"%s\" \"%s\"", pkg_path, out_path);
-        printf("running %s\n", makesis);
-        code = run_tool(makesis, args, log, sizeof(log));
-        if (code != 0) {
-            fprintf(stderr, "acetylene-sis: makesis failed (%d)\n", code);
-            return 1;
-        }
+        {
+            char sis_path[1024];
+            snprintf(sis_path, sizeof(sis_path), "%s", out_path);
+            if (ac_has_ext(sis_path, ".sisx") || ac_has_ext(sis_path, ".SISX"))
+                sis_path[strlen(sis_path) - 1] = 0;
+            snprintf(args, sizeof(args), "\"%s\" \"%s\"", pkg_path, sis_path);
+            code = run_tool(makesis, args, log, sizeof(log));
+            if (code != 0) {
+                fprintf(stderr, "acetylene-sis: makesis failed (%d)", code);
+                fprintf(stderr, "\n");
+                return 1;
+            }
+            if (strcmp(sis_path, out_path) != 0) {
+                DeleteFileA(out_path);
+                MoveFileA(sis_path, out_path);
+            }
         printf("wrote %s\n", out_path);
+        }
     }
     if (cert && key) {
         char signsis[1024];

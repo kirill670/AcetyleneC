@@ -124,6 +124,10 @@ typedef struct {
     int menu_hover;
     int status_msg_timer;
     char status[256];
+    char emu_path[512];
+    char emu_args[512];
+    char emu_workdir[512];
+    char last_sisx[768];
     int dirty_layout;
     int find_open;
     char find_text[128];
@@ -154,6 +158,13 @@ void ide_close_file(int index);
 void ide_goto_line(int line);
 void ide_find(void);
 void ide_set_status(const char *fmt, ...);
+int run_capture(const char *cmd, char *log, size_t logcap);
+void add_msg(const char *fmt, ...);
+void ide_settings_load(void);
+void ide_settings_save(void);
+void ide_choose_emulator(void);
+void ide_package(void);
+void ide_run(void);
 
 Doc *doc_active(void);
 void doc_init(Doc *d, const char *path);

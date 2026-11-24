@@ -18,9 +18,17 @@ Studio: project tree, tabbed editor with C/C++ syntax highlighting, build pipeli
 | SIS / SISX packaging | works via platform `makesis` | `acetylene-sis` validates the `.pkg`, invokes the target's `makesis.exe` (same as Carbide does) and produces a real SISX (verified: `7a 1a 20 10` header, 380-byte package from the test pkg). |
 | Certificate generator | works | `acetylene-makekeys` generates RSA keys, self-signed X.509 v3 certs, PEM/PKCS#1 output. Verified independently with a Python DER/RSA verifier. |
 | Signing with those certs | **not accepted by `signsis`** | The SDK's `signsis.exe` only parses its own PEM profile and rejects ours. Sign with keys produced by the bundled `makekeys.exe` for now. |
+| Run on emulator | adapter to an external EKA emulator | F5 packages and launches the emulator you configured; the SDK never bundles it. Exact command line goes to the output pane. See `docs/EMULATOR.md`. |
 | C++ | works (subset) | `acetylene-cxx`, MIT, our own front-end: classes, fields, methods, constructors, member access, out-of-line definitions, Itanium mangling (`_ZN7Counter3GetEv`). It transpiles to C and then goes through TCC. Rejects inheritance, virtuals, destructors, references and templates with an explicit error. The bundled GCCE `g++` is still available for full C++. |
 | C headers/libs from all SDKs | yes | `sdk/targets/{s60v2,s60v30,s60v31,s60v32,s60v5}/{include,lib,tools}` — imported from the official archives. |
 | IDE | works | Tree, tabs, C/C++ highlighting, editing with undo/redo, find bar (Ctrl+F, Enter = next) and go-to-line (Ctrl+G), multi-file project build where every `source=` entry is compiled and linked, error list with the exact command log, status bar. Verified interactively: typing, undo, save-to-disk, search match, C and C++ builds. |
+
+## Running on an emulator
+
+No emulator is shipped. **Build > Set Emulator...** points AcetyleneC at an EKA2 emulator you
+downloaded yourself; **F5** then packages the project when needed and starts it with the built
+paths substituted (`%e32%`, `%sisx%`, `%project%`). Settings live in `acetylene.ini` next to the
+IDE, format and examples in `docs/EMULATOR.md`.
 
 ## Layout
 

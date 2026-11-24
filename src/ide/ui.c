@@ -56,6 +56,7 @@ enum {
     CMD_SIGN,
     CMD_RUN,
     CMD_CLEAN,
+    CMD_SET_EMU = 350,
     CMD_TOGGLE_OUTPUT = 400,
     CMD_TOGGLE_TREE,
     CMD_ABOUT = 500
@@ -93,6 +94,8 @@ static const MenuItem k_build[] = {
     {"", "", 0, 1},
     {"Package SISX", "", CMD_PACKAGE, 0},
     {"Sign Package", "", CMD_SIGN, 0},
+    {"", "", 0, 1},
+    {"Set Emulator...", "", CMD_SET_EMU, 0},
     {"", "", 0, 1},
     {"Run", "F5", CMD_RUN, 0},
 };
@@ -234,6 +237,7 @@ void ide_init(HWND hwnd)
     g_ide.proj.heap = 0x10000;
     g_ide.proj.stack = 0x8000;
     g_ide.dirty_layout = 1;
+    ide_settings_load();
 }
 
 void ide_layout(void)
@@ -910,7 +914,7 @@ void ide_find(void)
     ide_set_status("type to search, Enter = next, Esc = close");
 }
 
-static int run_capture(const char *cmd, char *log, size_t logcap)
+int run_capture(const char *cmd, char *log, size_t logcap)
 {
     STARTUPINFOA si;
     PROCESS_INFORMATION pi;
@@ -976,7 +980,7 @@ static void join_path(char *out, size_t cap, const char *a, const char *b)
     snprintf(out, cap, "%s/%s", a, b);
 }
 
-static void add_msg(const char *fmt, ...)
+void add_msg(const char *fmt, ...)
 {
     va_list ap;
     BuildMsg *m;
@@ -1270,13 +1274,16 @@ static void ide_command(int cmd)
         ide_build();
         break;
     case CMD_PACKAGE:
-        ide_set_status("Packaging: configure a .pkg in the project, then Build > Package SISX");
+        ide_package();
+        break;
+    case CMD_SET_EMU:
+        ide_choose_emulator();
         break;
     case CMD_SIGN:
         ide_set_status("Signing: run acetylene-makekeys once, then acetylene-sign (see Help > About)");
         break;
     case CMD_RUN:
-        ide_set_status("Run: build first; device binary is written to build\\");
+        ide_run();
         break;
     case CMD_CLEAN:
         ide_set_status("Clean: delete the build folder manually for now");
@@ -1365,6 +1372,10 @@ int ide_key(int vk, int ctrl, int shift, int alt)
     }
     if (ctrl && vk == 'A') {
         ide_command(CMD_SELECT_ALL);
+        return 1;
+    }
+    if (ctrl && vk == 'P') {
+        ide_command(CMD_PACKAGE);
         return 1;
     }
     if (ctrl && vk == 'F') {
