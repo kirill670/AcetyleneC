@@ -136,6 +136,13 @@ typedef struct {
     char replace_text[128];
     int find_focus;
     int find_caret;
+    int comp_open;
+    int comp_index;
+    int comp_count;
+    char comp_items[8][96];
+    int comp_x;
+    int comp_y;
+    int viewer_mode;
     int tree_sel;
     StrVec tree_files;
 } Ide;
@@ -194,5 +201,27 @@ void doc_paste(Doc *d);
 int doc_has_selection(Doc *d);
 void doc_sel_range(Doc *d, int *a, int *b);
 void doc_scroll_to_caret(Doc *d);
+
+
+void ide_host_run_named(const char *id);
+
+void plugins_load(void);
+int plugins_command_count(void);
+const char *plugins_command_id(int i);
+const char *plugins_command_label(int i);
+int plugins_menu_count(void);
+const char *plugins_menu_name(int i);
+const char *plugins_menu_label(int i);
+const char *plugins_menu_cmd(int i);
+int plugins_command_find(const char *cmd);
+void plugins_exec_index(int i);
+void plugins_fire(int event, const char *arg);
+void plugins_doc_changed(void);
+int plugins_complete(const char *prefix, char *out, int cap);
+void *plugins_viewer_for(const char *path, void **user);
+int plugins_diag_count(void);
+int plugins_diag_severity(int i);
+const char *plugins_diag_text(int i);
+int plugins_diag_line(int i);
 
 #endif

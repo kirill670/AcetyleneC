@@ -22,6 +22,7 @@ Studio: project tree, tabbed editor with C/C++ syntax highlighting, build pipeli
 | C++ | works (subset) | `acetylene-cxx`, MIT: classes, fields, methods with prototypes, constructors, `new`/`delete`, `this->`, member access, out-of-line definitions, Itanium mangling. Transpiles to C, then TCC. Rejects inheritance, virtuals, destructors, references and templates with an explicit error. GCCE `g++` remains available for full C++. |
 | C headers/libs from all SDKs | yes | `sdk/targets/{s60v2,s60v30,s60v31,s60v32,s60v5}/{include,lib,tools}` — imported from the official archives. |
 | IDE | works | Tree, tabs, C/C++ highlighting, editing with undo/redo, find bar (Ctrl+F, Enter = next) and go-to-line (Ctrl+G), multi-file project build where every `source=` entry is compiled and linked, error list with the exact command log, status bar. Verified interactively: typing, undo, save-to-disk, search match, C and C++ builds. |
+| Plugins | works | VS Code-style `plugins/<name>/{plugin.json,*.dll}` loaded at start-up, C ABI vtable for buffers, commands, menus, diagnostics, completions, viewers and events. Four examples ship: autocomplete, image viewer, JSON linter and an MCP server. See `docs/PLUGINS.md`. |
 
 ## Running on an emulator
 
@@ -43,6 +44,8 @@ sdk/targets/<t>      headers, import libs and tools per S60 target
 sdk/gcce             official Symbian GCCE toolchain (C++ compiler, ld, readelf)
 sdk/include          C bindings for Symbian OS (mangled symbol declarations)
 tools/sdkimport.sh   rebuilds sdk/targets from the official SDK archives
+tools/mcp-stdio.c    stdio bridge into the MCP plugin, for clients that only speak stdio
+plugins/             bundled plugins (autocomplete, imageviewer, jsonlint, mcp)
 vendor               tinycc (LGPL-2.1), unshield (MIT), zlib
 ```
 
@@ -53,7 +56,8 @@ by the bootstrap scripts; nothing is installed system-wide.
 
 ```sh
 sh build/build-tcc.sh          # TCC as a Windows-hosted ARM cross compiler
-sh build/build-tools.sh        # linker, makekeys, sis, IDE
+sh build/build-tools.sh        # linker, makekeys, sis, IDE, MCP bridge, plugin test host
+sh build/build-plugins.sh      # plugins/*/*.dll
 ```
 
 ## Using the IDE
@@ -81,6 +85,18 @@ the mangled Symbian entry points explicitly, e.g.:
 GLDEF_C TInt E32Main(void) { return KErrNone; }
 ```
 
+## Plugins
+
+Drop a directory into `plugins/` with a `plugin.json` and a DLL exporting `ac_plugin_api` /
+`ac_plugin_init`; AcetyleneC picks it up at start-up and lists its commands in the **Plugins** menu.
+Plugins can read and edit the buffer, register commands and menu items in the existing menus, add
+diagnostics to the output pane, provide completions, draw file viewers, subscribe to editor and build
+events, and trigger the IDE's own commands. Load results and failures land in
+`build/bin/acetylene-ide.log`.
+
+Everything is documented in [`docs/PLUGINS.md`](docs/PLUGINS.md), which also covers the MCP server
+and the `acetylene-mcp-stdio.exe` bridge.
+
 ## Licensing
 
 Our code is MIT (see `LICENSE`). Vendored components keep their own licenses: TCC (LGPL-2.1),
@@ -90,8 +106,12 @@ built from them without checking those terms.
 
 ## Known gaps, stated plainly
 
-* E32 import tables are not emitted; `docs/E32-IMPORTS.md` records exactly what was tried and what
-  the next attempt needs (reproduce the GCCE `-shared` link product for `elftran`, or recover the
-  header CRC to splice an Idata table into the `elf2e32` output).
-* `signsis` rejects our generated certificates; the SDK `makekeys` path works.
-* C++ relies on the bundled GCCE compiler, not on an MIT-licensed frontend.
+* Nothing produced here has been executed on real Symbian hardware. The E32 import tables are
+  validated structurally (our own record walker, `tests/check-e32.py`) and by Symbian's dumper for
+  the first record; a loader-level test still needs a device or a working EKA image.
+* `sdk/targets/s60v2` ships headers, import libraries and packaging tools only — S60v2 uses EPOC PE
+  binaries and the link path for that format is not implemented.
+* C++ is a documented subset. Inheritance, virtuals, destructors, references and templates are
+  rejected with an explicit error; the bundled GCCE `g++` covers the full language.
+* The MCP plugin exposes the editor over loopback TCP with no authentication. It is a local
+  developer tool and binds `127.0.0.1` only.

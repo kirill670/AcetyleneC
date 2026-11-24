@@ -1,0 +1,8 @@
+{
+  "id": "acetylene.autocomplete",
+  "name": "Autocomplete",
+  "version": "1.0.0",
+  "api": 1,
+  "entry": "autocomplete.dll",
+  "description": "Word and keyword completion for the editor"
+}

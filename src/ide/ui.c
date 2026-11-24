@@ -1,4 +1,6 @@
 #include "ide.h"
+#include "../../include/ac_plugin.h"
+#include <ctype.h>
 #include <stdarg.h>
 
 Ide g_ide;
@@ -119,12 +121,15 @@ typedef struct {
     int count;
 } MenuDef;
 
+static const MenuItem k_none_items[] = {{"", "", 0, 1}};
+
 static const MenuDef k_menus[] = {
     {"File", k_file, (int)(sizeof(k_file) / sizeof(k_file[0]))},
     {"Edit", k_edit, (int)(sizeof(k_edit) / sizeof(k_edit[0]))},
     {"Build", k_build, (int)(sizeof(k_build) / sizeof(k_build[0]))},
     {"View", k_view, (int)(sizeof(k_view) / sizeof(k_view[0]))},
     {"Help", k_help, (int)(sizeof(k_help) / sizeof(k_help[0]))},
+    {"Plugins", k_none_items, 0},
 };
 static const int k_nmenus = (int)(sizeof(k_menus) / sizeof(k_menus[0]));
 
@@ -242,6 +247,7 @@ void ide_init(HWND hwnd)
     g_ide.proj.stack = 0x8000;
     g_ide.dirty_layout = 1;
     ide_settings_load();
+    plugins_load();
 }
 
 void ide_layout(void)
@@ -368,8 +374,10 @@ static void panel_draw(HDC dc, int px, int py, const CtxItem *items, int count, 
     int height = 8;
     for (k = 0; k < count; k++) {
         int ww;
-        if (items[k].sep)
+        if (items[k].sep) {
+            height += 8;
             continue;
+        }
         ww = text_w(dc, items[k].label, g_ide.font_ui) + text_w(dc, items[k].shortcut, g_ide.font_ui) + 48;
         if (ww > wmax)
             wmax = ww;
@@ -525,6 +533,10 @@ static void copy_output_line(void)
 static void ctx_execute(int cmd)
 {
     Doc *d = doc_active();
+    if (cmd <= -1000) {
+        plugins_exec_index(-1000 - cmd);
+        return;
+    }
     switch (cmd) {
     case 900:
         if (g_ide.tree_sel >= 0 && g_ide.tree_sel < g_ide.tree_files.count)
@@ -666,16 +678,67 @@ static void draw_toolbar(HDC dc, int w)
     fill(dc, (RECT){0, 55, w, 56}, C_BORDER);
 }
 
+static CtxItem g_menu_items[96];
+static int g_menu_count;
+
+static void build_menu(int idx)
+{
+    const MenuDef *m = &k_menus[idx];
+    int n = 0;
+    int i;
+    for (i = 0; i < m->count && n < 90; i++) {
+        g_menu_items[n].label = m->items[i].label;
+        g_menu_items[n].shortcut = m->items[i].shortcut;
+        g_menu_items[n].cmd = m->items[i].cmd;
+        g_menu_items[n].sep = m->items[i].sep;
+        n++;
+    }
+    if (idx == k_nmenus - 1) {
+        int c;
+        for (c = 0; c < plugins_command_count() && n < 90; c++) {
+            g_menu_items[n].label = plugins_command_label(c);
+            g_menu_items[n].shortcut = "";
+            g_menu_items[n].cmd = -1000 - c;
+            g_menu_items[n].sep = 0;
+            n++;
+        }
+    } else {
+        int k;
+        for (k = 0; k < plugins_menu_count() && n < 90; k++) {
+            int ci;
+            if (_stricmp(plugins_menu_name(k), m->title) != 0)
+                continue;
+            ci = plugins_command_find(plugins_menu_cmd(k));
+            if (ci < 0)
+                continue;
+            if (n > 0 && !g_menu_items[n - 1].sep) {
+                g_menu_items[n].label = "";
+                g_menu_items[n].shortcut = "";
+                g_menu_items[n].cmd = 0;
+                g_menu_items[n].sep = 1;
+                n++;
+            }
+            g_menu_items[n].label = plugins_menu_label(k);
+            g_menu_items[n].shortcut = "";
+            g_menu_items[n].cmd = -1000 - ci;
+            g_menu_items[n].sep = 0;
+            n++;
+        }
+    }
+    g_menu_count = n;
+}
+
 static void draw_popup(HDC dc, int w, int h)
 {
     int i, k;
+    build_menu(g_ide.menu_index);
     int x = 8;
     int px, wmax = 140, y;
     for (i = 0; i < g_ide.menu_index; i++)
         x += text_w(dc, k_menus[i].title, g_ide.font_ui) + 20;
     px = x;
-    for (k = 0; k < k_menus[g_ide.menu_index].count; k++) {
-        const MenuItem *it = &k_menus[g_ide.menu_index].items[k];
+    for (k = 0; k < g_menu_count; k++) {
+        const CtxItem *it = &g_menu_items[k];
         int ww = text_w(dc, it->label, g_ide.font_ui) + text_w(dc, it->shortcut, g_ide.font_ui) + 48;
         if (it->sep)
             continue;
@@ -685,15 +748,15 @@ static void draw_popup(HDC dc, int w, int h)
     y = 26;
     {
         int height = 8;
-        for (k = 0; k < k_menus[g_ide.menu_index].count; k++)
-            height += k_menus[g_ide.menu_index].items[k].sep ? 8 : 24;
+        for (k = 0; k < g_menu_count; k++)
+            height += g_menu_items[k].sep ? 8 : 24;
         {
             RECT r = {px, y, px + wmax, y + height};
             fill(dc, r, C_PANEL2);
             frame(dc, r, C_BORDER);
         }
-        for (k = 0; k < k_menus[g_ide.menu_index].count; k++) {
-            const MenuItem *it = &k_menus[g_ide.menu_index].items[k];
+        for (k = 0; k < g_menu_count; k++) {
+            const CtxItem *it = &g_menu_items[k];
             RECT r = {px + 1, y + 4, px + wmax - 1, y + 4 + 24};
             if (it->sep) {
                 fill(dc, (RECT){px + 8, y + 8, px + wmax - 8, y + 9}, C_BORDER);
@@ -793,6 +856,15 @@ static void draw_editor(HDC dc)
     if (!d) {
         text_at(dc, r.left + 24, r.top + 24, "No file open. Use File > Open File, or create a project.", C_DIM, g_ide.font_ui);
         return;
+    }
+    {
+        void *vuser = NULL;
+        AcPaintFn vfn = (AcPaintFn)plugins_viewer_for(d->path, &vuser);
+        if (vfn) {
+            vfn(dc, r.left + gutter + 2, r.top + 2, r.right - r.left - gutter - 4, r.bottom - r.top - 4, d->path, vuser);
+            text_at(dc, r.left + gutter + 8, r.bottom - 20, "image viewer plugin", C_DIM, g_ide.font_ui);
+            return;
+        }
     }
     if (g_ide.line_h <= 0)
         return;
@@ -898,6 +970,22 @@ static void draw_output(HDC dc)
         text_at(dc, r.left + 60, y, cnt, C_DIM, g_ide.font_ui);
     }
     y += 20;
+    {
+        int dn = plugins_diag_count();
+        if (dn > 0) {
+            int k;
+            for (k = 0; k < dn && y < r.bottom - 18; k++) {
+                char line[400];
+                snprintf(line, sizeof(line), "line %d: %s", plugins_diag_line(k) + 1, plugins_diag_text(k));
+                text_at(dc, r.left + 10, y + 1, line,
+                        plugins_diag_severity(k) == 1 ? C_ERR :
+                        (plugins_diag_severity(k) == 2 ? C_WARN : C_DIM), g_ide.font_ui);
+                y += 18;
+            }
+            if (dn > 0)
+                y += 4;
+        }
+    }
     if (g_ide.nmsgs > 0) {
         for (i = 0; i < g_ide.nmsgs && y < r.bottom - 18; i++) {
             BuildMsg *m = &g_ide.msgs[i];
@@ -959,6 +1047,120 @@ static void draw_status(HDC dc, int w)
     text_at(dc, w - text_w(dc, right, g_ide.font_ui) - 10, r.top + 3, right, C_DIM, g_ide.font_ui);
 }
 
+static int g_comp_start;
+
+static void comp_compute_pos(void)
+{
+    Doc *d = doc_active();
+    int line, col;
+    if (!d)
+        return;
+    line = doc_line_of(d, d->caret) - d->top_line;
+    col = doc_col_of(d, d->caret);
+    g_ide.comp_x = g_ide.rc_editor.left + 52 + col * g_ide.char_w - d->scroll_x;
+    g_ide.comp_y = g_ide.rc_editor.top + 2 + (line + 1) * g_ide.line_h;
+    if (g_ide.comp_y > g_ide.rc_editor.bottom - 40)
+        g_ide.comp_y = g_ide.rc_editor.bottom - 40 - 18 * g_ide.comp_count;
+}
+
+static void comp_update(void)
+{
+    Doc *d = doc_active();
+    char prefix[64];
+    char out[1024];
+    int p, s, n, i;
+    int count = 0;
+    if (!d)
+        return;
+    p = d->caret;
+    s = p;
+    while (s > 0) {
+        char ch = d->data.data[s - 1];
+        if (isalnum((unsigned char)ch) || ch == '_')
+            s--;
+        else
+            break;
+    }
+    g_ide.comp_open = 0;
+    if (p - s < 2)
+        return;
+    if (p - s >= (int)sizeof(prefix))
+        return;
+    memcpy(prefix, d->data.data + s, (size_t)(p - s));
+    prefix[p - s] = 0;
+    n = plugins_complete(prefix, out, sizeof(out));
+    if (n <= 0)
+        return;
+    g_comp_start = s;
+    count = 0;
+    {
+        char *line = out;
+        while (*line && count < 8) {
+            char *nl = strchr(line, 10);
+            char *cr;
+            if (nl)
+                *nl = 0;
+            cr = strchr(line, 13);
+            if (cr)
+                *cr = 0;
+            if (line[0]) {
+                snprintf(g_ide.comp_items[count], 96, "%s", line);
+                count++;
+            }
+            if (!nl)
+                break;
+            line = nl + 1;
+        }
+    }
+    if (!count)
+        return;
+    g_ide.comp_count = count;
+    g_ide.comp_index = 0;
+    g_ide.comp_open = 1;
+    comp_compute_pos();
+}
+
+static void comp_accept(void)
+{
+    Doc *d = doc_active();
+    if (!d || !g_ide.comp_open)
+        return;
+    if (g_ide.comp_index < 0 || g_ide.comp_index >= g_ide.comp_count)
+        return;
+    doc_delete(d, g_comp_start, d->caret - g_comp_start);
+    doc_set_caret(d, g_comp_start, 0);
+    doc_insert(d, g_comp_start, g_ide.comp_items[g_ide.comp_index], (int)strlen(g_ide.comp_items[g_ide.comp_index]));
+    g_ide.comp_open = 0;
+}
+
+static void draw_completions(HDC dc)
+{
+    int i;
+    int w = 220;
+    int h;
+    int x, y;
+    if (!g_ide.comp_open || g_ide.comp_count <= 0)
+        return;
+    x = g_ide.comp_x;
+    y = g_ide.comp_y;
+    h = g_ide.comp_count * 18 + 4;
+    if (x + w > g_ide.rc_editor.right - 4)
+        x = g_ide.rc_editor.right - 4 - w;
+    if (x < g_ide.rc_editor.left)
+        x = g_ide.rc_editor.left;
+    {
+        RECT box = {x, y, x + w, y + h};
+        fill(dc, box, C_PANEL2);
+        frame(dc, box, C_ACCENT);
+    }
+    for (i = 0; i < g_ide.comp_count; i++) {
+        RECT row = {x + 1, y + 2 + i * 18, x + w - 1, y + 20 + i * 18};
+        if (i == g_ide.comp_index)
+            fill(dc, row, C_SEL);
+        text_at(dc, x + 8, y + 3 + i * 18, g_ide.comp_items[i], C_TEXT, g_ide.font);
+    }
+}
+
 void ide_paint(HDC dc, RECT *client)
 {
     HDC mem;
@@ -983,6 +1185,7 @@ void ide_paint(HDC dc, RECT *client)
         draw_popup(mem, w, h);
     if (g_ctx_kind && g_ctx_items)
         panel_draw(mem, g_ctx_x, g_ctx_y, g_ctx_items, g_ctx_count, g_ctx_hover);
+    draw_completions(mem);
 
     BitBlt(dc, 0, 0, w, h, mem, 0, 0, SRCCOPY);
     SelectObject(mem, old);
@@ -1011,6 +1214,7 @@ static int hit_menu(int x, int y)
 static int menu_item_hit(int x, int y, int *item)
 {
     int i, k;
+    build_menu(g_ide.menu_index);
     int px = 8, wmax = 140, py = 26;
     HDC dc;
     if (g_ide.menu_index < 0)
@@ -1018,8 +1222,8 @@ static int menu_item_hit(int x, int y, int *item)
     dc = GetDC(g_ide.hwnd);
     for (i = 0; i < g_ide.menu_index; i++)
         px += text_w(dc, k_menus[i].title, g_ide.font_ui) + 20;
-    for (k = 0; k < k_menus[g_ide.menu_index].count; k++) {
-        const MenuItem *it = &k_menus[g_ide.menu_index].items[k];
+    for (k = 0; k < g_menu_count; k++) {
+        const CtxItem *it = &g_menu_items[k];
         int ww;
         if (it->sep)
             continue;
@@ -1028,8 +1232,8 @@ static int menu_item_hit(int x, int y, int *item)
             wmax = ww;
     }
     ReleaseDC(g_ide.hwnd, dc);
-    for (k = 0; k < k_menus[g_ide.menu_index].count; k++) {
-        const MenuItem *it = &k_menus[g_ide.menu_index].items[k];
+    for (k = 0; k < g_menu_count; k++) {
+        const CtxItem *it = &g_menu_items[k];
         if (it->sep) {
             py += 8;
             continue;
@@ -1102,6 +1306,7 @@ void ide_open_file(const char *path)
     g_ide.ndocs++;
     g_ide.tree_sel = g_ide.tree_files.count;
     sv_push(&g_ide.tree_files, path);
+    plugins_fire(1, path);
     ide_set_status("Opened %s", ac_basename(path));
 }
 
@@ -1117,6 +1322,7 @@ void ide_save_file(int index, int save_as)
     }
     if (ac_write_file(d->path, d->data.data, d->data.len) == 0) {
         d->modified = 0;
+        plugins_fire(2, d->path);
         ide_set_status("Saved %s (%d bytes)", d->name, (int)d->data.len);
     } else {
         ide_set_status("ERROR: cannot write %s", d->path);
@@ -1526,6 +1732,7 @@ static void run_build_pipeline(void)
     code = run_capture(cmd, NULL, 0);
     if (code != 0) {
         add_msg("elf2e32 failed with exit code %d (see output)", code);
+        plugins_fire(5, "elf2e32");
         ide_set_status("E32 FAILED");
         return;
     }
@@ -1542,6 +1749,7 @@ static void run_build_pipeline(void)
             MoveFileA(fixed_file, e32_file);
         }
     }
+    plugins_fire(4, e32_file);
     ide_set_status("Build OK: %s", e32_file);
 }
 
@@ -1556,9 +1764,42 @@ void ide_build(void)
     InvalidateRect(g_ide.hwnd, NULL, FALSE);
 }
 
+void ide_host_run_named(const char *id)
+{
+    if (!id)
+        return;
+    if (strcmp(id, "build") == 0)
+        ide_command(CMD_BUILD);
+    else if (strcmp(id, "rebuild") == 0)
+        ide_command(CMD_REBUILD);
+    else if (strcmp(id, "package") == 0)
+        ide_command(CMD_PACKAGE);
+    else if (strcmp(id, "sign") == 0)
+        ide_command(CMD_SIGN);
+    else if (strcmp(id, "run") == 0)
+        ide_command(CMD_RUN);
+    else if (strcmp(id, "save") == 0)
+        ide_command(CMD_SAVE);
+    else if (strcmp(id, "save_as") == 0)
+        ide_command(CMD_SAVE_AS);
+    else if (strcmp(id, "find") == 0)
+        ide_command(CMD_FIND);
+    else if (strcmp(id, "goto") == 0)
+        ide_command(CMD_GOTO);
+    else if (strcmp(id, "new_project") == 0)
+        ide_command(CMD_NEW_PROJECT);
+    else if (strcmp(id, "toggle_output") == 0)
+        ide_command(CMD_TOGGLE_OUTPUT);
+}
+
 static void ide_command(int cmd)
 {
     Doc *d = doc_active();
+    if (cmd <= -1000) {
+        plugins_exec_index(-1000 - cmd);
+        InvalidateRect(g_ide.hwnd, NULL, FALSE);
+        return;
+    }
     switch (cmd) {
     case CMD_NEW_PROJECT:
         ide_new_project();
@@ -1667,6 +1908,28 @@ static void ide_command(int cmd)
 int ide_key(int vk, int ctrl, int shift, int alt)
 {
     Doc *d = doc_active();
+    if (g_ide.comp_open && !g_ide.find_open) {
+        if (vk == VK_DOWN) {
+            g_ide.comp_index = (g_ide.comp_index + 1) % g_ide.comp_count;
+            InvalidateRect(g_ide.hwnd, NULL, FALSE);
+            return 1;
+        }
+        if (vk == VK_UP) {
+            g_ide.comp_index = (g_ide.comp_index + g_ide.comp_count - 1) % g_ide.comp_count;
+            InvalidateRect(g_ide.hwnd, NULL, FALSE);
+            return 1;
+        }
+        if (vk == VK_TAB || vk == VK_RETURN) {
+            comp_accept();
+            InvalidateRect(g_ide.hwnd, NULL, FALSE);
+            return 1;
+        }
+        if (vk == VK_ESCAPE) {
+            g_ide.comp_open = 0;
+            InvalidateRect(g_ide.hwnd, NULL, FALSE);
+            return 1;
+        }
+    }
     if (g_ide.find_open) {
         if (vk == VK_ESCAPE) {
             g_ide.find_open = 0;
@@ -2006,6 +2269,7 @@ void ide_char(wchar_t ch)
     }
     doc_insert(d, d->caret, utf8, n);
     doc_scroll_to_caret(d);
+    comp_update();
 }
 
 void ide_rbutton_down(int x, int y)
@@ -2378,6 +2642,64 @@ void ide_save_project(void)
     ide_set_status("Project saved: %s", g_ide.proj.project_path);
 }
 
+static int path_is_abs(const char *p)
+{
+    if (!p || !p[0])
+        return 0;
+    if (p[0] == '\\' && p[1] == '\\')
+        return 1;
+    return p[0] != 0 && p[1] == ':' && (p[2] == '\\' || p[2] == '/');
+}
+
+static void path_dir_of(char *p)
+{
+    int i = (int)strlen(p);
+    while (i > 0 && p[i] != '\\' && p[i] != '/')
+        i--;
+    if (i > 3)
+        p[i] = 0;
+    else if (i == 2 && p[1] == ':')
+        p[3] = 0;
+}
+
+static int path_exists(const char *p)
+{
+    DWORD a = GetFileAttributesA(p);
+    return a != INVALID_FILE_ATTRIBUTES && a != 0xFFFFFFFFu;
+}
+
+static void resolve_relative(const char *dir, const char *rel, char *out, int cap)
+{
+    char cand[MAX_PATH];
+    char cur[MAX_PATH];
+    int depth;
+
+    if (path_is_abs(rel)) {
+        snprintf(out, (size_t)cap, "%s", rel);
+        return;
+    }
+    snprintf(cand, sizeof(cand), "%s\\%s", dir, rel);
+    if (path_exists(cand)) {
+        snprintf(out, (size_t)cap, "%s", cand);
+        return;
+    }
+    snprintf(cur, sizeof(cur), "%s", dir);
+    for (depth = 0; depth < 8; depth++) {
+        int before = (int)strlen(cur);
+        path_dir_of(cur);
+        if ((int)strlen(cur) == before)
+            break;
+        snprintf(cand, sizeof(cand), "%s\\%s", cur, rel);
+        if (path_exists(cand)) {
+            snprintf(out, (size_t)cap, "%s", cand);
+            return;
+        }
+        if (cur[1] == ':' && cur[2] == 0)
+            break;
+    }
+    snprintf(out, (size_t)cap, "%s\\%s", dir, rel);
+}
+
 void ide_open_project(const char *path)
 {
     Buf b;
@@ -2414,22 +2736,13 @@ void ide_open_project(const char *path)
             else if (strcmp(p, "is_dll") == 0)
                 g_ide.proj.is_dll = (int)strtol(eq + 1, NULL, 0);
             else if (strcmp(p, "source") == 0) {
+                char full[MAX_PATH];
+                char projdir[MAX_PATH];
                 sv_push(&g_ide.proj.sources, eq + 1);
-                {
-                    char full[MAX_PATH];
-                    if (eq[1] && eq[2] == ':')
-                        sv_push(&g_ide.tree_files, eq + 1);
-                    else {
-                        const char *dir = path;
-                        char base[MAX_PATH];
-                        int i;
-                        snprintf(base, sizeof(base), "%s", dir);
-                        for (i = (int)strlen(base); i > 0 && base[i] != '\\'; i--)
-                            base[i] = 0;
-                        snprintf(full, sizeof(full), "%s%s", base, eq + 1);
-                        sv_push(&g_ide.tree_files, full);
-                    }
-                }
+                snprintf(projdir, sizeof(projdir), "%s", path);
+                path_dir_of(projdir);
+                resolve_relative(projdir, eq + 1, full, sizeof(full));
+                sv_push(&g_ide.tree_files, full);
             } else if (strcmp(p, "lib") == 0) {
                 sv_push(&g_ide.proj.libs, eq + 1);
             }

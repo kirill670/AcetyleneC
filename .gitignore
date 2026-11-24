@@ -10,3 +10,4 @@ build/
 *.user
 selftest.cer
 selftest.key
+plugins/*/*.dll

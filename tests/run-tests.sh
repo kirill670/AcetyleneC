@@ -331,5 +331,44 @@ check "two translation units compile" $?
     -lecrt0 -lestlib -leuser -ldrtaeabi -lusrt2_2 2>"$WORK/mf3.log"
 check "both objects link together" $? "$(cat "$WORK/mf3.log")"
 
+echo '== plugin system =='
+for p in autocomplete imageviewer jsonlint mcp; do
+    dll="$ROOT/plugins/$p/$p.dll"
+    if [ -f "$dll" ]; then
+        pe32 "$dll" && ok "$p.dll is a 32-bit PE" || bad "$p.dll is not a 32-bit PE"
+    else
+        bad "$p.dll missing, run build/build-plugins.sh"
+    fi
+done
+
+"$BIN/plugin-host.exe" "$ROOT/plugins/autocomplete" probe >"$WORK/pl_auto.log" 2>&1
+check "autocomplete plugin initialises" $? "$(tail -3 "$WORK/pl_auto.log")"
+grep -q "cand TInt64" "$WORK/pl_auto.log" && ok "autocomplete suggests TInt64 for TIn" || bad "autocomplete suggestion missing"
+
+"$BIN/plugin-host.exe" "$ROOT/plugins/imageviewer" probe >"$WORK/pl_view.log" 2>&1
+check "image viewer plugin initialises" $? "$(tail -3 "$WORK/pl_view.log")"
+grep -q "viewers: .png .jpg .jpeg .bmp .gif" "$WORK/pl_view.log" && ok "image viewer claims png/jpg/bmp/gif" || bad "image viewer extensions missing"
+
+"$BIN/plugin-host.exe" "$ROOT/plugins/jsonlint" probe >"$WORK/pl_json.log" 2>&1
+check "json linter accepts valid JSON" $? "$(tail -3 "$WORK/pl_json.log")"
+grep -q "diag sev=1 line=0 col=8 expected string" "$WORK/pl_json.log" && ok "json linter reports the error position" || bad "json linter error position wrong"
+
+ACETYLENE_MCP_PORT=8799 "$BIN/plugin-host.exe" "$ROOT/plugins/mcp" serve 14 >"$WORK/pl_mcp.log" 2>&1 &
+MCP_PID=$!
+python -I "$ROOT/tests/mcp-probe.py" 8799 >"$WORK/mcp_probe.log" 2>&1
+MCP_RC=$?
+kill $MCP_PID 2>/dev/null
+wait $MCP_PID 2>/dev/null
+check "MCP server serves a client over TCP" $MCP_RC "$(cat "$WORK/mcp_probe.log")"
+
+ACETYLENE_MCP_PORT=8800 "$BIN/plugin-host.exe" "$ROOT/plugins/mcp" serve 10 >"$WORK/pl_mcp2.log" 2>&1 &
+BRIDGE_PID=$!
+sleep 1
+printf '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}\n' | "$BIN/acetylene-mcp-stdio.exe" 8800 >"$WORK/bridge.log" 2>&1
+check "stdio bridge relays JSON-RPC" $? "$(cat "$WORK/bridge.log")"
+grep -q '"name":"acetylene-ide"' "$WORK/bridge.log" && ok "stdio bridge returns the server identity" || bad "bridge response wrong"
+kill $BRIDGE_PID 2>/dev/null
+wait $BRIDGE_PID 2>/dev/null
+
 printf '\n%d passed, %d failed\n' "$PASS" "$FAIL"
 [ "$FAIL" = 0 ]

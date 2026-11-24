@@ -167,6 +167,7 @@ void doc_insert(Doc *d, int pos, const char *text, int len)
     d->caret = pos + len;
     d->anchor = d->caret;
     d->sel_active = 0;
+    plugins_doc_changed();
 }
 
 void doc_delete(Doc *d, int pos, int len)
@@ -192,6 +193,7 @@ void doc_delete(Doc *d, int pos, int len)
     d->caret = pos;
     d->anchor = d->caret;
     d->sel_active = 0;
+    plugins_doc_changed();
 }
 
 void doc_undo(Doc *d)

@@ -1,0 +1,8 @@
+{
+  "id": "acetylene.jsonlint",
+  "name": "JSON Linter",
+  "version": "1.0.0",
+  "api": 1,
+  "entry": "jsonlint.dll",
+  "description": "Validates .json files and reports errors in the output pane"
+}

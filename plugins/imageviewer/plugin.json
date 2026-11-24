@@ -1,0 +1,8 @@
+{
+  "id": "acetylene.imageviewer",
+  "name": "Image Viewer",
+  "version": "1.0.0",
+  "api": 1,
+  "entry": "imageviewer.dll",
+  "description": "Draws PNG/JPG/BMP/GIF files inside the editor pane"
+}
