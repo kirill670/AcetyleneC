@@ -37,6 +37,8 @@ jobs:
             curl
             grep
             sed
+            git
+            python
 
       - name: next community build number
         id: cb

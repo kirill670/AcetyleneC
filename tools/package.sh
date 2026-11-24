@@ -29,10 +29,16 @@ cp -r "$ROOT/sdk" "$STAGE/sdk"
 
 ZIP="AcetyleneC-$TAG-win32.zip"
 rm -f "$OUT/$ZIP"
-(
-    cd "$STAGE"
-    zip -qr "$OUT/$ZIP" .
-)
+if command -v zip >/dev/null 2>&1; then
+    (cd "$STAGE" && zip -qr "$OUT/$ZIP" .)
+elif command -v 7z >/dev/null 2>&1; then
+    (cd "$STAGE" && 7z a -tzip -mx=6 "$OUT/$ZIP" . >/dev/null)
+elif command -v powershell >/dev/null 2>&1; then
+    powershell -NoProfile -Command "Compress-Archive -Path '$STAGE/*' -DestinationPath '$OUT/$ZIP' -CompressionLevel Optimal"
+else
+    echo "no zip tool found: install zip, 7z or run on a host with PowerShell" >&2
+    exit 1
+fi
 (
     cd "$OUT"
     sha256sum "$ZIP" > SHA256SUMS.txt
