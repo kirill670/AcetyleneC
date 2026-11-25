@@ -130,9 +130,4 @@ jobs:
           AC_BUILD_TITLE: ${{ steps.cb.outputs.title }}
         run: |
           set -e
-          gh release create "$AC_BUILD_TAG" \
-            "$RUNNER_TEMP/dist/AcetyleneC-$AC_BUILD_TAG-win32.zip" \
-            "$RUNNER_TEMP/dist/SHA256SUMS.txt" \
-            --title "$AC_BUILD_TITLE" \
-            --notes-file "$RUNNER_TEMP/notes.md" \
-            --latest
+          sh tools/publish-release.sh "$AC_BUILD_TAG" "$AC_BUILD_TITLE" "$RUNNER_TEMP/notes.md" "$RUNNER_TEMP/dist"
