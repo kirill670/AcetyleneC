@@ -1,4 +1,6 @@
-build/
+build/*
+!build/*.sh
+build/extract-sdks.sh
 .cache/
 *.o
 *.obj
