@@ -8,7 +8,7 @@ OUT="$ROOT/build/tcc-cross-arm"
 mkdir -p "$OUT"
 cd "$SRC"
 if [ ! -f config.mak ]; then
-  "$SRC/configure" --cc="$CC" --ar=ar --cpu=i386 --targetos=WIN32 --disable-static
+  ./configure --cc="$CC" --ar=ar --cpu=i386 --targetos=WIN32 --disable-static
 fi
 cat > config-extra.mak <<'EOM'
 DEF-arm = -DTCC_TARGET_ARM -DTCC_ARM_EABI -DTCC_ARM_VFP
