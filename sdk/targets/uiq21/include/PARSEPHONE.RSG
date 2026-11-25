@@ -1,0 +1,5 @@
+#define R_DIALABLE_CHARACTERS                     0x4fca6003
+#define R_MINIMUM_DIGITS_IN_PHONE_NUMBER          0x4fca6004
+#define R_PARSE_PHONE_MENU_PANE                   0x4fca6005
+#define R_PARSE_PHONE_TASK_ARRAY                  0x4fca6006
+#define R_PHONEPARSER_STATE_MATRIX                0x4fca6007

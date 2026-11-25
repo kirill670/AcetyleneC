@@ -1,0 +1,2 @@
+#define R_BEAM_FAILED                             0x2e943004
+#define R_BEAM_ERROR_TIMEOUT                      0x2e943005

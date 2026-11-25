@@ -1,0 +1,7 @@
+
+#include <mtmuidef.hrh>  // For KMtmFirstFreeMtmUiFunctionId
+
+enum // Syni dynamic menu commands.
+	{
+	ESynCmdConvertMessageType=KMtmFirstFreeMtmUiFunctionId    // MTMs are free to use any value ABOVE this.
+	};

@@ -1,0 +1,7 @@
+#define R_SYSTEM_ONE_FONT_NAME_ALIAS              1
+#define R_STARTUP_REASONS                         2
+#define R_STARTUP_REASON_NORMAL                   3
+#define R_STARTUP_REASON_MASTER_RESET             4
+#define R_STARTUP_LIST                            5
+#define R_START_EXTRAS_LIST                       6
+#define R_STARTUP_LIST_MASTER_RESET               7

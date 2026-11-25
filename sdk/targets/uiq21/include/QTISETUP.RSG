@@ -1,0 +1,9 @@
+#define R_QTISETUP_TOP_LEVEL_DIALOG_BUTTONS       0x20520002
+#define R_QTISETUP_TOP_LEVEL_DIALOG               0x20520003
+#define R_SETUP_PRIMARY_BUTTON                    0x20520004
+#define R_SETUP_SECONDARY_BUTTON                  0x20520005
+#define R_QTISETUP_PAGE_SELECTOR                  0x20520006
+#define R_QTISETUP_PRIMARY_PAGE                   0x20520007
+#define R_QTISETUP_SECONDARY_PAGE                 0x20520008
+#define R_QTISETUP_TBUF_NONE                      0x20520009
+#define R_QTISETUP_DEFAULT_DIALOG                 0x2052000a

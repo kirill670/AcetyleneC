@@ -1,0 +1,5 @@
+#define R_QVN_VIEWER_DIALOG                       0x55a0b004
+#define R_QVN_VIEWER_BUTTONS                      0x55a0b005
+#define R_QVN_SIZE_IN_K                           0x55a0b006
+#define R_QVN_INFORMATION                         0x55a0b007
+#define R_QVN_CORRUPT_FILE                        0x55a0b008

@@ -1,0 +1,94 @@
+// FOR SYMBIAN INTERNAL USE ONLY!!!
+// --------------------------------
+
+
+#define KCknRgbBlue               {red=0;green=0;blue=240;}
+#define KCknRgbWhite              {red=240;green=240;blue=240;}
+#define KCknRgbGray              {red=144;green=144;blue=144;}
+#define KCknRgbLightGray              {red=192;green=192;blue=192;}
+#define KCknRgbBlack              {red=0;green=0;blue=0;}
+#define KCknRgbYellow             {red=240;green=240;blue=0;}
+#define KCknRgbOrange             {red=240;green=160;blue=0;}
+
+#define KCknRgbControlBackground3  {red=160;green=160;blue=192;}
+#define KCknRgbControlBorder  {red=32;green=32;blue=32;}
+#define KCknRgbApplicationBackground  KCknRgbWhite
+#define KCknRgbShadow3  {red=128;green=128;blue=160;}
+#define KCknRgbControlBackground1  {red=208;green=208;blue=240;}
+#define KCknRgbShadow1  {red=192;green=192;blue=224;}
+#define KCknRgbShadow2  {red=160;green=160;blue=192;}
+#define KCknRgbShadow4  {red=96;green=96;blue=128;}
+#define KCknRgbText  KCknRgbBlack
+#define KCknRgbTextDimmed  KCknRgbGray
+#define KCknRgbCBPressed  KCknRgbBlue
+#define KCknRgbShadow5  {red=64;green=64;blue=96;}
+#define KCknRgbGradientValue16  KCknRgbBlue
+#define KCknRgbGradientValue15  {red=16;green=16;blue=240;}
+#define KCknRgbGradientValue14  {red=32;green=32;blue=240;}
+#define KCknRgbGradientValue13 {red=48;green=48;blue=240;}
+#define KCknRgbGradientValue12  {red=64;green=64;blue=240;}
+#define KCknRgbGradientValue11  {red=80;green=80;blue=240;}
+#define KCknRgbGradientValue10  {red=96;green=96;blue=240;}
+#define KCknRgbGradientValue9  {red=112;green=112;blue=240;}
+#define KCknRgbGradientValue8  {red=128;green=128;blue=240;}
+#define KCknRgbGradientValue7  {red=144;green=144;blue=240;}
+#define KCknRgbGradientValue6  {red=160;green=160;blue=240;}
+#define KCknRgbGradientValue5  {red=176;green=176;blue=240;}
+#define KCknRgbGradientValue4  {red=192;green=192;blue=240;}
+#define KCknRgbGradientValue3  {red=208;green=208;blue=240;}
+#define KCknRgbGradientValue2  {red=224;green=224;blue=240;}
+#define KCknRgbFocusBackground  {red=176;green=176;blue=240;}
+#define KCknRgbFocusHighlight  {red=208;green=208;blue=240;}
+#define KCknRgbFocusShadow  KCknRgbBlue
+#define KCknRgbControlBackground2  {red=192;green=192;blue=224;}
+#define KCknRgbLine  KCknRgbLightGray
+#define KCknRgbTextVisited  {red=128;green=64;blue=192;}
+#define KCknRgbInfobannerHighlight  KCknRgbYellow
+#define KCknRgbInfobannerShadow  KCknRgbOrange
+#define KCknRgbHighlight1  KCknRgbWhite
+#define KCknRgbHighlight2  {red=192;green=192;blue=224;}
+#define KCknRgbHighlight3  {red=160;green=160;blue=192;}
+
+
+//this list is the order of items in r_eik_color_extra_items_color16 in eikcolor.ra
+//logical colours as defind in Lindapda screenlayout page 77
+
+#define ECknColorControlBackground3  0
+#define ECknColorControlBorder  1
+//#define ECknColorApplicationBackground use EEikColorWindowBackground
+#define ECknColorShadow3 2
+#define ECknColorControlBackground1 3
+#define ECknColorShadow1  4
+#define ECknColorShadow2  5
+#define ECknColorShadow4  6
+//#define ECknColorText use EEikColorWindowText
+//#define ECknColorTextDimmed use EEikColorControlDimmedText
+#define ECknColorCBPressed  7
+#define ECknColorShadow5  8
+#define ECknColorGradientValue16  9
+#define ECknColorGradientValue15  10
+#define ECknColorGradientValue14  11
+#define ECknColorGradientValue13 12
+#define ECknColorGradientValue12  13
+#define ECknColorGradientValue11  14
+#define ECknColorGradientValue10  15
+#define ECknColorGradientValue9  16
+#define ECknColorGradientValue8  17
+#define ECknColorGradientValue7  18
+#define ECknColorGradientValue6  19
+#define ECknColorGradientValue5  20
+#define ECknColorGradientValue4  21
+#define ECknColorGradientValue3 22
+#define ECknColorGradientValue2  23
+#define ECknColorFocusBackground  24
+#define ECknColorFocusHighlight  25
+#define ECknColorFocusShadow  26
+#define ECknColorControlBackground2  27
+#define ECknColorLine  28
+#define ECknColorTextVisited  29
+//#define ECknColorInfobannerHighlight  in msgwin 
+//#define ECknColorInfobannerShadow  in msgwin
+#define ECknColorHighlight2  30
+#define ECknColorHighlight3  31
+#define ECknColorHighlight1  32
+

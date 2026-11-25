@@ -1,0 +1,33 @@
+/*
+* ==============================================================================
+*  Name        : nsmldsparam.rh
+*  Part of     : SyncML DS / Plugin adapter interface
+*  Description : Resource definitions for adapter parameters
+*  Version     : $Revision: 3 $ $Modtime: 18.08.03 16:19 $
+*
+*  Copyright © 2002 Nokia Corporation.
+*  This material, including documentation and any related 
+*  computer programs, is protected by copyright controlled by 
+*  Nokia Corporation. All rights are reserved. Copying, 
+*  including reproducing, storing, adapting or translating, any 
+*  or all of this material requires the prior written consent of 
+*  Nokia Corporation. This material also contains confidential 
+*  information which may not be disclosed to others without the 
+*  prior written consent of Nokia Corporation.
+* ==============================================================================
+*/
+
+#if !defined(__NSMLDSPARAM_RH__)
+#define __NSMLDSPARAM_RH__
+
+#include <badef.rh>
+
+
+STRUCT NSMLCHOICE
+    {
+	WORD	id;
+    LTEXT	txt;
+    }
+
+
+#endif // __NSMLDSPARAM_RH__

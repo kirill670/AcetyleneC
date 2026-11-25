@@ -24,7 +24,8 @@ Studio: project tree, tabbed editor with C/C++ syntax highlighting, build pipeli
 | Signing | works | `acetylene-makekeys` now generates **DSA** keys/certs in the same profile as Nokia's `makekeys`; `signsis` accepts them, signs, and reports the signature as `Primary`. The IDE (`F9`) generates a dev pair automatically on first use. |
 | Run on emulator | adapter to an external EKA emulator | F5 packages and launches the emulator you configured; the SDK never bundles it. Exact command line goes to the output pane. See `docs/EMULATOR.md`. |
 | C++ | works (subset) | `acetylene-cxx`, MIT: classes, fields, methods with prototypes, constructors, `new`/`delete`, `this->`, member access, out-of-line definitions, Itanium mangling. Transpiles to C, then TCC. Rejects inheritance, virtuals, destructors, references and templates with an explicit error. GCCE `g++` remains available for full C++. |
-| C headers/libs from all SDKs | yes | `sdk/targets/{s60v2,s60v30,s60v31,s60v32,s60v5}/{include,lib,tools}` — imported from the official archives. |
+| C headers/libs from all SDKs | yes | `sdk/targets/{s60v1,s60v2,s80,uiq21,s60v30,s60v31,s60v32,s60v5}/{include,lib,tools}` — imported from the official archives. |
+| Legacy EPOC images (S60v2, S60v1, UIQ 2.x, S80) | works | `acetylene-pe` reads our ELF objects and the SDK's ARM COFF import libraries, links them and writes the finished ABI-less image itself — no SDK executable involved. Entry point, import tables, IAT and header checksums are validated by `tests/check-epoc.py`. See `docs/LEGACY-PE.md`. |
 | IDE | works | Tree, tabs, C/C++ highlighting, editing with undo/redo, find bar (Ctrl+F, Enter = next) and go-to-line (Ctrl+G), multi-file project build where every `source=` entry is compiled and linked, error list with the exact command log, status bar. Verified interactively: typing, undo, save-to-disk, search match, C and C++ builds. |
 | Plugins | works | VS Code-style `plugins/<name>/{plugin.json,*.dll}` loaded at start-up, C ABI vtable for buffers, commands, menus, diagnostics, completions, viewers and events. Four examples ship: autocomplete, image viewer, JSON linter and an MCP server. See `docs/PLUGINS.md`. |
 
@@ -127,8 +128,9 @@ redistribute binaries built from them without checking those terms.
 * Nothing produced here has been executed on real Symbian hardware. The E32 import tables are
   validated structurally (our own record walker, `tests/check-e32.py`) and by Symbian's dumper for
   the first record; a loader-level test still needs a device or a working EKA image.
-* `sdk/targets/s60v2` ships headers, import libraries and packaging tools only — S60v2 uses EPOC PE
-  binaries and the link path for that format is not implemented.
+* Legacy images (S60v2, S60v1, UIQ 2.x, S80) carry no base relocation table, exactly like the
+  platform's GCC path for those SDKs, so they are bound to 0x400000. DLL export tables for that
+  generation are not implemented yet: `acetylene-pe` produces executables only.
 * C++ is a documented subset. Inheritance, virtuals, destructors, references and templates are
   rejected with an explicit error; the bundled GCCE `g++` covers the full language.
 * The MCP plugin exposes the editor over loopback TCP with no authentication. It is a local

@@ -1,0 +1,7 @@
+
+#include <mtmuidef.hrh>  // For KMtmFirstFreeMtmUiFunctionId
+
+enum // Iri dynamic menu commands.
+	{  // MTMs are free to use any value ABOVE this.
+	EIrCmdNULL=KMtmFirstFreeMtmUiFunctionId    //-- No custom commands
+	};

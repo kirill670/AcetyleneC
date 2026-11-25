@@ -1,0 +1,5 @@
+#define R_PARSE_URL_MENU_PANE                     0x20806003
+#define R_PARSE_URL_TASK_ARRAY                    0x20806004
+#define R_SAFE_CHARACTERS                         0x20806005
+#define R_EXTRA_CHARACTERS                        0x20806006
+#define R_PARSE_FTP_URL_STATE_MATRIX              0x20806007

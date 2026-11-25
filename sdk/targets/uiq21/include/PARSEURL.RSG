@@ -1,0 +1,7 @@
+#define R_PARSE_URL_MENU_PANE                     0x3dbf003
+#define R_PARSE_URL_TASK_ARRAY                    0x3dbf004
+#define R_START_SEQUENCE_CHARACTERS               0x3dbf005
+#define R_SAFE_CHARACTERS                         0x3dbf006
+#define R_EXTRA_CHARACTERS                        0x3dbf007
+#define R_PARSE_URL_STATE_MATRIX                  0x3dbf008
+#define R_PARSE_HTTP_URL_STATE_MATRIX             0x3dbf009

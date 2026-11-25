@@ -1,0 +1,9 @@
+#define R_HELP_MOVER_DUMMY                        0x5332f004
+#define R_HELP_APPNAME                            0x5332f005
+#define R_HELP_HEADER_SEPARATOR                   0x5332f006
+#define R_HELP_TOPIC_NOT_FOUND_TEXT               0x5332f007
+#define R_HELP_ELLIPSIS                           0x5332f008
+#define R_HELP_NO_ENTRY_SELECTED                  0x5332f009
+#define R_HELP_ZOOM_BUTTON_TEXT                   0x5332f00a
+#define R_HELP_TOPICS_BUTTON_TEXT                 0x5332f00b
+#define R_HELP_DONE_BUTTON_TEXT                   0x5332f00c

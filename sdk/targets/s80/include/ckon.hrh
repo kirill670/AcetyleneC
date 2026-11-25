@@ -1,0 +1,206 @@
+// CKON.HRH
+//
+// Copyright (c) 1999 Symbian Ltd.  All rights reserved.
+//
+#if !defined(__CKON_HRH__)
+#define __CKON_HRH__
+//CKNAPPTITLE constants
+#define ECknAppTitleTypeEditor	0
+#define ECknAppTitleTypeWindow	1
+#define ECknAppTitleTypeList	2
+
+// CKNANIMATION constants
+#define ECknAnimationModePlay		0		// Plays once through
+#define ECknAnimationModeCycle		1		// Cycles continuously
+#define ECknAnimationModeBounce		2		// Bounces between start and end frames
+
+#define ECknAnimationNotFlashing		0
+#define ECknAnimationFlashing			1
+
+// CKNINFO constants
+#define ECknCidNoteContents				1
+
+// CKNINFRM constants
+
+#define ECknInputFrmRemoveBorder		0x1 
+#define ECknInputFrmUpIntendents		0x4
+#define ECknInputFrmDownIntendents		0x8
+#define ECknInputFrmLeftIntendents		0x10
+#define ECknInputFrmRightIntendents	0x20
+#define ECknInputFrmIntendents 		0x3C //EUpIntendents|EDownIntendents|ELeftIntendents|ERightIntendents)	
+
+
+
+enum TCknStockControls
+	{
+	ECknCtAppTitle=500,
+	ECknCtInputFrameBC,
+	ECknCtSearchField,
+	ECknCtNoteContents,
+	ECknCtControlBar,
+	ECknCtAnimationControlBC,
+	ECknCtIpFieldEditor,
+	ECknCtCancelNoteContentsAnim,
+	ECknCtCancelNoteContentsProgress,
+	ECknCtEikSrvUiNoteContentsCustomControl,
+	ECknCtNtfyMessageColumnListBox,
+	ECknCtToolbarButton,
+	ECknCtToolbarBitmapButton,
+	ECknCtToolbarTwoPictureButton,
+	ECknCtDialogButton,
+	ECknCtColumnedText,
+	ECknCtVolumeBar,
+	ECknCtIconWithText,
+	ECknCtSeekBar,
+	ECknCtLocationControl,
+	ECknCtPhoneNumberEditor,
+	ECknCtItu9Control,
+	ECknCtSecretEditor,
+	ECknCtInputFrame,
+	ECknCtAnimationControl,
+	ECknCtImagePreview,
+	ECknCtViewButton,
+	ECknCtCallHeaderButton,
+	ECknCtCellSelector,
+	ECknCtFileNameEditor,
+	ECknCtProgressInfo,
+	ECknCtChoiceListCheckBox,
+	ECknCtCheckBox,
+	ECknCtTimeLabel,
+	ECknCtColumnChoiceList
+	};
+
+// Ckon Print dialog
+
+enum TCknPrintDialogLines
+    {
+    ECknNbrOfCopies=1,
+    ECknPrintPageRange,
+    ECknPrinterPort,
+    ECknPrinterModels
+    };
+
+// Ckon Print options multipage dialog
+
+enum TCknPrintOptionsPages
+    {
+    ECknPrintOptionsDocument=1,
+    ECknPrintOptionsConnection,
+    ECknPrintOptionsOthers
+    };
+
+// Ckon print dialog buttons
+
+enum TCknPrintDialogButtons
+    {
+    ECknBidChange=1,
+    ECknBidClose,
+    ECknBidPreview,
+    ECknBidOptions,
+    ECknBidPageSetup,
+    ECknBidSettings,
+	ECknBidNotUsed,
+	ECknBidInsert,
+	ECknBidFormat
+    };
+
+// Ckon JetDirect Print dialog
+enum TCknJetDirectPrintDialogLines
+    {
+    EEikCidJetDirectIPOrName=1,
+    EEikCidJetDirectPort
+    };
+// Ckon LPR Print dialog
+enum TCknLPRPrintDialogLines
+    {
+    EEikCidLPRUserName=1,
+	EEikCidLPRNetworkName,
+    EEikCidLPRQueueName
+    };
+
+// CkonCharMap
+
+enum
+	{
+	ECknCidSpecialCharCharacters,
+	ECknCidSpecialCharCharacters2,
+	ECknCidSpecialCharCharacters3,
+	ECknCidSpecialCharMathematical,
+	ECknCidSpecialCharSymbols
+	};
+
+#define ECknTasksAutoMenuCommand1   1000
+#define ECknTasksAutoMenuStart      10000
+#define ECknTasksAutoMenuEnd        11000
+
+// Application button events
+#define 	ECknApplicationForeground					0x01
+#define 	ECknApplicationPassFirstEvent				0x02
+#define 	ECknApplicationPassFurtherEvents			0x04
+#define		ECknApplicationPassFirstEventIfInForeground 0x08
+
+// Page Setup: Text format listbox control identification
+#define ECknFormatTextControlId		1
+
+// Font name flags
+#define		ECknScalableFontsOnly	0x10000000 
+
+
+enum
+	{ // search field types
+	ESearchFieldStyleSearch,
+	ESearchFieldStyleInput,
+	ESearchFieldStyleUrl,		
+	ESearchFieldStylePhone,
+	ESearchFieldStylePlain
+	};
+
+//volume bar orientation
+#define EVolumeBarOrientationHorizontal	0
+#define EVolumeBarOrientationVertical	1
+#define EVolumeBarOrientationToolbar	2
+
+//volume bar mute icon
+#define EVolumeBarMuteIconNotShown 0
+#define EVolumeBarMuteIconShown 1
+
+//seek bar mode
+#define ESeekBarModeNormal	0
+#define ESeekBarModeToolbar	1
+
+enum
+	{// seek bar time indicator position
+	ESeekBarTimeIndicatorNotShown,
+	ESeekBarTimeIndicatorAbove,
+	ESeekBarTimeIndicatorBelow,
+	ESeekBarTimeIndicatorLeft
+	};
+
+enum
+	{// phone number formatting flags
+	EPhoneNumberCharactersNotFormatted,
+	EPhoneNumberCharactersFormatted
+	};
+
+enum
+	{// location control new folder flags
+	ELocationControlAllowNewFolder,
+	ELocationControlDisallowNewFolder
+	};
+
+// Itu-9 Control flags
+#define 	ECknItu9IsSecret					0x01
+#define 	ECknItu9DigitsOnly					0x02
+#define 	ECknItu9QuestionMarkLegal			0x04
+
+// auto cell nubmering - currently not supported
+#define	ECknCellSelectorShowNumbers			0x1		
+// must not or-ed with EYCMatrixShowNumbers
+#define	ECknCellSelectorShowWeekDays		0x2		
+// only one cell can be selected
+#define	ECknCellSelectorSingleClicked		0x4		
+// at least one cell must have selection
+#define	ECknCellSelectorMustHaveClicked		0x8		
+
+
+#endif

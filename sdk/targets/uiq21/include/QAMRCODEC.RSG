@@ -1,0 +1,3 @@
+#define AUDIO_LIBRARY                             1
+#define GSM_AMR_FORMAT                            2
+#define GSM_AMR_CODEC                             3

@@ -1,0 +1,10 @@
+#define R_QCTRLPN_HOTKEYS                         0x5255a005
+#define R_QCTRLPNL_CATEGORIES                     0x5255a006
+#define R_QCTRLPNL_MENUBAR                        0x5255a007
+#define R_QCTRLPNL_APPLICATION_MENU               0x5255a008
+#define R_CONTROL_PANEL_TAB_GROUP                 0x5255a009
+#define R_QCTRLPNL_BUTTONS_GROUPS_DONE            0x5255a00a
+#define R_QCTRLPNL_SORT_ORDER                     0x5255a00b
+#define R_QCTRLPNL_SET_GROUPS                     0x5255a00c
+#define R_QCTRLPNL_BUTTONS_DONE                   0x5255a00d
+#define R_QCTRLPNL_CHANGE_GROUP                   0x5255a00e

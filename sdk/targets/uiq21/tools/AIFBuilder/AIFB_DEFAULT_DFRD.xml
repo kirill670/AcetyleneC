@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<SUPPORTEDDFRDS>
+	<DFRD BPP = "c8" DEFAULTMBM = "UIQ.mbm">
+		<NAME>UIQ</NAME>
+		<ICONS>
+			<ICON HEIGHT = "20" WIDTH = "16">20x16</ICON>
+			<ICON HEIGHT = "32" WIDTH = "32">32x32</ICON>
+		</ICONS>
+	</DFRD>
+</SUPPORTEDDFRDS>

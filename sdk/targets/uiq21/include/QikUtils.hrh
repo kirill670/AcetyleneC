@@ -1,0 +1,67 @@
+// QIkUtils.hrh
+// Copyright (c) 2000 Symbian Ltd.  All rights reserved.
+//
+// This file defines commands for use in the C++ source file.
+
+#ifndef __QIKUTILS_HRH__
+#define __QIKUTILS_HRH__
+
+enum TQikMediaFolderCmd
+	{
+	EQikAllMediaFolder = 0x401,
+	EQikEditMediaFolder = 0x402
+	};
+
+enum TQikMediaFolders
+	{
+	EQikMediaFolderImage,
+	EQikMediaFolderAudio,
+	EQikMediaFolderVideo,
+	EQikMediaFolderDocument,
+	EQikMediaFolderOther
+	};
+
+enum TQikMediaOperation
+	{
+	EQikFolderAdd,
+	EQikFolderRenameMove,
+	EQikFolderDelete,
+	EQikFileSave,
+	EQikFileRename,
+	EQikFileMove,
+	EQikFileCopy,
+	EQikFileCopyAny,
+	EQikFileDelete
+	};
+
+enum TQikMediaFileType
+	{
+	EQikFileUnrecognizedImageDir,		// Unrecognized CQikMediaFile in "Image" directory
+	EQikFileUnrecognizedAudioDir,		// Unrecognized CQikMediaFile in "Audio" directory
+	EQikFileUnrecognizedVideoDir,		// Unrecognized CQikMediaFile in "Video" directory
+	EQikFileUnrecognizedDocumentDir,	// Unrecognized CQikMediaFile in "Document" directory
+	EQikFileOrdinary,					// Normal CQikMediaFile
+	EQikFileRecognizedOtherDir,			// Recognized CQikMediaFile in "Other" directory
+	EQikFileUnrecognizedDir				// Unrecognized CQikMediaFile in unrecognized directory
+	};
+
+enum TQikProgressInfo
+	{
+	EProgressName,
+	EProgressBar
+	};
+
+#define EQikThemeColorControlBackground		0	// Light
+#define EQikThemeColorControlText			1	
+#define EQikThemeColorDialogBackground		2	// Medium
+#define EQikThemeColorDialogText			3
+#define EQikThemeColorHighlightBackground	4	// Dark
+#define EQikThemeColorHighlightText			5
+
+#define EQikThemeColorBlack					6
+#define EQikThemeColorWhite					7
+#define EQikThemeColorMidGray				8
+#define EQikThemeColorDarkGray				9
+#define EQikThemeColorDerived				10
+
+#endif	// __QIKUTILS_HRH__

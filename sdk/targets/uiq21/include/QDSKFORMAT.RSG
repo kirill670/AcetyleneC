@@ -1,0 +1,13 @@
+#define R_CTRLPNL_BUTTONS_CANCEL_DONE             0x52e1c004
+#define R_BUTTONS_DEF_CANCEL_FORMAT               0x52e1c005
+#define R_BUTTON_DONE                             0x52e1c006
+#define R_SELECT_DRIVE_DIALOG                     0x52e1c007
+#define R_FORMAT_CONFIRM_DIALOG                   0x52e1c008
+#define R_FORMAT_DISK_PROGRESS_DIALOG             0x52e1c009
+#define R_FORMAT_DISK_FAILED_DIALOG               0x52e1c00a
+#define R_FORMAT_DISK_EJECTED_DIALOG              0x52e1c00b
+#define R_NAME_DISK_DIALOG                        0x52e1c00c
+#define R_DISK_WRITEPROTECTED                     0x52e1c00d
+#define R_NO_DISK_FOUND                           0x52e1c00e
+#define R_VOL_DEFAULT_DISK_START_NAME             0x52e1c00f
+#define R_FORMAT_DEFAULT_DISK_NAME_               0x52e1c010

@@ -1,0 +1,30 @@
+// EIKCBA.RH
+//
+// Copyright (c) 1998 Symbian Ltd.  All rights reserved.
+//
+
+STRUCT CBA
+	{
+	LONG flags=EEikButtonGroupAddToStack;
+	// breadth is overridden by skin parameters
+	WORD breadth=80; // !!! make this accessible from LAF
+	// related_buttons is used to group multiple CBA instances so that layout parameters 
+        // can be provided which apply to all (e.g. max width of any related CBA). Overridden 
+	// by skin parameters.
+	LLINK related_buttons=0;
+	// Array of CBA_BUTTON
+   	STRUCT buttons[];
+	}
+
+STRUCT CBA_BUTTON
+	{
+	// Not used
+	BYTE version=0;
+	// Command Id for this button
+	WORD id=0;
+   	LTEXT txt="";
+	// None of the bmp related fields is used - the bitmap is set by reference to the skin
+	LTEXT bmpfile="";
+  	WORD bmpid=0xffff;		// -1
+    	WORD bmpmask=0xffff;	// -1
+	}

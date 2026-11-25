@@ -1,0 +1,2 @@
+#define R_HWRFEP_DESCRIPTION_TEXT                 0x2a949003
+#define R_HWRFEP_NOTHING_TO_SETUP                 0x2a949004

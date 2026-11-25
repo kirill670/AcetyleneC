@@ -1,0 +1,9 @@
+// bld.inf
+//
+
+PRJ_PLATFORMS
+    <mead:prjplatforms/>
+
+PRJ_MMPFILES
+    ..\engine\<mead:applicationname/>eng.mmp
+    ..\gui\<mead:applicationname/>.mmp

@@ -1,0 +1,45 @@
+// EIKFCTRY.H
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#if !defined(__EIKFCTRY_H__)
+#define __EIKFCTRY_H__
+
+#if !defined(__E32DEF_H__)
+#include <e32def.h>
+#endif
+
+class CCoeControl;
+
+enum
+	{
+	EEikControlHasEars=0x01,
+	EEikControlIsNonFocusing=0x02,
+	EEikControlHasExtraAscent=0x04
+	};
+
+struct SEikControlInfo
+    {
+    CCoeControl* iControl;
+	TInt iTrailerTextId;
+    TInt iFlags;
+    };
+
+/**
+ *
+ * Abstract factory that creates controls by type.
+ *
+ * This class provides a unified way to create controls according to the
+ * specified control integer ID.
+ *
+ * @since 1.2
+ * @lib " eikcore.lib "
+ */
+class EikControlFactory
+	{
+public:
+    IMPORT_C static SEikControlInfo CreateByTypeL(TInt aControlType);
+	};
+
+#endif

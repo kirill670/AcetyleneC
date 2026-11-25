@@ -1,0 +1,6 @@
+rls_string STRING_r_error_res_ir_no_device_found	 "No other device found" 
+rls_string STRING_r_error_res_ir_other_device_stupid "The other device does not understand data sent" 
+rls_string STRING_r_error_res_ir_other_device_aborted "The other device aborted the transfer" 
+rls_string STRING_r_error_res_ir_unknown_data		 "Unable to receive unknown data format" 
+rls_string STRING_r_error_res_ir_receive_failed_oom	 "Cannot receive data. Out of memory" 
+rls_string STRING_r_error_res_ir_other_device_no_multi "The other device does not accept multiple objects" 

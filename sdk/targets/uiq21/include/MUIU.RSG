@@ -1,0 +1,14 @@
+#define R_OPERATION_PROGRESS_DIALOG               0x4245c003
+#define R_MUIU_LOCAL_PROGRESS_MOVING_1            0x4245c004
+#define R_MUIU_LOCAL_PROGRESS_MOVING_X            0x4245c005
+#define R_MUIU_LOCAL_PROGRESS_COPYING_1           0x4245c006
+#define R_MUIU_LOCAL_PROGRESS_COPYING_X           0x4245c007
+#define R_MUIU_LOCAL_PROGRESS_DELETING_1          0x4245c008
+#define R_MUIU_LOCAL_PROGRESS_DELETING_X          0x4245c009
+#define R_SYSAGT_PHONE_OFF                        0x4245c00a
+#define R_SYSAGT_SIM_ABSENT                       0x4245c00b
+#define R_SYSAGT_SIM_REJECTED                     0x4245c00c
+#define R_SYSAGT_NETWORK_UNAVAILABLE              0x4245c00d
+#define R_SYSAGT_PHONE_ERR                        0x4245c00e
+#define R_REPLY_MENU_OPEN_CONTACT                 0x4245c00f
+#define R_REPLY_MENU_SAVE_CONTACT                 0x4245c010

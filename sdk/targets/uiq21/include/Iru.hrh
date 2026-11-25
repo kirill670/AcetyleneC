@@ -1,0 +1,17 @@
+//  Iru.hrh
+//
+// Copyright (c) 1998 Symbian Ltd.  All rights reserved.
+//
+
+enum // Ir Transfer email type dialog
+	{
+	EIrCIDTransferType,
+	EIrCIDSetDirection,
+	EIrCIDSetAccount,
+	EIrCIDExplanation,
+	EIrCIDAccntDelRemoveMessages,
+	EIrCIDAccntsettings,
+	EIrCIDAccntIsDefault,
+	EIrCIDDeleteCurrent,
+	EIrCIDDeleteNumber
+	};

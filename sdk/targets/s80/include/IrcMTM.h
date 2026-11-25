@@ -1,0 +1,90 @@
+// $Workfile: IRCMTM.H $
+//
+// Copyright (c) 2001 Symbian Ltd.  All rights reserved.
+//
+
+#if !defined (__IRCMTM_H__)
+#define __IRCMTM_H__
+
+#include <obexClientMtm.h>
+#include <obexMtmUtil.h>
+	
+
+class CIrClientMtm : public CObexClientMtm
+/**
+Class CIrClientMtm
+
+Infrared Client MTM
+Provides client-side functionality for infrared messaging. This is a thin implementation over the top of
+CObexClientMtm.
+ 
+@publishedPartner
+@released
+*/
+	{
+public:
+
+	/**
+	 * Canonical NewL factory function. 
+	 *
+	 * @param aRegisteredMtmDll Reference to registration data for MTM DLL.
+	 * @param aMsvSession Reference to CMsvSession of the client requesting the object.
+	 * @returns Pointer to a new, constructed CIrClientMtm
+	 * @exception Leaves if no memory is available.
+	 */
+
+	IMPORT_C static CIrClientMtm* NewL(CRegisteredMtmDll& aRegisteredMtmDll, CMsvSession& aMsvSession);
+
+	/// Contains the timeout values for connect and put operations
+	struct STimeouts
+		{
+		TInt iConnectTimeout;
+		TInt iPutTimeout;
+		};
+
+	///Enumeration for commands to be passed to InvokeAsyncFunctionL
+	enum TAsyncCmds
+		{
+		EIrcCmdSend ///< Send via IR operation
+		};
+
+	// --- RTTI functions ---
+	
+	/**
+	 * Starts an asynchronous messaging function as an active object. Only works for EIrcCmdSend.
+	 *
+	 * @param aFunctionId Identifier of the function to be invoked. Only supports EIrcCmdSend.
+	 * @param aSelection Selction of message entries for the requested function to operate on.
+	 * @param aParameter Buffer containing input and output parameters.
+	 * @param aCompletionStatus Canonical TRequestStatus used for control of the active object.
+	 * @return Pointer to a new asynchronously completing CMsvOperation. If failed, this is a completed operation with 
+	 * status set to the relevant error code.
+	 * @exception KErrXXX System-wide error codes
+	 * @exception KErrNotSupported if aFunctionId != EIrcCmdSend
+	 */
+	
+	CMsvOperation* InvokeAsyncFunctionL(TInt aFunctionId,const CMsvEntrySelection& aSelection, TDes8& aParameter, TRequestStatus& aCompletionStatus);
+
+private:
+	
+	/**
+	 * Constructor
+	 *
+	 * @param aRegisteredMtmDll Registration data for MTM DLL.
+	 * @param aMsvSession CMsvSession of the client requesting the object.
+	 */
+
+	CIrClientMtm(CRegisteredMtmDll& aRegisteredMtmDll, CMsvSession& aMsvSession);
+	
+	/**
+	 * Deletes the old header, then creates a new CIrHeader.	
+	 *
+	 *  @exception KErrXXX System-wide error codes if allocation fails
+	 */
+		
+	virtual void InitialiseHeaderL();
+	};
+
+
+
+#endif // __IRCMTM_H__

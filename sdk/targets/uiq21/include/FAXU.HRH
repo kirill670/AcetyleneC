@@ -1,0 +1,72 @@
+// FAXU.HRH
+//
+// Copyright (C) Symbian Ltd 1998
+//
+
+#include <mtmuidef.hrh>
+
+
+#define KFaxMtmuiFaxNumberWidth			15
+#define KFaxMtmuiFaxNumberLength		20
+
+#define KFaxMtmuiUserNameWidth			15
+#define KFaxMtmuiUserNameLength			20
+
+#define KFaxOnDemandDelayMin			0
+#define KFaxOnDemandDelayMax			99
+
+enum 
+	{
+	// --- Fax Settings dialog ---
+	EFaxCIDSettingsDialogOK,
+	EFaxCIDSettingsDialogCancel,
+	EFaxCIDSettingsAdvanced,
+	EFaxCIDSettingsFaxSettings,
+	EFaxCIDSettingsFaxNumber,
+	EFaxCIDSettingsUserName,
+	EFaxCIDSettingsSendResolution,
+	EFaxCIDSettingsReceiveResolution,
+	EFaxCIDSettingsShowDialog,
+	EFaxCIDSettingsCoverPage,
+	EFaxCIDSettingsDelivery,
+	EFaxCIDSettingsMinFaxSpeed,
+	EFaxCIDSettingsFaxbackDelay,
+	EFaxCIDSettingsECM,
+	EFaxCIDSettingsResend,
+	EFaxCIDSettingsAltFax,
+	EFaxCIDSettingsCallBarring,
+	EFaxCIDSettingsCallDiverting,
+	EFaxCIDSettingsOffPeak,  //This may not be required - just to test the UI
+	//
+	// --- Faxback dialog ---
+	EFaxCIDFaxBackNumber,
+	//
+	// --- Fax send summary dialog ---
+	EFaxCIDSentFax,
+	EFaxCIDNotSentFax,
+	EFaxCIDSendErrorLine1,
+	EFaxCIDSendErrorLine2,
+	//
+	// --- Fax send summary dialog ---
+	EFaxCIDRenderProgress,
+	//
+	// --- Connect dialog ---
+	EFaxCIDConnectFaxNumber,
+	EFaxCIDConnectLocation,
+	EFaxCIDConnectModem,
+	//
+	// --- Error dialog ---
+	EFaxCIDErrorLine1,
+	EFaxCIDErrorLine2,
+	//
+	// --- Fax Polling dialog ---
+	EFaxCIDPollingFaxNumber,
+	EFaxCIDFaxFetch,
+	EFaxCIDAddressBook,
+	EFaxCIDFaxClose,
+	//
+
+	EFaxCIDSettingsTesting1,
+	EFaxCIDSettingsTesting2
+	};
+

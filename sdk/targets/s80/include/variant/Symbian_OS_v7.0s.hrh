@@ -1,0 +1,127 @@
+// Symbian_OS_v7.0s.hrh
+//
+// Copyright (c) 2003 Symbian Ltd.  All rights reserved.
+//
+
+// Configuration options for Symbian OS v7.0s
+//
+// This file is managed by the Master Codeline Forum
+
+/**
+@publishedAll
+
+EKA2
+
+If EKA2 is defined, assume Kernel Architecture 2.
+If EKA2 is not defined, assume Kernel Architecture 1
+
+Kernel Architecture 2 is a defining property of the Cedar platform.
+Kernel Architecture 1 is a defining property of the Beech platform.
+
+Note: EKA2 is currently hardwired in Cedar tools.
+*/
+// #undef EKA2
+
+
+/**
+@publishedAll
+
+SYMBIAN_CRYPTO
+
+If SYMBIAN_CRYPTO is defined, assume the Symbian implementation of 
+cryptographic algorithms (including AES), hash algorithms, and 
+PKCS10 support.
+If SYMBIAN_CRYPTO is not defined, assume the RSA implementation of
+cryptographic algorithms.
+*/
+#define SYMBIAN_CRYPTO
+
+/**
+@publishedAll
+
+__CNF_FORMAT_V2__
+
+If __CNF_FORMAT_V2__ is defined, assume that Epoccnf.pl generates
+files in version 2 of the CNF format, and that both versions 1
+and 2 of this file format can be read by Conarc.
+If __CNF_FORMAT_V2__ is not defined, assume that Epoccnf.pl
+generates files in version 1 of the CNF format, and that only
+version 1 of this file format can be read by Conarc.
+*/
+// #define __CNF_FORMAT_V2__
+
+/**
+@publishedAll
+
+__KEYSTORE_API_V2__
+
+If __KEYSTORE_API_V2__ is defined, assume that version 2 of the keystore API
+will be built.  Version 2 API is not backwards compatible with version 1, and
+depends on the Symbian implementation of the cryptographic algorithms being
+present.
+@see SYMBIAN_CRYPTO 
+
+If __KEYSTORE_API_V2__ is not defined, version 1 of the API will be built.
+
+The keystore API is part of the security subsystem and provides a set of
+interfaces to access cryptographic keys stored on the device, and perform
+private key operations with them.  By itself, it does not provide an
+implementation of a keystore.
+
+*/
+#define __KEYSTORE_API_V2__
+
+/**
+@publishedAll
+
+__BLUETOOTH_API_V2__
+
+If __BLUETOOTH_API_V2__ is defined assume that version 2 of the bluetooth
+subsystem will be built.  This is binary compatible with version 1 for all
+published-all APIs but is not source compatible.  Users of classes defined
+in BTDevice.h and BTManClient.h may need to make source changes.
+
+The BTRegistry.dll is removed, users should link instead against BTManClient.lib.
+The APIs provided by that DLL were classified as published-partner.
+
+@see CBTDevice
+@see SGL.GT172.103 - Bluetooth Compatibility Specification
+
+If __BLUETOOTH_API_V2__ is not defined then version 1 of the bluetooth subsystem
+will be built.
+
+*/
+// #undef __BLUETOOTH_API_V2__
+
+
+/**
+@publishedAll
+
+__OBEX_USER_DEFINED_HEADERS__
+
+If __OBEX_USER_DEFINED_HEADERS__ is defined then the new API support for extended Headers will be available.
+This new support includes USER DEFINED HEADERS and the COUNT header.
+If this functionality is compiled out then the old API is available as before.
+For more information on see documents shown below.
+
+@see SGL.GT171.097 - Obex Header Extension how to
+@see SGL.GT171.095 - Obex Extension Design Document
+*/
+#define __OBEX_USER_DEFINED_HEADERS__
+
+/**
+@publishedAll
+
+__HIDE_IPC_V1__
+
+If __HIDE_IPC_V1__ is defined then the deprecated insecure IPC APIs will be removed from various Symbian OS header files. Classes affected include CSession, CServer, RMessage and RMessageptr.
+
+For more information see the document listed below.
+
+@see SMG.SM0005.004 - Platform Security Development for Zephyr
+@see CSession
+@see CServer
+@see RMessage
+@see RMessagePtr
+*/
+//#undef __HIDE_IPC_V1__

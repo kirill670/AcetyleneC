@@ -1,0 +1,8 @@
+#define R_SECDLG_NO_TRUST_DIALOG                  0x5c36b003
+#define R_SECDLG_AVAILABLE_WIDTH_CERTINFODLG      0x5c36b004
+#define R_SECDLG_MAX_LINES_CERTINFODLG            0x5c36b005
+#define R_SECDLG_CERTIFICATE_DIALOG               0x5c36b006
+#define R_SECDLG_TRUST_BUTTONS                    0x5c36b007
+#define R_SECDLG_GENERAL_ALERT                    0x5c36b008
+#define R_SECDLG_DATE_FORMAT                      0x5c36b009
+#define R_SECDLG_NOT_FOUND                        0x5c36b00a

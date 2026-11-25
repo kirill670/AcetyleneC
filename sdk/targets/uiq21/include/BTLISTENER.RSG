@@ -1,0 +1,2 @@
+#define R_BT_FTPNAME                              0xd308003
+#define R_QOBEX_SETTINGS_FILE                     0xd308004

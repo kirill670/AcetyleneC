@@ -1,0 +1,38 @@
+// QSystemSoundIds.hrh
+//
+// Copyright (c) 2003 Symbian Ltd.  All rights reserved.
+//
+
+#ifndef __QSYSTEMSOUNDIDS_HRH__
+#define __QSYSTEMSOUNDIDS_HRH__
+
+// This file define UIQ specific system sound UIDs. 
+// Some UIDs defined in bassnd.h are redefined here.
+// Allocated UID range is (GT) 0x100048aa to 0x100048ca and (UIQ) 0x1000A7BE to 0x1000A7C7
+
+// Event sound
+#define EQSystemSoundMajorUidEvent					0x1000609F
+#define EQSystemSoundMinorUidEventScreenTap			0x00000001
+#define EQSystemSoundMinorUidEventHwButtonPressed	0x00000002
+
+// Error sound
+#define EQSystemSoundMajorUidError					0x1000609E
+
+// Ring
+#define EQSystemSoundMajorUidRing					0x100048AB
+
+// Alarm
+#define EQSystemSoundMajorUidAlarm					0x100048AC
+
+// Message
+#define EQSystemSoundMajorUidMessage				0x100048AD
+#define EQSystemSoundMinorUidMessageNewSms			0x00000001
+#define EQSystemSoundMinorUidMessageNewMms			0x00000002
+#define EQSystemSoundMinorUidMessageNewEmail		0x00000003
+#define EQSystemSoundMinorUidMessageNewVoiceMessage 0x00000004
+#define EQSystemSoundMinorUidMessageNewBeamedObject 0x00000005
+#define EQSystemSoundMinorUidMessageNewFax 0x00000006
+
+
+
+#endif // __QSYSTEMSOUNDIDS_HRH__

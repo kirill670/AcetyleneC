@@ -1,0 +1,41 @@
+// MTMExtendedCapabilities.hrh
+//
+// Copyright (c) 1998 Symbian Ltd.  All rights reserved.
+//
+
+#if !defined __MTMEXTENDEDCAPABILITIES_HRH__
+#define __MTMEXTENDEDCAPABILITIES_HRH__
+
+#if !defined KMtmUiFunctionPrint
+#include <mtmuidef.hrh>
+#endif // KMtmUiFunctionPrint
+
+
+// new capabilties
+//
+#define KUidMsvMtmQueryViewerUidValue 0x10006516
+// response TUid of the viewer application (which may be the same as the editor)
+#define KUidMsvMtmCanActOnNewMessagesUidValue 0x10006551
+#define KUidMtmQueryCanCreateNewMsgValue 0x10008b24
+#define KUidMsvMtmUiQueryExtendedGetMailProgress 0x10009293
+#define KUidQueryNeedsAccountButCannotCreateValue 0x100096C6 
+#define KUidHasSubfolderForInboxValue 0x10083568
+#define KUidCanInsertSignatureValue     0x101F895F
+#define KUidMsvMtmUiQueryCanGetSoundUid 0x101F87EA
+
+// new function ids
+//
+#define KMtmUiNewMessageAction KMtmFirstFreeMtmUiFunctionId
+#define KMtmUiGetInboxId KMtmFirstFreeMtmUiFunctionId+1
+#define KMtmUiHasSignature KMtmFirstFreeMtmUiFunctionId+2
+#define KMtmUiIsConnected				KMtmFirstFreeMtmUiFunctionId+3
+#define KMtmUiGetNewMsgSoundUID		KMtmFirstFreeMtmUiFunctionId+4
+
+// function invoked on an MTM UI when a new message arrives in the Inbox
+//
+#define KMtmUiFirstFreeDFRDMTMFunctionId KMtmFirstFreeMtmUiFunctionId+0x1000
+
+// extensions to data layer function flags
+#define EMtudCommandReceiveMain 0x800 //For transfer receive mtm commands that goes under main Menu e.g. SMS MTM "SIM Messages"
+
+#endif // __MTMEXTENDEDCAPABILITIES_HRH__

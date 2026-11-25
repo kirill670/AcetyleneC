@@ -1,0 +1,581 @@
+/* -*- Mode: c++; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
+**
+** Copyright (C) 1995-2001 Opera Software AS.  All rights reserved.
+**
+** This file is part of the Opera web browser.  It may not be distributed
+** under any circumstances.
+*/
+
+// File name:          pm_type.h
+// Contents:           Types used in the Preference manager
+//
+// Various typedef'd and #define'd datatypes used by the Preference Manager.
+// Collected here as not to clutter up prefsman.h
+
+#ifndef __prefs_pm_type_h
+#define __prefs_pm_type_h
+
+
+#if defined (__QNX__)
+# include "core/unicode.h"
+#endif
+
+
+/// Location of status bar
+typedef enum
+{
+	STATUS_OFF,
+	STATUS_TOP,
+	STATUS_BOTTOM,
+	STATUS_EMBED	// Qt uses this to embed the status bar
+} STATUSBAR;
+
+#ifdef _BUTTON_EXTENDED_PREFS_
+#include "ui/ButtonSet/BorderEnum.h"
+#endif
+
+#if defined(_MACINTOSH_)
+typedef enum
+{
+	kBarOff,
+	kBarTop,
+	kBarBottom,
+	kBarLeft,
+	kBarRight,
+	kBarCombined,
+	kBarCombinedAddressBar,
+	kBarCombinedStatusBar,
+	kToolBarDefaultPosition = kBarTop,
+	kLinkBarDefaultPosition = kBarTop,
+//	kProgressBarDefaultPosition = kBarTop,
+//	kAddressBarDefaultPosition = kBarCombined,
+	kProgressBarDefaultPosition = kBarCombinedStatusBar,
+	kAddressBarDefaultPosition = kBarTop,
+	kFavoriteBarDefaultPosition = kBarOff,
+	kStatusBarDefaultPosition = kBarBottom
+} BarPosition;			///< Location of toolbar, progressbar or linkbar
+#endif
+
+#if defined(_QT_)
+// Location of toolbar (QT only)
+typedef enum
+{
+	TOOLBAR_OFF = 0,
+	TOOLBAR_LEFT = 1,
+	TOOLBAR_TOP = 2,
+	TOOLBAR_RIGHT = 3,
+	TOOLBAR_BOTTOM = 4
+} TOOLBAR_LOCATION;
+
+
+struct MenuVisibility
+{
+	int	 menuId;
+	uni_char *name;
+	bool visible;
+	int  accel;
+};
+
+// What to show on the progress toolbar
+enum ProgressBarItem
+{
+	PROGRESS_ITEM_SECURITY = 0x0001,
+	PROGRESS_ITEM_IMAGE    = 0x0002,
+	PROGRESS_ITEM_DOCUMENT = 0x0004,
+	PROGRESS_ITEM_PREVIEW  = 0x0008,
+	PROGRESS_ITEM_LOCATION = 0x0010,
+	PROGRESS_ITEM_GO       = 0x0020,
+	PROGRESS_ITEM_SEARCH   = 0x0040,
+	PROGRESS_ITEM_ZOOM     = 0x0080,
+	PROGRESS_ITEM_ALL      = 0x00FF
+};
+#endif
+
+#if defined(_QT_) || defined(MSWIN)
+// Where to display (JavaScript) popup windows
+enum PopupDestination
+{
+	POPUP_WIN_NEW = 0,
+	POPUP_WIN_CURRENT = 1,
+	POPUP_WIN_BACKGROUND = 2,
+	POPUP_WIN_IGNORE = 3
+};
+#endif
+
+/** How to handle recovery after a crash */
+enum WindowRecoveryStrategy
+{
+	Restore_RegularStartup = 0, ///< No recovery needed (start with saved win.)
+#ifdef AUTOSAVE_WINDOWS
+	Restore_AutoSavedWindows,   ///< Start using autosaved window file (if any)
+#endif
+	Restore_Homepage,           ///< Start with homepage
+	Restore_NoWindows           ///< Start with no windows
+};
+
+
+
+/// Display images or not
+typedef enum {
+	FIGS_OFF = 1,
+	FIGS_SHOW,
+	FIGS_ON
+} SHOWIMAGESTATE;
+
+/// Format of the buttons in the button bar
+enum BUTTONTYPE
+{
+	BUTTON_BAR_IMAGE,
+	BUTTON_BAR_TEXT,
+	BUTTON_BAR_IMAGE_AND_TEXT,
+	BUTTON_BAR_IMAGE_AND_TEXT_ON_RIGHT
+};
+
+/// Selects which kind of button bar to show
+enum BUTTONBARSIZE
+{
+	BUTTON_BAR_NONE,
+	BUTTON_BAR_SIMPLE,
+	BUTTON_BAR_FULL
+};
+
+enum OpPosRep								// Position representation
+{
+	opPosRepAbsolute	= 0x00,				// Absolute x, y, endx or endy
+	opPosRepFromEnd		= 0x01,				// Relative to screen or parent window ending point
+	opPosRepPercentage	= 0x02,				// % of screen or parent window
+	opPosRepRelative	= 0x03,				// Relative to contrary point (will centre if both relative)
+	opPosRepMask		= 0x03,				// mask for bitwise ANDing.
+
+	opPosRepTop			= 0x1000,			// multiply the above values by these, when stuffing the values into a short.
+	opPosRepLeft		= 0x0100,
+	opPosRepBottom		= 0x0010,
+	opPosRepRight		= 0x0001
+
+// Most used representations:
+//	x, y, width, height
+//	x, y, width%, height%				(% of screen area or parent window)
+//	x, y, endx, endy
+//	x, y, fromRight, fromBottom
+//	top, left, bottom, right			(many people are used to this representation)
+//	top, left, fromBottom, fromRight
+};
+
+/// System's mail handler
+enum MAILHANDLER
+{
+	_MAILHANDLER_FIRST_ENUM	= 0,
+	MAILHANDLER_OPERA		= 1,
+	MAILHANDLER_APPLICATION	= 2,
+	MAILHANDLER_SYSTEM		= 3,
+//	insert above
+	IGNORE_MAILHANDLER_PARAM,
+	_MAILHANDLER_LAST_ENUM
+};
+
+// Bitmaps
+//enum?
+#define UNKNOWN_BITMAP 						0
+#define DIR_BITMAP							1
+//#define TXT_BITMAP						2
+//#define HTML_BITMAP						3
+//#define BIN_BITMAP						4
+//#define GRAPHIC_BITMAP					5
+//#define SOUND_BITMAP						6
+
+// *** 10/10/97 GI ***
+#define X_BITMAP							5
+#define V_BITMAP							6
+
+#define OPERA_BITMAP						7
+#define NEWS_ARTICLE_READ_BITMAP			8
+#define NEWS_ARTICLE_UNREAD_BITMAP			9
+#define NEWS_GROUP_SUBSCRIBED_BITMAP		10
+#define NEWS_GROUP_UNSUBSCRIBED_BITMAP		11
+#define NEWS_GROUPS_BITMAP					12
+#define NEWS_GROUPS_BITMAP_OPEN				13
+#define NEWS_THREAD_BITMAP_OPEN				14
+#define NEWS_THREAD_BITMAP_CLOSED			15
+
+
+/*****************************************************************
+**
+**		Bitmap IDs for images in Opera that
+**		map into the corresponding ImageArray
+**		object and must be correct according to
+**		order of the keys. (see pm_ui.cpp)
+**
+*****************************************************************/
+
+enum BitmapIDs
+{
+	MAINBAR_BITMAP_FIRST					= 0,
+	MAINBAR_BITMAP_BACK						= MAINBAR_BITMAP_FIRST,
+	MAINBAR_BITMAP_FORWARD,
+	MAINBAR_BITMAP_RELOAD,
+	MAINBAR_BITMAP_STOP,
+	MAINBAR_BITMAP_HOME,
+	MAINBAR_BITMAP_ACTIVE_BOOKMARK_FOLDER,
+	MAINBAR_BITMAP_HOTLIST,
+	MAINBAR_BITMAP_PRINT,
+	MAINBAR_BITMAP_FULL_SCREEN,
+	MAINBAR_BITMAP_FIND,
+	MAINBAR_BITMAP_TILE,
+	MAINBAR_BITMAP_CASCADE,
+	MAINBAR_BITMAP_NEW,
+	MAINBAR_BITMAP_OPEN,
+	MAINBAR_BITMAP_SAVE,
+	MAINBAR_BITMAP_COPY,
+	MAINBAR_BITMAP_GOTO,
+	MAINBAR_BITMAP_CUSTOM_1,
+	MAINBAR_BITMAP_CUSTOM_2,
+	MAINBAR_BITMAP_CUSTOM_3,
+	MAINBAR_BITMAP_CUSTOM_4,
+	MAINBAR_BITMAP_CUSTOM_5,
+	MAINBAR_BITMAP_CUSTOM_6,
+	MAINBAR_BITMAP_CUSTOM_7,
+	MAINBAR_BITMAP_CUSTOM_8,
+	MAINBAR_BITMAP_HELP_INDEX,
+	MAINBAR_BITMAP_HELP_KEYBOARD_SHORTCUTS,
+	MAINBAR_BITMAP_LAST,
+
+	HOTLIST_BITMAP_FIRST					= MAINBAR_BITMAP_LAST,				
+	HOTLIST_BITMAP_NEW_BOOKMARK				= HOTLIST_BITMAP_FIRST,
+	HOTLIST_BITMAP_NEW_CONTACT,			
+	HOTLIST_BITMAP_NEW_FOLDER,		
+	HOTLIST_BITMAP_VIEW,
+	HOTLIST_BITMAP_LAST,
+	
+	WINDOWBAR_BITMAP_FIRST					= HOTLIST_BITMAP_LAST,				
+	WINDOWBAR_BITMAP_UNKNOWN				= WINDOWBAR_BITMAP_FIRST,
+	WINDOWBAR_BITMAP_HOTLIST,
+	WINDOWBAR_BITMAP_TRANSFERS,				
+	WINDOWBAR_BITMAP_MAIL_BOX,				
+	WINDOWBAR_BITMAP_MAIL_COMPOSE,			
+	WINDOWBAR_BITMAP_MAIL_SEARCH,			
+	WINDOWBAR_BITMAP_NEWS_ARTICLE,			
+	WINDOWBAR_BITMAP_NEWS_GROUP,			
+	WINDOWBAR_BITMAP_NEWS_GROUP_LIST,		
+	WINDOWBAR_BITMAP_DOCUMENT_COMPLETE,		
+	WINDOWBAR_BITMAP_DOCUMENT_COMPLETE_UNREAD,
+	WINDOWBAR_BITMAP_DOCUMENT_INCOMPLETE,
+	WINDOWBAR_BITMAP_MESSAGING_NORMAL,			
+	WINDOWBAR_BITMAP_MESSAGING_NEW,
+	WINDOWBAR_BITMAP_LAST,
+
+	ADDRESSBAR_BITMAP_FIRST					= WINDOWBAR_BITMAP_LAST,				
+	ADDRESSBAR_BITMAP_STOP					= ADDRESSBAR_BITMAP_FIRST,
+	ADDRESSBAR_BITMAP_LOAD_IMAGES,			
+	ADDRESSBAR_BITMAP_SHOW_IMAGES,			
+	ADDRESSBAR_BITMAP_NO_IMAGES,			
+	ADDRESSBAR_BITMAP_NO_SECURITY,			
+	ADDRESSBAR_BITMAP_LOW_SECURITY,			
+	ADDRESSBAR_BITMAP_MEDIUM_SECURITY,			
+	ADDRESSBAR_BITMAP_HIGH_SECURITY,	
+	ADDRESSBAR_BITMAP_AUTHOR_MODE,		
+	ADDRESSBAR_BITMAP_USER_MODE,	
+#ifdef INTERNAL_SOURCE_VIEWER
+	ADDRESSBAR_BITMAP_VIEWSOURCE_MODE,
+#endif	
+	ADDRESSBAR_BITMAP_PRINT_PREVIEW,			
+	ADDRESSBAR_BITMAP_PRINT_PREVIEW_AS_SCREEN,			
+	ADDRESSBAR_BITMAP_PRINT_PREVIEW_ACTIVE_FRAME,			
+	ADDRESSBAR_BITMAP_PRINT_PREVIEW_ALL_FRAMES,			
+	ADDRESSBAR_BITMAP_SEARCH,			
+	ADDRESSBAR_BITMAP_GO,
+	ADDRESSBAR_BITMAP_LAST,
+
+	MAIL_BITMAP_FIRST						= ADDRESSBAR_BITMAP_LAST,				
+	MAIL_BITMAP_PREVIOUS					= MAIL_BITMAP_FIRST,
+	MAIL_BITMAP_NEXT,			
+	MAIL_BITMAP_COMPOSE,			
+	MAIL_BITMAP_REPLY,			
+	MAIL_BITMAP_REPLY_ALL,			
+	MAIL_BITMAP_FORWARD,			
+	MAIL_BITMAP_REDIRECT,			
+	MAIL_BITMAP_MOVE_TO,			
+	MAIL_BITMAP_DELETE,			
+	MAIL_BITMAP_VIEW,			
+	MAIL_BITMAP_SEND,	
+	MAIL_BITMAP_SEND_ALL,	
+	MAIL_BITMAP_ADD_ATTACHMENT,			
+	MAIL_BITMAP_SAVE,			
+	MAIL_BITMAP_CHECK,			
+	MAIL_BITMAP_STOP,			
+	MAIL_BITMAP_MENU,			
+	MAIL_BITMAP_LAST,
+
+	NEWS_BITMAP_FIRST						= MAIL_BITMAP_LAST,				
+	NEWS_BITMAP_PREVIOUS					= NEWS_BITMAP_FIRST,
+	NEWS_BITMAP_NEXT,			
+	NEWS_BITMAP_COMPOSE,			
+	NEWS_BITMAP_REPLY,			
+	NEWS_BITMAP_FOLLOW_UP,			
+	NEWS_BITMAP_FORWARD,			
+	NEWS_BITMAP_VIEW,			
+	NEWS_BITMAP_SHOW_ALL_GROUPS,
+	NEWS_BITMAP_CATCHUP,
+	NEWS_BITMAP_LAST,
+
+	TRANSFERS_BITMAP_FIRST					= NEWS_BITMAP_LAST,				
+	TRANSFERS_BITMAP_RESUME					= TRANSFERS_BITMAP_FIRST,
+	TRANSFERS_BITMAP_STOP,			
+	TRANSFERS_BITMAP_RETRANSFER,			
+	TRANSFERS_BITMAP_VIEW,
+	TRANSFERS_BITMAP_LAST,
+
+	MESSAGING_BITMAP_FIRST					= TRANSFERS_BITMAP_LAST,				
+	MESSAGING_BITMAP_SEND					= MESSAGING_BITMAP_FIRST,
+	MESSAGING_BITMAP_COMPOSE,			
+	MESSAGING_BITMAP_ADD_CONTACT,
+	MESSAGING_BITMAP_LAST,
+
+	PERSONALBAR_BITMAP_FIRST				= MESSAGING_BITMAP_LAST,				
+	PERSONALBAR_BITMAP_BOOKMARK				= PERSONALBAR_BITMAP_FIRST,
+	PERSONALBAR_BITMAP_FOLDER,
+	PERSONALBAR_BITMAP_SEARCH_FIRST,		// now follows 16 slots reserved for the 16 first search engines...
+	PERSONALBAR_BITMAP_SEARCH_LAST			= PERSONALBAR_BITMAP_SEARCH_FIRST + 15,
+	PERSONALBAR_BITMAP_LAST,
+
+	ICONS_BITMAP_FIRST						= PERSONALBAR_BITMAP_LAST,
+	ICONS_BITMAP_BLANK						= ICONS_BITMAP_FIRST,
+	ICONS_BITMAP_CLOSE,
+	ICONS_BITMAP_DROPDOWN,
+	ICONS_BITMAP_PAGE,
+	ICONS_BITMAP_FOLDER_CLOSED,
+	ICONS_BITMAP_FOLDER_OPEN,
+	ICONS_BITMAP_FOLDER_PARENT,
+	ICONS_BITMAP_FOLDER_PERSONALBAR,
+	ICONS_BITMAP_FOLDER_FIND_RESULTS,
+	ICONS_BITMAP_BOOKMARK_UNVISITED,
+	ICONS_BITMAP_BOOKMARK_VISITED,
+	ICONS_BITMAP_MAIL_ACCOUNT,
+	ICONS_BITMAP_MAIL_INBOX,
+	ICONS_BITMAP_MAIL_OUTBOX,
+	ICONS_BITMAP_MAIL_SENTBOX,
+	ICONS_BITMAP_MAIL_DRAFTS,
+	ICONS_BITMAP_MAIL_TRASH,
+	ICONS_BITMAP_MAIL_UNREAD,
+	ICONS_BITMAP_MAIL_READ,
+	ICONS_BITMAP_MAIL_NEW,
+	ICONS_BITMAP_MAIL_REPLIED,
+	ICONS_BITMAP_MAIL_FORWARDED,
+	ICONS_BITMAP_MAIL_REDIRECTED,
+	ICONS_BITMAP_MAIL_ATTACHMENT,
+	ICONS_BITMAP_MAIL_SENT,
+	ICONS_BITMAP_MAIL_HIGHEST_PRIORITY,
+	ICONS_BITMAP_MAIL_HIGH_PRIORITY,
+	ICONS_BITMAP_MAIL_LOW_PRIORITY,
+	ICONS_BITMAP_MAIL_LOWEST_PRIORITY,
+	ICONS_BITMAP_MAIL_QUEUED,
+
+	ICONS_BITMAP_NEWS_UNSUBSCRIBED,
+	ICONS_BITMAP_NEWS_SUBSCRIBED,
+	ICONS_BITMAP_NEWS_UNREAD,
+	ICONS_BITMAP_NEWS_READ,
+
+	ICONS_BITMAP_TRANSFER_LOADING,
+	ICONS_BITMAP_TRANSFER_LOADING_WAITING,
+	ICONS_BITMAP_TRANSFER_SIZE_MISMATCH,
+	ICONS_BITMAP_TRANSFER_SUCCESS,
+	ICONS_BITMAP_TRANSFER_STOPPED,
+	ICONS_BITMAP_TRANSFER_FAILURE,
+
+	ICONS_BITMAP_PREFS_PERSONAL,
+	ICONS_BITMAP_PREFS_BROWSER,
+	ICONS_BITMAP_PREFS_PAGES,
+	ICONS_BITMAP_PREFS_EXTENSIONS,
+	ICONS_BITMAP_PREFS_NETWORK,
+
+	ICONS_BITMAP_STATUS_FIRST,
+	ICONS_BITMAP_STATUS_OFFLINE			= ICONS_BITMAP_STATUS_FIRST,
+	ICONS_BITMAP_STATUS_ONLINE,
+	ICONS_BITMAP_STATUS_AWAY,
+	ICONS_BITMAP_STATUS_NA,
+	ICONS_BITMAP_STATUS_OCCUPIED,
+	ICONS_BITMAP_STATUS_DND,
+	ICONS_BITMAP_STATUS_INVISIBLE,
+	ICONS_BITMAP_STATUS_CHAT,
+	ICONS_BITMAP_STATUS_CONNECTING,
+	ICONS_BITMAP_STATUS_REQUESTING,
+	ICONS_BITMAP_STATUS_NO_MESSAGING,
+	ICONS_BITMAP_STATUS_LAST,
+
+	ICONS_BITMAP_CONTACT_FIRST			= ICONS_BITMAP_STATUS_LAST,
+	ICONS_BITMAP_CONTACT_LAST			= ICONS_BITMAP_CONTACT_FIRST + 40,
+
+	ICONS_BITMAP_LAST					= ICONS_BITMAP_CONTACT_LAST,
+
+	PROGRESS_BITMAP_FIRST				= ICONS_BITMAP_LAST,
+	PROGRESS_BITMAP_EMPTY				= PROGRESS_BITMAP_FIRST,
+	PROGRESS_BITMAP_FULL,
+	PROGRESS_BITMAP_LAST
+};
+
+
+/// How to decode JPEGs
+enum JPEGDCTMethod
+{
+	JINTEGER,
+	JFAST_INTEGER,
+	JFLOAT
+};
+
+/// How to dither JPEGs
+enum JPEGDithering
+{
+	FLOYD_STEINBERG,
+	ORDERED,
+	NONE
+};
+
+/// Number of passes for JPEGs
+enum JPEGPasses
+{
+	ONE,
+	TWO
+};
+
+/// Check modification time for cache
+enum CHMOD
+{
+	NEVER,
+	ALWAYS,
+	TIME
+};
+
+/// What to do with HTTP errors
+enum HTTPERRORSTRATEGY
+{
+	HTTP_ERROR_ALWAYS_SHOW,
+	HTTP_ERROR_NEVER_SHOW,
+	HTTP_ERROR_SHOW_CUSTOM
+};
+
+/// What to display on startup
+enum STARTUPTYPE
+{
+	_STARTUP_FIRST_ENUM = -1,
+
+	STARTUP_HISTORY,
+	STARTUP_WINHOMES,
+	STARTUP_HOME,
+	STARTUP_CONTINUE,	// Continue where interrupted
+	STARTUP_NOWIN,		// Open with no windows
+	STARTUP_ONCE,
+	STARTUP_BLANK,
+
+	_STARTUP_LAST_ENUM
+};
+
+/// How to sort news
+enum NEWSSORT
+{
+	NEWS_SORT_AUTHOR,
+	NEWS_SORT_DATE,
+	NEWS_SORT_SUBJECT,
+	NEWS_SORT_DATE_REVERSE
+};
+
+/// How is news displayed?
+enum NEWSWINMODE
+{
+	NEWS_WIN_SHARE,
+	NEWS_WIN_ONE,
+	NEWS_WIN_MULTIPLE
+};
+
+/// What kind of settings file are we reading?
+enum INIFILETYPE
+{
+	INIFILE_SUPER,
+	INIFILE_USER
+};
+
+/// What are we doing with the configuration?
+enum PREFSIO
+{
+	PREFS_WRITE,
+	PREFS_READ
+};
+
+/// UI appearance
+enum UIDrawToolKind
+{
+	UIDT_3DFACE=0,
+	UIDT_3DLIGHT,
+	UIDT_3DSHADOW,
+	UIDT_3DHOTLIGHT,
+	UIDT_3DDARK,
+	UIDT_PROGRESS,
+	__UIDT_LAST_ENUM
+};
+
+/// What is to be shown in full screen mode?
+enum PrefsFullScreenKind
+{
+	PFS_COVERTASKBAR		= 0,
+	PFS_HIDEMENU,
+/*	not ready yet
+	PFS_HIDEHOTLIST,			
+	PFS_HIDETOOLBAR,
+	PFS_HIDEPROGRESSBAR,
+	PFS_HIDESTATUSBAR,
+	PFS_MAXIMIZEACTIVEWINDOW,	
+ */
+	PFS_LAST_ENUM
+};
+
+/// Types of cryptography
+enum SSLversion
+{
+	VER2_X,
+	VER3_0,
+	VER3_1
+};
+#define NUMBER_OF_SSLVERSIONS	3
+
+// Progress bar position (BOOL)
+#define PROGRESSBAR_BOTTOM	FALSE
+#define PROGRESSBAR_TOP		TRUE
+
+// Number of document appearance settings (pm_css.cpp)
+#define DM_NUMSETTINGS 6
+
+//	hotlist sort options
+enum HLSortBy		{ HL_SORTBY_NAME=0, HL_SORTBY_CREATED, HL_SORTBY_VISITED, HL_SORTBY_USER };
+enum HLCol			{ HL_COL_NAME=0, HL_COL_VISITED, HL_COL_CREATED, HL_COL_ENUMSDEFINED};
+enum HLSortDirection{ HL_SORTDIR_ASC=0, HL_SORTDIR_DES, HL_SORTDIR_NULL, HL_SORTDIR_ENUMSDEFINED};
+
+// Window cycle type..
+
+enum WindowCycleType
+{
+	WINDOW_CYCLE_TYPE_STACK = 0,
+	WINDOW_CYCLE_TYPE_LIST,
+	WINDOW_CYCLE_TYPE_MDI
+};
+
+// Toolbar alignment.. uhm.. this is the same as QT's toolbar_location
+// better merge it some time
+
+enum ToolbarAlignment
+{
+	TOOLBAR_ALIGNMENT_OFF = 0,
+	TOOLBAR_ALIGNMENT_LEFT,
+	TOOLBAR_ALIGNMENT_TOP,
+	TOOLBAR_ALIGNMENT_RIGHT,
+	TOOLBAR_ALIGNMENT_BOTTOM
+};
+
+// Check expiry type
+
+enum CheckExpiryType
+{
+	CHECK_EXPIRY_NORMAL = 0,
+	CHECK_EXPIRY_USER = 1,
+	CHECK_EXPIRY_NEVER = 2
+};
+
+#endif //__prefs_pm_type_h
+

@@ -1,0 +1,18 @@
+// QHelp.HRH
+//
+// Copyright (c) 2000 Symbian Ltd.  All rights reserved.
+//
+
+// This file defines commands for use in the resource file and
+// in the C++ source file.
+
+#ifndef __QHELP_HRH__
+#define __QHELP_HRH__
+
+enum
+	{
+	EQHelpDefaultStartMode,
+	EQHelpContextStartMode
+	};
+
+#endif	// __QHELP_HRH__

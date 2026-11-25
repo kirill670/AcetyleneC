@@ -1,0 +1,7 @@
+//indicato.rsg exported from ckon for compatability with 6.0
+
+#include <baseskin.rsg>
+
+#define R_INDICATOR_LAYOUT_WIDE R_BSKN_INDICATOR_LAYOUT_WIDE
+#define R_INDICATOR_LAYOUT_NARROW R_BSKN_INDICATOR_LAYOUT
+

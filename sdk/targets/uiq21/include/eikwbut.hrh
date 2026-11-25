@@ -1,0 +1,10 @@
+// EIKWBUT.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EEikWindowButtonMinimize					0x01
+#define EEikWindowButtonMaximize					0x02
+#define EEikWindowButtonClose						0x03
+#define EEikWindowButtonMoveAndResize				0x04
+#define EEikWindowButtonStandardSize				0x05

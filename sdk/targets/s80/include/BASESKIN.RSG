@@ -1,0 +1,22 @@
+#define R_DUMMY_APP_NAME                          0xd118002	//Only used in Series 80
+#define R_BSKN_STATUS_PANE                        0xd118003
+#define R_BSKN_INDICATOR_LAYOUT                   0xd118004
+#define R_BSKN_CBA_DIGITAL_CLOCK                  0xd118005
+#define R_BSKN_INDICATOR_LAYOUT_WIDE              0xd118006
+#define R_BSKN_INDICATOR_CLOCK                    0xd118007
+#define R_BSKN_APPLICATION_KEYS                   0xd118008
+#define R_BSKN_STATUS_INDICATOR_LAYOUT            0xd118009
+#define R_BSKN_STATUS_INDICATOR_LAYOUT_NARROW     0xd11800a
+#define R_BSKN_NETWORK_INDICATOR_RECT             0xd11800b
+#define R_BSKN_NETWORK_INDICATOR_RECT_NARROW      0xd11800c
+#define R_BSKN_DESK_INDICATOR_RECT                0xd11800d
+#define R_BSKN_BATTERY_INDICATOR_RECT             0xd11800e
+#define R_BSKN_BATTERY_INDICATOR_RECT_NARROW      0xd11800f
+#define R_BSKN_FEP_INDICATOR_RECT                 0xd118010
+#define R_BSKN_TELEPHONE_INDICATOR_RECT           0xd118011
+#define R_BSKN_CLOCK_INDICATOR_RECT               0xd118012
+#define R_BSKN_CLOCK_INDICATOR_RECT_NARROW        0xd118013
+#define R_BSKN_EXPRESS_MENU_RECT                  0xd118014
+#define R_BSKN_EXPRESS_MENU_POSITION              0xd118015
+#define R_BSKN_APP_ICON_RECT                      0xd118016
+#define R_BSKN_APP_TITLE_RECT                     0xd118017

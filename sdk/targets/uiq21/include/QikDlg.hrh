@@ -1,0 +1,167 @@
+// CEikCategories.hrh
+//
+// Copyright (c) 2000 Symbian Ltd.  All rights reserved.
+//
+// This file defines commands for use in the resource file and
+// in the C++ source file.
+
+#ifndef __QIKDLG_HRH__
+#define __QIKDLG_HRH__
+
+
+// CQikZoomDilaog
+enum TQikZoomDialogControls
+	{
+	EQikCidZoomOptButGrp	= 1,
+	EQikCidZoomSmallOptBut	= 2,
+	EQikCidZoomMediumOptBut	= 3,
+	EQikCidZoomLargeOptBut	= 4
+	};
+
+// CQikEditCategoriesDilaog
+enum TQikCategoryDialogButtons
+	{
+	EQikBidCategoryDialogsAddButton		= 0x01,
+	EQikBidCategoryDialogsChangeButton	= 0x02,
+	EQikBidCategoryDialogsDeleteButton	= 0x03
+	};
+
+enum TQikCategoryDialogControls
+	{
+	EQikCidCategoryDialogsListBox	= 0x101,
+	EQikCidCategoryDialogsEdwin		= 0x102,
+	EQikCidCategoryDialogsLabel		= 0x103
+	};
+
+// CQikEditFileFoldersDilaog
+enum TQikFileFoldersDialogButtons
+	{
+	EQikBidFileFoldersDialogsAddButton		= 0x04,
+	EQikBidFileFoldersDialogsRenameButton	= 0x05,
+	EQikBidFileFoldersDialogsDeleteButton	= 0x06
+	};
+
+enum TQikFileFoldersDialogControls
+	{
+	EQikCidFileFoldersDialogsListBox	= 0x104,
+	EQikCidFileFoldersDialogsEdwin		= 0x105,
+	EQikCidFileFoldersDialogsLabel		= 0x106,
+	EQikCidFileFolderLocationChoiceList = 0x20A
+	};
+
+enum TQikSelectMediaFileDialogControls
+	{
+	EQikCidSelectImageThumbnails = 0x10F,
+	EQikCidSelectImageList = 0x110,
+	EQikCidSelectImageDialogOptionButtons = 0x107,
+	EQikCidSelectImageDialogListBox = 0x108,
+	EQikCidSelectImageDialogFolderList = 0x109,
+	EQikCidSelectUnrecMediaLocation = 0x11A,
+	EQikCidSelectImageSnakingListBox = 0x11B,
+	EQikCidSelectFileInformation = 0x11C
+	};
+
+enum TQikSelectMediaFileCustomControls
+	{
+	EQikCidSelectImageSnakingListbox = 0x2000,
+	EQikCidSelectFileInformationType = 0x2001
+	};
+
+enum TQikSelectMediaFileDialogButtons
+	{
+	EQikBidSelectImageDialogsSelectButton	= 0x07,
+	EQikBidSelectAudioStopButton,
+	EQikBidSelectAudioPlayButton
+	};
+
+enum TQikSelectAttachmentTypeDialogControls
+	{
+	EQikCidSelectAttachmentTypeChoiseList = 0x10A
+	};
+
+enum TQikSaveFileInFolderDialogControls
+	{
+	EQikCidSaveFileInFolderChoiseList = 0x10B,
+	EQikCidSaveFileInFolderChangeNameField = 0x10C,
+	EQikCidSaveUnrecFileInFolderDialogsLabel = 0x10D,
+	EQikCidSaveFileInFolderLocationChoiseList = 0x10E,
+	EQikCidSaveFileInFolderCheckBoxImage = 0x10F,
+	EQikCidSaveFileInFolderCheckBoxAudio = 0x110	
+	};
+
+enum TQikRenameFileFolderDialogControls
+	{
+	EQikCidRenameFileFolderChoiceList = 0x111,
+	EQikCidRenameFileFolderDialogsLabel = 0x112,
+	EQikCidRenameFileFolderDialogsEdwin = 0x113,
+	EQikCidLocationRenameFileFolderDialogsLabel = 0x20B
+	};
+
+enum TQikAddFileFolderDialogControls
+	{
+	EQikCidAddFileFolderChoiceList = 0x114,
+	EQikCidAddFileFolderDialogsEdwin = 0x115,
+	EQikCidAddFileFolderDialogsLabel = 0x20C
+	};
+
+enum
+	{
+	EQikStorageFilesLocationLabel ,
+	EQikStorageFilesLocationChoiceList,
+	EQikStorageFilesTypeChoiceList,
+	EQikStorageFilesButtonDone,
+	EQikStorageFilesButtonDelete,
+	EQikStorageFilesListBox,
+	EQikStorageFilesColumnTitle,
+	EQikStorageFilesSpaceLeft,
+	EQikStorageFilesButtonCopy
+	};
+
+enum TQikCopyFilesInFolderDialogControls
+	{
+	EQikCidCopyFilesInFolderChoiceList,
+	EQikCidCopyFilesInFolderDialogLabel,
+	EQikCidCopyFilesUnrecDialogLabel
+	};
+
+enum
+	{
+	EQikStorageFilesDialogCtColumnTitle = 5000,
+	EQikStorageFilesDialogCtColumnListBox
+	};
+
+enum	//Different columns
+	{
+	EFileIcon=0,
+	EFileName,
+	EFileSize
+	};
+
+enum	//Different columns
+	{
+	EStorageFileIcon,
+	EStorageFileName,
+	EStorageFileSize
+	};
+
+enum TQikFolderProperties
+	{
+	EQikFolderNameMaxLength		= 20
+	};	
+
+// CQikDevicePasswordDlg
+enum TQikDevicePasswordDialogControls
+	{
+	EQikCidDevicePasswordCtrl	= 0x101
+	};
+
+#define	EQikCtDevicePasswordCtrl	2000
+
+//CQikSendAsdialog
+enum
+	{
+	ESendAsUIMtmChoiceList,
+	EButtonDone
+	};
+
+#endif	// __QIKDLG_HRH__

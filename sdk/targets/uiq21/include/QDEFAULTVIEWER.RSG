@@ -1,0 +1,3 @@
+#define R_QDEF_VIEWER_DIALOG                      0x526c9004
+#define R_QDEF_SIZE_IN_K                          0x526c9005
+#define R_QDEF_SAVE_BUTTON                        0x526c9006

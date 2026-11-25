@@ -1,0 +1,18 @@
+// MTMEXTUIUTILDEF.HRH
+//
+// Shared ids from MTMEXTUIDEF.HRH
+
+#define KMtmSetDeliveryOptionFromService			0x101F879D
+#define KMtmUiLaunchMtmDirectly						0x101F87E0
+
+#define KUidMsvMtmUiQueryCanSetDeliveryOptionFromService		0x101F879E
+#define KUidMsvMtmUiQueryCanLaunchMtmDirectly		0x101F87DF
+
+
+#define KMtmSetCC							0x101FAC4A
+#define KMtmSetBCC							0x101FAC4C
+#define KMtmSetSubject							0x101FAC4E
+// Capabilities
+#define KUidMsvMtmUiQueryCanAddCC					0x101FAC49
+#define KUidMsvMtmUiQueryCanAddBCC					0x101FAC4B
+#define KUidMsvMtmUiQueryCanAddSubject					0x101FAC4D

@@ -1,0 +1,11 @@
+#define R_EIK_TBUF_PAGE_NOT_AVAILABLE             0x18d1e002
+#define R_EIK_TBUF_FIRST_FIELD_REACHED            0x18d1e003
+#define R_EIK_TBUF_LAST_FIELD_REACHED             0x18d1e004
+#define R_EIK_TBUF_MORE_BUTTON_LABEL              0x18d1e005
+#define R_EIK_TBUF_MORE_BUTTON_BITMAP_FILE        0x18d1e006
+#define R_EDIT_TITLE_PANE                         0x18d1e007
+#define R_DUMMY                                   0x18d1e008
+#define R_DIALOG_EDIT_CUT                         0x18d1e009
+#define R_DIALOG_EDIT_COPY                        0x18d1e00a
+#define R_DIALOG_EDIT_PASTE                       0x18d1e00b
+#define R_DIALOG_EDIT_SELECTALL                   0x18d1e00c

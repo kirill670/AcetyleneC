@@ -1,0 +1,112 @@
+// <mead:applicationname/>.rss
+//
+
+
+NAME MEAD
+
+#include <eikon.rh>
+#include <eikcore.rsg>
+
+#include "<mead:applicationname/>.hrh"
+
+
+RESOURCE RSS_SIGNATURE { }
+
+RESOURCE TBUF
+	{
+	buf = "";
+	}
+
+RESOURCE EIK_APP_INFO
+	{
+	menubar = r_<mead:resourcename/>_menubar;
+	hotkeys = r_<mead:resourcename/>_hotkeys;
+	}
+
+RESOURCE HOTKEYS r_<mead:resourcename/>_hotkeys
+    {
+    control =
+        {
+        HOTKEY
+        	{
+        	command = EEikCmdExit;
+        	key = 'e';
+        	}
+        };
+    }
+
+RESOURCE MENU_BAR r_<mead:resourcename/>_menubar
+    {
+    titles =
+        {
+        MENU_TITLE
+        	{
+        	menu_pane = r_<mead:resourcename/>_file_menu;
+        	txt = "File";
+        	},
+        MENU_TITLE
+        	{
+        	menu_pane = r_<mead:resourcename/>_tools_menu;
+        	txt = "Tools";
+        	}
+		};
+    }
+
+RESOURCE MENU_PANE r_<mead:resourcename/>_file_menu
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			command = EEikCmdExit;
+			txt = "Close";
+			}
+        };
+    }
+
+RESOURCE MENU_PANE r_<mead:resourcename/>_tools_menu
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			command = E<mead:variablename/>Cmd1;
+			txt = "Cmd1";
+			},
+		MENU_ITEM
+			{
+			command = E<mead:variablename/>Cmd2;
+			txt = "Cmd2";
+			},
+		MENU_ITEM
+			{
+			command = E<mead:variablename/>Cmd3;
+			txt = "Cmd3";
+			},
+		MENU_ITEM
+			{
+			command = E<mead:variablename/>Cmd4;
+			txt = "Cmd4";
+			}
+        };
+    }
+
+RESOURCE TBUF r_<mead:resourcename/>_cmd_1
+	{
+	buf = "E<mead:variablename/>Cmd1";
+	}
+	
+RESOURCE TBUF r_<mead:resourcename/>_cmd_2
+	{
+	buf = "E<mead:variablename/>Cmd2";
+	}
+	
+RESOURCE TBUF r_<mead:resourcename/>_cmd_3
+	{
+	buf = "E<mead:variablename/>Cmd3";
+	}
+	
+RESOURCE TBUF r_<mead:resourcename/>_cmd_4
+	{
+	buf = "E<mead:variablename/>Cmd4";
+	}

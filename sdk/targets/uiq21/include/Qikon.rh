@@ -1,0 +1,258 @@
+// qikon.rh
+//
+// Copyright (c) 2001 Symbian Ltd.  All rights reserved.
+
+#include <qikon.hrh>
+
+STRUCT QIK_CATEGORY
+	{
+	LTEXT name(20);
+	LONG handle		= -1;
+	WORD flags		= 0;
+	WORD sortedAs	= 0;
+	LONG appflags	= 0;	// Flags defined by the application
+	}
+
+// VertOptionButtonList
+STRUCT QIK_VERTOPBUT
+	{
+	WORD buttonSpacing	= 3;
+	WORD textOnRight	= 1;
+	LLINK array_id		= 0;
+	}
+
+
+// Time Editors
+// ------------
+// flags are directly binary compatible with standard UIKON controls.
+
+
+STRUCT QIK_TIME_EDITOR
+	{
+	STRUCT minTime; // TIME
+	STRUCT maxTime; // TIME
+	BYTE flags=0; // permitted flags: EQikTimeWithoutPopout, EQikTimeForce24HourFormat
+	}
+
+STRUCT QIK_DATE_EDITOR
+	{
+	STRUCT minDate; // DATE
+	STRUCT maxDate; // DATE
+	BYTE flags=0; // permitted flags: EQikTimeWithoutPopout
+	}
+
+STRUCT QIK_TIME_AND_DATE_EDITOR
+	{
+	STRUCT minTimeAndDate; // TIME_AND_DATE
+	STRUCT maxTimeAndDate; // TIME_AND_DATE
+	BYTE flags=0; // permitted flags: EQikTimeWithoutPopout, EQikTimeForce24HourFormat
+	LTEXT interveningtext=" "; // not used...
+	}
+
+STRUCT QIK_DURATION_EDITOR
+	{
+	STRUCT minDuration; // DURATION
+	STRUCT maxDuration; // DURATION
+	BYTE flags=0; // permitted flags: EQikTimeWithoutPopout
+	}
+
+
+STRUCT QIK_COLOR_SEL
+	{
+	WORD flags=0;	// permitted flags:	EQikColorSelDisplayNoText|	// show no text.
+					//					EQikColorSelStandardColor|	// use std color palette
+					//					EQikColorSelStandard16|		// use 16 palette rather than 4
+					//					EQikColorSelCustomPalette	// use custom palette, supplied in palette_colors.
+	LLINK palette_colors=0;		//assign with resource array of COLOR items if using a custom palette.
+	LLINK palette_names=0;
+	}
+
+/*	custom palette example:
+
+	RESOURCE ARRAY my_custom_palette
+		{
+		items = 
+			{
+			COLOR { red = 0xFF; green = 0x00; blue = 0xAA; },
+			COLOR { red = 0x00; green = 0x00; blue = 0xFF; },
+			etc...
+			};
+		}
+
+	RESOURCE ARRAY my_palette_names
+		{
+		items = 
+			{
+			LBUF { txt = "Purple"; },
+			LBUF { txt = "Blue"; },
+			etc...
+			};
+		}
+
+	RESOURCE QIK_COLOR_SEL my_color_selector
+		{
+		flags = EQikColorSelCustomPalette;
+		palette_colors = my_custom_palette;
+		palette_names = my_palette_names;
+		}
+*/
+
+
+// CQikTab
+STRUCT QIK_TAB
+	{
+	LTEXT text(32)	= "";
+	LTEXT bmpfile	= "";
+	WORD bmpid		= 0xffff;	// -1
+	WORD bmpmaskid	= 0xffff;	// -1
+	}
+
+
+// CQikTabGroup
+STRUCT QIK_TABGROUP
+	{
+	WORD tab_width_type = EQikTabGroupEachTabAsWideAsNeeded;
+	WORD tab_content_alignment = EQikTabGroupTabContentCenterAligned;
+	STRUCT tabs[];
+	}
+
+
+// CQikTabScreen
+STRUCT QIK_TABSCREEN
+	{
+	WORD tab_width_type = EQikTabGroupEachTabAsWideAsNeeded;
+	WORD tab_content_alignment = EQikTabGroupTabContentCenterAligned;
+	STRUCT tab_pages[];	// QIK_TABSCREENPAGE
+	}
+
+STRUCT QIK_TABSCREENPAGE
+	{
+	STRUCT tab;
+	WORD page_type;	// e.g. EQikCtTabScreenPage or EQikCtScrollableContainer
+	}
+
+
+// CQikSlider
+STRUCT QIK_SLIDER
+	{
+	WORD min_value = 0;	// MinValue
+	WORD max_value;		// MaxValue
+	BYTE num_markers = 0;	
+	BYTE flags = 0;		// Permitted flags: EQikSliderSnapToMarker // Indicator snap to markers in slider
+	}
+
+// CQikDevicePasswordCtrl
+STRUCT QIK_DEVICE_PASSWORD_CTRL
+	{
+	STRUCT caption;
+	STRUCT seced;
+	}
+
+// Numeric editors
+STRUCT QIK_NUMBER_EDITOR
+	{
+	LONG min;
+	LONG max;
+	}
+
+STRUCT QIK_FLOATING_POINT_EDITOR
+	{
+	WORD maxlength=18;
+	DOUBLE min=-9.9e99;
+	DOUBLE max=9.9e99;
+	}
+
+// Toolbar
+
+STRUCT QIK_TOOLBAR
+	{
+	WORD height = EQikToolbarHeight;
+	WORD horizontal_margins = EQikToolbarHorMargins;
+	WORD top_margin = EQikToolbarTopMargin;
+	STRUCT controls[];
+	}
+
+STRUCT QIK_TBAR_CTRL
+	{
+	WORD type;
+	WORD id=0;
+	WORD flags=0;
+	WORD length=0;
+	BYTE alignment=EQikToolbarLeft;
+	WORD spacing=EQikToolbarSpacing;
+	WORD ypos=0;
+	STRUCT control;
+	}
+
+STRUCT QIK_TBAR_BUTTON
+	{
+	WORD type=0; // EEikCtCommandButton;
+	WORD id=0;
+	WORD flags=0;
+	WORD length=0;
+	BYTE alignment=EQikToolbarLeft;
+	WORD spacing=EQikToolbarSpacing;
+	WORD ypos=0;
+	BYTE version=0;
+	WORD behavior=0;
+	WORD layout=0; // ETextRightPictureLeft|EEikCmdButShareExcess
+	LTEXT helptxt="";
+	LLINK extension=0;
+	LTEXT txt="";
+	LTEXT bmpfile="";
+	WORD bmpid=0xffff;
+	WORD bmpmask=0xffff;
+	}
+
+
+
+// media file handling
+STRUCT QIK_EXTENSION_MIMETYPE
+	{
+	LTEXT ext(8);           // extension
+	LTEXT mimetype="";      // MIME-TYPE
+	}
+
+STRUCT QIK_FOLDER_MIME
+	{
+	LONG folderId = 0;
+	LTEXT mimetype = "";
+	}
+
+// IpEditor
+STRUCT QIK_IP_EDITOR
+	{
+	}
+
+STRUCT QIK_DYNAMIC_PALETTE_BITMAP
+	{
+	LTEXT bmp_file;
+	STRUCT bmp_ids[]; // Array of NUMBER_INT16 from Uikon.rh
+	STRUCT color_substitutes[]; // The resource shall define wither an array of QIK_COLOR_SUBSTITUTEs
+	STRUCT color_colorization; // or a QIK_COLOR_COLORIZATION struct (never both).
+	}
+
+STRUCT QIK_COLOR_SUBSTITUTE
+	{
+	STRUCT pixel_pos;	// POINT from Eikon.rh
+	LONG logical_color;
+	BYTE sat;
+	BYTE lum;
+	}
+
+STRUCT QIK_COLOR_COLORIZATION
+	{
+	STRUCT base_color; // COLOR from Uikon.rh
+	LONG logical_target_color;
+	}
+
+STRUCT QIK_TASK_MENU_ENTRY
+	{	
+	LONG appUid=0;			// Which app to dnl to.
+	LONG viewUid=0;			// Which view to open in the app.
+	LONG paramUid=0;		// Parameter for the DNL
+	LTEXT info="";			// Text that is displayed in the infoprint.
+	LTEXT fileFormat="";	// Describes the file syntax for a viewer with UID = appUID 
+	LTEXT fileName="";		// Name of the file to create for viewers.
+	LTEXT filePath="";		// Path to the file.	
+	}

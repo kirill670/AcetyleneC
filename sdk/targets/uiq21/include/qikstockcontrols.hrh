@@ -1,0 +1,36 @@
+// qikstockcontrols.hrh
+//
+// Copyright (c) 1999-2003 Symbian Ltd.  All rights reserved.
+
+#ifndef __QIKSTOCKCONTROLS_HRH__
+#define __QIKSTOCKCONTROLS_HRH__
+
+enum TQikStockControls
+	{
+	// UIQ spcific framework stock controls
+	EQikCtVertOptionButtonList		= 500,	// same base as Crystal
+	EQikCtSoundSelector				= 501,
+	EQikCtArrowHeadScrollBar		= 502,
+	EQikCtArrowHeadPageScrollBar	= 503,
+	EQikCtTimeEditor				= 504,
+	EQikCtDateEditor				= 505,
+	EQikCtTimeAndDateEditor			= 506,
+	EQikCtDurationEditor			= 507,
+	EQikCtColorSelector				= 508,
+	EQikCtTabScreen					= 509,
+	EQikCtTabScreenPage				= 510,
+	EQikCtScrollableContainer		= 511,
+	EQikCtSlider					= 512,
+	EQikCtNumberEditor				= 513,
+	EQikCtFloatingPointEditor		= 514,
+	EQikCtGregorianCalendar			= 515,	// can not be constructed from Resource, but by type
+	EQikCtIpEditor					= 516,
+	EQikCtImagePreview				= 517
+	};
+
+enum TQikToolbarTypes
+	{
+	EQikToolbar	= 500
+	};
+
+#endif

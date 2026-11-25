@@ -1,0 +1,2 @@
+#define R_EIK_TBUF_PAGE_NOT_AVAILABLE             0x18d1e002
+#define R_EIK_DIALOG_EDIT_MENU                    0x18d1e003

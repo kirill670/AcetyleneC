@@ -1,0 +1,12 @@
+#define R_SAVED_TO_WEB_MESSAGE                    0x6f6ee004
+#define R_SAVED_TO_WAP_MESSAGE                    0x6f6ee005
+#define R_BOOKMARK_ADDED_MESSAGE                  0x6f6ee006
+#define R_SAVE_FOLDER_NAME                        0x6f6ee007
+#define R_SAVE_WEB_ROOT_DIRECTORY                 0x6f6ee008
+#define R_SAVE_WEB_DIRECTORY                      0x6f6ee009
+#define R_SAVE_WAP_DIRECTORY                      0x6f6ee00a
+#define R_WAP_BOOKMARK_DATABASE_FILE              0x6f6ee00b
+#define R_BUTTONS_CANCEL_OPEN_SAVE                0x6f6ee00c
+#define R_BUTTONS_CANCEL_OPEN_ADD                 0x6f6ee00d
+#define R_WEB_PAGE_VIEWER_DIALOG                  0x6f6ee00e
+#define R_WEB_BOOKMARK_VIEWER_DIALOG              0x6f6ee00f

@@ -1,0 +1,31 @@
+//	FXVWAPP.HRH
+//
+//	Command/control enumerations for fxvwapp
+
+enum	// command(button) enumerations
+	{
+	EFXVWAppCmdZoomIn=1,
+	EFXVWAppCmdZoomOut,
+	EFXVWAppCmdZoom,
+	EFXVWAppCmdPrefs,
+	EFXVWAppCmdHelp,
+	EFXVWAppCmdFlip,
+	EFXVWAppCmdRotate,
+	EFXVWAppCmdCentre,
+	EFXVWAppCmdPrevPage,
+	EFXVWAppCmdNextPage,
+	EFXVWAppCmdCreateNewFax,
+	EFXVWAppCmdForward,
+	EFXVWAppCmdPageSetup,
+	EFXVWAppCmdDeleteMessage,
+	EFXVWAppCmdReply,
+	EFXVWAppCmdCopy
+	};
+
+enum	// other control enumerations
+	{
+	EFXVWAppCidFileName=1,
+	EFXVWAppCidClock
+	};
+
+#define KFxvwBufLength 32

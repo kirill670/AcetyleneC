@@ -1,0 +1,144 @@
+// CKNDLG.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define ECknFileTargetNewFolder			1
+#define ECknFileTargetExpandCollapse	2
+#define	ECknFileOpenShowAllFiles		3
+#define ECknFileSaveAsChangeFormat		4
+#define ECknFileBidOverwrite			5
+#define ECknFileTargetCollapse			6
+#define ECknFileTargetExpand			7
+
+#define ECidNoteContents	1
+
+#define ECidChangeFormat	1
+
+#define ECidSpellProgress				1
+
+#define ECknSpellIgnoreAll				1
+#define ECknSpellAddToUserDic			2
+#define	ECknSpellCorrectAll				3
+#define ECknSpellIgnore					4
+
+#define	ECknSpellIncorrectWord			1
+
+#define ECknSpellCorrectionDlgLabel		1
+#define ECknSpellCorrectionEdwin		2
+#define ECknSpellSuggestionList			3
+
+#define ECknPassword					1
+#define ECknPasswordConfirm				2
+#define ECknGetPasswordInputFrame		3
+#define ECknEnterPasswordLabel			4
+#define ECknPasswordChange				5
+#define	ECknPasswordConfirmChange		6
+#define ECknPasswordProtect				7
+
+#define ECknInsertObject		1
+#define ECknBidInsertExisting	2
+
+#define ECknFieldFileName		0
+#define ECknFieldObject			1
+#define ECknFieldPageNumber		2
+#define ECknFieldNumberPages	3
+#define ECknFieldCurrentTime	4
+#define ECknFieldCurrentDate	5
+
+#define ECknRenameFileName		1
+
+#define ECknPropertiesList		1
+#define ECknPropertyReadOnly	2
+
+#define ECknSortField			0
+#define ECknSortOrder			1
+
+#define ECknFieldDate			0
+#define ECknFieldName			1
+#define ECknFieldSize			2
+
+#define ECknFieldAscending		0
+#define ECknFieldDescending		1
+
+#define ECknNewFolderName		1
+#define ECknNewFolderLocation	2
+
+#define ECknNewFileName			1
+#define ECknNewFileLocation		2
+
+#define EOptionalButtonCommandId 0x1001
+
+#define ECknCidImagePreview		1
+
+#define ECknNewGroupName 1
+
+#define ECknRenameGroupName 1
+
+#define ECknFileSelectNoCard 3
+
+#define ECknFileBrowseMMC			2
+#define ECknFileBrowseROM			3
+#define ECknFileBrowseNoCard		4
+#define ECknFileBrowsePageDefault	5
+#define ECknFileBrowsePageMMC		6
+#define ECknFileBrowsePageROM		7
+
+enum TCknOpenDialogPageIds
+	{
+	ECknOpenFilePageDefault,
+	ECknOpenFilePageMMC
+	};
+
+enum TCknOpenDialogButtonIds
+	{
+	ECknBidNewFolder,
+	ECknBidUp
+	};
+
+enum
+	{
+	ECknReplaceConnectionNoteContents,
+	ECknReplaceConnectionList,  
+	ECknReplaceSingleConnection
+	};
+
+enum
+	{
+	ECknRetryConnectionNoteContents,
+	ECknRetryConnectionList
+	};
+
+#define ECknGlobalFinderBidOptions		0
+
+enum
+	{
+	EGlobalFinderCidFindText=0x4000,
+	EGlobalFinderCidFindLookIn,
+	EGlobalFinderCidFindDateRange,
+	EGlobalFinderCidFindStartDate,
+	EGlobalFinderCidFindEndDate,
+	EGlobalFinderCidFindLocationFile,
+	EGlobalFinderCidFindLocationUser,
+	EGlobalFinderCidFindNameOrContents,
+	EGlobalFinderCidFindInfoLine
+	};
+
+enum
+	{
+	EGlobalFinderCtChoiceList=0x5800
+	};
+
+enum
+	{ 
+	ENoteContentsControlNoWrapping=0x1	
+	};
+
+// Connect confirmation dialog
+enum
+	{
+	EDlgConnTitle,
+	EDlgConnList
+	};
+
+#define	EGlobalNoteLabelId	1000

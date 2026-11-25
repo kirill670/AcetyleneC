@@ -1,0 +1,66 @@
+// <mead:applicationname/>.rss
+//
+
+
+NAME MEAD
+
+#include <eikon.rh>
+#include <eikcore.rsg>
+
+#include "<mead:applicationname/>.hrh"
+
+
+RESOURCE RSS_SIGNATURE { }
+
+RESOURCE TBUF
+	{
+	buf = "";
+	}
+
+RESOURCE EIK_APP_INFO
+	{
+	menubar = r_menubuilder_menubar;			// DO NOT REMOVE
+	hotkeys = r_<mead:resourcename/>_hotkeys;
+	}
+
+RESOURCE HOTKEYS r_<mead:resourcename/>_hotkeys
+    {
+    plain =
+        {
+		#include "menubuilderhkplain.ra"		// DO NOT REMOVE
+        };
+
+    control =
+        {
+		#include "menubuilderhkctrl.ra"			// DO NOT REMOVE
+        };
+
+    shift_control =
+        {
+		#include "menubuilderhkshftctrl.ra"		// DO NOT REMOVE
+        };
+    }
+
+
+#include "menubuildermenu.ra"					// DO NOT REMOVE
+
+
+RESOURCE TBUF r_<mead:resourcename/>_cmd_1
+	{
+	buf = "E<mead:variablename/>Cmd1";
+	}
+
+RESOURCE TBUF r_<mead:resourcename/>_cmd_2
+	{
+	buf = "E<mead:variablename/>Cmd2";
+	}
+
+RESOURCE TBUF r_<mead:resourcename/>_cmd_3
+	{
+	buf = "E<mead:variablename/>Cmd3";
+	}
+
+RESOURCE TBUF r_<mead:resourcename/>_cmd_4
+	{
+	buf = "E<mead:variablename/>Cmd4";
+	}

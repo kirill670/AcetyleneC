@@ -1,0 +1,31 @@
+// CEikCategories.hrh
+//
+// Copyright (c) 1999 Symbian Ltd.  All rights reserved.
+//
+// This file defines commands for use in the resource file and
+// in the C++ source file.
+
+#ifndef __QIKCATEGORIES_HRH__
+#define __QIKCATEGORIES_HRH__
+
+enum TQikCategoryProperties
+{
+	EQikCategoryNameMaxLength		= 20,
+	EQikCategoryArrayIncrement		= 5
+};
+
+// Category flags
+#define EQikCategoryAll				0x01
+#define EQikCategoryUnfiled			0x02
+#define EQikCategoryCantBeRenamed	0x04
+#define EQikCategoryCantBeDeleted	0x08
+#define EQikCategoryDimmedInMenu	0x10
+#define EQikCategoryHiddenInList	0x20
+
+// Use this macro to set the needed flags and bitmaps for the category menu title
+#include <quartz.mbg>
+#define DECLARE_CATEGORY_MENU_TITLE 	flags = EEikMenuTitleRightAlign | EEikMenuTitleIsChangeable | EEikMenuTitleIconRightAlign; bmpfile = "z:\\System\\Data\\quartz.mbm"; bmpid = EMbmQuartzMenudownarrowadornment; bmpmask = EMbmQuartzMenudownarrowadornmentmask
+
+
+
+#endif

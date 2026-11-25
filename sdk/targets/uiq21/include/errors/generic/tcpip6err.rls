@@ -1,0 +1,152 @@
+rls_string  STRING_r_tcpip6_error_NoDestination "IPv6: flow has no destination address"
+rls_string  STRING_r_tcpip6_error_NoPathMtu "IPv6: Misconfigured driver not giving proper MTU"
+rls_string  STRING_r_tcpip6_error_ShortPacket "IPv6: A packet in RMBUF is too short"
+rls_string  STRING_r_tcpip6_error_DuplicateAddress "IPv6: Duplicate address detected on a device"
+rls_string  STRING_r_tcpip6_error_AddressExpired "IPv6: Source Address used by connection has expired"
+rls_string  STRING_r_tcpip6_error_NoRoute "IPv6: No route available"
+
+/*
+	DND errors. Some errors use the same text, duplicate strings have been
+	"factored out" to save space
+*/
+rls_string  STRING_r_dnd_error_DndTimedOut        "No response from DNS server"                   
+rls_string  STRING_r_dnd_error_DndRefused         "DNS server refused connection"
+rls_string  STRING_r_dnd_error_DndNameTooBig      "Invalid Host Name (too long)"
+rls_string  STRING_r_dnd_error_DndRetry           "Temporary error in host name resolver - please retry"
+rls_string  STRING_r_dnd_error_DndHostNotFound    "Host not found"  
+rls_string  STRING_r_dnd_error_DndInternalError   "Internal error in host name resolver"               
+rls_string  STRING_r_dnd_error_DndNoAnswer        "DNS server couldn't answer query"                           
+
+
+/*
+	IPSEC related stuff
+*/
+rls_string STRING_r_error_EIpsec_NotANATTPacket          "IpSec Protocol: UDP packet is NOT a NAT Traversal packet"
+
+
+rls_string STRING_r_error_EIpsec_NoInnerSource           "IpSec Policy: Cannot find inner-src for outbound packet when tunneling"
+rls_string STRING_r_error_EIpsec_LostSA                  "IpSec Policy: An SA has been lost or expired between Apply and Verify"
+rls_string STRING_r_error_EIpsec_IcmpError               "IpSec: An ICMP error report contained an AH or ESP packet"
+
+
+//
+// Policy parsing errors
+//
+rls_string STRING_r_error_EIpsec_PolicyUnknownSelector    "IpSec Policy Parser: Unknown selector keyword"
+rls_string STRING_r_error_EIpsec_PolicyInboundOutbound    "IpSec Policy Parser: Only one of 'inbound' or 'outbound' is allowed"
+rls_string STRING_r_error_EIpsec_PolicyIpMaskExpected     "IpSec Policy Parser: Expected an IP address here"
+rls_string STRING_r_error_EIpsec_PolicyIpAddressExpected  "IpSec Policy Parser: Expected an IP address here"
+rls_string STRING_r_error_EIpsec_PolicyInvalidIpAddress   "IpSec Policy Parser: Invalid IP address"
+rls_string STRING_r_error_EIpsec_PolicyRightParen         "IpSec Policy Parser: ')' expected"
+rls_string STRING_r_error_EIpsec_PolicyLeftParen          "IpSec Policy Parser: '(' expected"
+rls_string STRING_r_error_EIpsec_PolicySpecNotFound       "IpSec Policy Parser: SA specification is not defined before reference in selector"
+rls_string STRING_r_error_EIpsec_PolicySyntaxError        "IpSec Policy Parser: Syntax error in specification"
+rls_string STRING_r_error_EIpsec_PolicySpecName           "IpSec Policy Parser: SA specification name missing or invalid"
+rls_string STRING_r_error_EIpsec_PolicyNoEncryptAlgorithm "IpSec Policy Parser: An ESP specification must include an encryption algorithm"
+rls_string STRING_r_error_EIpsec_PolicyNoAuthAlgorithm    "IpSec Policy Parser: An AH specification must include an authentication algorithm"
+rls_string STRING_r_error_EIpsec_PolicyTooManyTypes       "IpSec Policy Parser: Only one SA Type (AH or ESP) allowed in a specification"
+rls_string STRING_r_error_EIpsec_PolicyNoType             "IpSec Policy Parser: SA type (AH or ESP) omitted from specification"
+rls_string STRING_r_error_EIpsec_PolicyCloseBraceExpected "IpSec Policy Parser: Closing brace expected"
+rls_string STRING_r_error_EIpsec_PolicyNumberExpected     "IpSec Policy Parser: Numeric value expected"
+rls_string STRING_r_error_EIpsec_PolicyUnknownSpec        "IpSec Policy Parser: Unknown policy specification keyword"
+rls_string STRING_r_error_EIpsec_PolicyInvalidIdentity    "IpSec Policy Parser: Invalid identity syntax"                              // Not used
+rls_string STRING_r_error_EIpsec_PolicyIdentityDefined    "IpSec Policy Parser: Identify already defined"
+rls_string STRING_r_error_EIpsec_PolicyUnknownAuth        "IpSec Policy Parser: Authentication algorithm not found in algorithm map"
+rls_string STRING_r_error_EIpsec_PolicyUnknownEncrypt     "IpSec Policy Parser: Encryption algorithm not found in algorithm map"
+
+//
+// PFKEY/SAD errors
+rls_string STRING_r_error_EIpsec_UnavailableDigest       "IpSec Encryption: No installed library implements this digest"               // Alternative - "IPSEC Encryption: Encryption error"
+rls_string STRING_r_error_EIpsec_UnavailableCipher       "IpSec Encryption: No installed library implements this cipher"               // Alternative - "IPSEC Encryption: Encryption error"
+rls_string STRING_r_error_EIpsec_UnknownDigestNumber     "IpSec Encryption: Unknown digest number"                                    // Alternative - "IPSEC Encryption: Encryption error"
+rls_string STRING_r_error_EIpsec_UnknownCipherNumber     "IpSec Encryption: Unknown cipher number"                                    // Alternative - "IPSEC Encryption: Encryption error"
+rls_string STRING_r_error_EIpsec_BadCipherKey            "IpSec Encryption: Key in SA is weak or too short for this algorithm"        // Alternative - "IPSEC Encryption: Encryption error"
+
+
+
+// 
+// IPSEC policy mismatch errors
+// 
+
+/*
+
+	Replace these with a single error message!
+
+rls_string STRING_r_error_EIpsec_MismatchDestinationIdentity	"IpSec: destination identity does not match"
+rls_string STRING_r_error_EIpsec_MismatchSourceIdentity         "IpSec: source identity does not match"
+rls_string STRING_r_error_EIpsec_MismatchProtocol               "IpSec: protocol does not match"
+rls_string STRING_r_error_EIpsec_MismatchDestinationPort        "IpSec: destination port does not match"
+rls_string STRING_r_error_EIpsec_MismatchSourcePort             "IpSec: source port does not match"
+rls_string STRING_r_error_EIpsec_MismatchProxy                  "IpSec: proxy address does not match"
+rls_string STRING_r_error_EIpsec_MismatchSource                 "IpSec: source address does not match"
+rls_string STRING_r_error_EIpsec_MismatchReplayWindow           "IpSec: replay window length is shorter than required"
+rls_string STRING_r_error_EIpsec_MismatchedEncryptAlg           "IpSec: encrypt algorithm doesn't match"
+rls_string STRING_r_error_EIpsec_MismatchedAuthAlg              "IpSec: auth algorithm doesn't match"
+rls_string STRING_r_error_EIpsec_MismatchedPFS                  "IpSec: PFS bit is not same"
+rls_string STRING_r_error_EIpsec_MismatchedType                 "IpSec: SA Type (AH/ESP) does not match"
+rls_string STRING_r_error_EIpsec_MismatchedDestination          "IpSec: SA destination does not match (internal error)"
+*/
+
+//
+// Replacement for all the above
+//
+rls_string STRING_r_error_EIpsec_PolicyMismatch	"IpSec Policy Mismatch: Specified security policy does not match the host policy"
+
+
+rls_string STRING_r_error_EIpsec_AcquireFailed  "IpSec: Failed to negotiate SA"
+
+
+
+//
+// IP6 specific IPSEC Protocol errors
+//
+rls_string STRING_r_error_EIpsec_EspBadCipherBlockSize   "IpSec Protocol Error: Configuration error cipher block size must be smaller than 256"
+
+//
+// These two aren't IP6 specific!!!
+rls_string STRING_r_error_EIpsec_EspSequenceWrap         "IpSec Protocol: Outbound sequence number wrapped around for this SA (ESP)"  // Alternative - "IpSec Protocol: Outgoing packet dropped"
+rls_string STRING_r_error_EIpsec_AhSequenceWrap          "IpSec Protocol: Outbound sequence number wrapped around for this SA (AH)"   // Alternative - "IpSec Protocol: Outgoing packet dropped"
+
+//
+// More IP6 specific IPSEC Protocol errors
+//
+rls_string STRING_r_error_EIpsec_AhPacketTooLong         "IpSec Protocol: Outbound packet would exeed maximum allowed size with AH"   // Alternative - "IpSec Protocol: Outgoing packet dropped"
+rls_string STRING_r_error_EIpsec_AhRMBufSplit            "IpSec Protocol: Inbound AH processing failed (memory problems ?)"           // Alternative - "IpSec Protocol: Outgoing packet dropped"
+
+
+
+
+//
+// IPSEC Policy error strings
+//
+rls_string STRING_r_error_EIpsec_NoBundle                "IpSec Policy: Incoming packet rejected - Had transforms when none required"    
+rls_string STRING_r_error_EIpsec_TooManyTransforms       "IpSec Policy: Incoming packet rejected - More transforms than policy requires" 
+rls_string STRING_r_error_EIpsec_UnrequiredSA            "IpSec Policy: Incoming packet rejected - Applied SA where policy has none"
+rls_string STRING_r_error_EIpsec_MismatchedSA            "IpSec Policy: Incoming packet rejected - Applied SA does not match the policy"                                // Not used!
+rls_string STRING_r_error_EIpsec_TunnelMismatch          "IpSec Policy: Incoming packet rejected - Tunnel source does not match."            
+rls_string STRING_r_error_EIpsec_TooFewTransforms        "IpSec Policy: Incoming packet rejected - Not enough transforms"
+rls_string STRING_r_error_EIpsec_MaxTransforms           "IpSec Policy: Incoming packet rejected - Too many transforms"
+rls_string STRING_r_error_EIpsec_NoSelectorMatch         "IpSec Policy: Incoming packet rejected - No policy selectors matched"
+rls_string STRING_r_error_EIpsec_OutboundPending         "IpSec Policy: No outbound SA exists, ACQUIRE pending"                              // Not an error, is there any way to suppress this altogether?
+rls_string STRING_r_error_EIpsec_OutboundNotFound        "IpSec Policy: No outbound SA exists, ACQUIRE started"                              // Not an error, is there any way to suppress this altogether? 
+
+//
+// IPSEC Protocol error strings
+//
+rls_string STRING_r_error_EIpsec_ReplayDuplicate         "IpSec Protocol: Duplicate packet detected by anti-replay"                               // Map to "IpSec Protocol: Incoming packet rejected" (or similiar)?
+rls_string STRING_r_error_EIpsec_EspPadLength            "IpSec Protocol: The ESP pad length is corrupt (probably wrong key)"                     // Map to "IpSec Protocol: Incoming packet rejected" (or similiar)?
+rls_string STRING_r_error_EIpsec_EspPadByte              "IpSec Protocol: The ESP pad byte content is invalid (probably wrong key)"               // Map to "IpSec Protocol: Incoming packet rejected" (or similiar)?
+rls_string STRING_r_error_EIpsec_DataAlignment           "IpSec Protocol: Incoming packet data not aligned by block size"                         // Map to "IpSec Protocol: Incoming packet rejected" (or similiar)?
+rls_string STRING_r_error_EIpsec_PacketLength            "IpSec Protocol: Packet Length was invalid"                                              // Map to "IpSec Protocol: Incoming packet rejected" (or similiar)?
+rls_string STRING_r_error_EIpsec_AhAuthentication        "IpSec Protocol: An incoming AH packet could not be authenticated"                       // Map to "IpSec Protocol: Incoming packet rejected" (or similiar)?
+rls_string STRING_r_error_EIpsec_AhIcvLength             "IpSec Protocol: Integrity Check Value length in packet does not match algorithm"        // Map to "IpSec Protocol: Incoming packet rejected" (or similiar)?
+rls_string STRING_r_error_EIpsec_AhInboundSA             "IpSec Protocol: No Secure Association exists for inbound AH packets"
+rls_string STRING_r_error_EIpsec_AhAuthAlg               "IpSec Protocol: The required AH authentication algorithm is not available"
+rls_string STRING_r_error_EIpsec_EspEncrAlg              "IpSec Protocol: The required ESP encryption algorithm is not available"
+rls_string STRING_r_error_EIpsec_EspAuthAlg              "IpSec Protocol: The required ESP authentication algorithm is not available"
+rls_string STRING_r_error_EIpsec_EspAuthentication       "IpSec Protocol: An incoming ESP packet could not be authenticated."                     // Map to "IpSec Protocol: Incoming packet rejected" (or similiar)?
+rls_string STRING_r_error_EIpsec_EspInboundSA            "IpSec Protocol: No Secure Association for ESP packets exists"
+rls_string STRING_r_error_EIpsec_CorruptPacketOut        "IpSec Protocol: An outgoing packet was corrupt after IPSEC operations"
+rls_string STRING_r_error_EIpsec_CorruptPacketIn         "IpSec Protocol: An incoming packet or header was incomplete or corrupt"                 // Map to "IpSec Protocol: Incoming packet rejected" (or similiar)?
+
+rls_string STRING_r_error_EIpsec_RMBUF           	 "IpSec: RMBUF operation failed unexpectedly"

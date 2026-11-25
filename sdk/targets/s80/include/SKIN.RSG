@@ -1,0 +1,17 @@
+#define R_DUMMY_APP_NAME                          0x5d52d002
+#define R_SKIN_STATUS_PANE                        0x5d52d003
+#define R_SKIN_INDICATOR_LAYOUT                   0x5d52d004
+#define R_SKIN_CBA_DIGITAL_CLOCK                  0x5d52d005
+#define R_SKIN_INDICATOR_LAYOUT_WIDE              0x5d52d006
+#define R_SKIN_INDICATOR_CLOCK                    0x5d52d007
+#define R_EIK_APPLICATION_KEYS                    0x5d52d008
+#define R_SKIN_PROGRESS_BALL_ANIMATION            0x5d52d009
+#define R_SKIN_PROGRESS_BALL_ANIMATION_IMAGE_ARRAY 0x5d52d00a
+#define R_SKIN_COPY_MOVE_ANIMATION                0x5d52d00b
+#define R_SKIN_COPY_MOVE_ANIMATION_IMAGE_ARRAY    0x5d52d00c
+#define R_SKIN_DELETE_ANIMATION                   0x5d52d00d
+#define R_SKIN_DELETE_ANIMATION_IMAGE_ARRAY       0x5d52d00e
+#define R_SKIN_SENDING_ANIMATION                  0x5d52d00f
+#define R_SKIN_SENDING_ANIMATION_IMAGE_ARRAY      0x5d52d010
+#define R_SKIN_DEFAULT_CANCEL_NOTE_ANIMATION      0x5d52d011
+#define R_SKIN_DEFAULT_CANCEL_NOTE_ANIMATION_IMAGE_ARRAY 0x5d52d012

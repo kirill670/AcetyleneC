@@ -1,0 +1,7 @@
+rls_string STRING_r_error_genconn_database_default_undefined "No Internet accounts have been set up. Set up an account in Control panel." 
+rls_string STRING_r_error_genconn_database_type_unknown "CommDb error" 
+rls_string STRING_r_error_genconn_database_not_found "CommDb error" 
+rls_string STRING_r_error_genconn_no_packet_network "No Packet network available" 
+rls_string STRING_r_error_genconn_incorrect_msclass "Phone capabilities insufficient for required services" 
+rls_string STRING_r_error_genconn_inadequate_signal_strength "Signal strength too low for connection, try again later" 
+rls_string STRING_r_error_genconn_statemachine_not_available "State Machine not available for connection" 

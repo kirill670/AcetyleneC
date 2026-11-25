@@ -1,0 +1,14 @@
+// FAXI.HRH
+//
+// Copyright (C) Symbian Ltd 1998
+//
+#if !defined (__MSVSTD_HRH__)
+#include <msvstd.hrh>
+#endif
+
+
+enum	// commands for dynamic menus
+	{
+	EFaxCmdPreview=KMtmFirstFreeMtmFunctionId,
+	EFaxCmdReceiveFax
+	};

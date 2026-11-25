@@ -1,0 +1,7 @@
+#define R_STATUSBAR_STATUS_PANE                   0x55167003
+#define R_STATUSBAR_LAYOUT_BOTTOM                 0x55167004
+#define R_STATUSBAR_CLOCK_PANE                    0x55167005
+#define R_STATUSBAR_BLANK_PANE                    0x55167006
+#define R_STATUSBAR_VK_PANE                       0x55167007
+#define R_STATUSBAR_MESSAGING_PANE                0x55167008
+#define R_STATUSBAR_GPRS_PANE_CONTENT             0x55167009

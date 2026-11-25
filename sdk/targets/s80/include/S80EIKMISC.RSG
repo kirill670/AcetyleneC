@@ -1,0 +1,5 @@
+#define R_EIK_WIN_BUT_CLOSE                       0x1a778002
+#define R_EIK_WIN_BUT_MAXIMIZE                    0x1a778003
+#define R_EIK_WIN_BUT_MINIMIZE                    0x1a778004
+#define R_EIK_WIN_BUT_RESIZE                      0x1a778005
+#define R_EIK_WIN_BUT_STD_SIZE                    0x1a778006

@@ -1,0 +1,12 @@
+// <mead:applicationname/>eng.mmp
+//
+
+TARGET			<mead:applicationname/>eng.dll
+TARGETTYPE		dll
+UID				0x1000008d <mead:engineuid/>
+SOURCEPATH		..\engine
+SOURCE			<mead:applicationname/>eng.cpp
+USERINCLUDE		..\inc
+SYSTEMINCLUDE	\epoc32\include
+LIBRARY			euser.lib
+EXPORTUNFROZEN

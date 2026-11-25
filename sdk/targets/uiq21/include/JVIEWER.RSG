@@ -1,0 +1,8 @@
+#define R_JOTTER_APP_NAME                         0x34203002
+#define R_JVIEWER_TBUF_JOTTER_DOCUMENT            0x34203004
+#define R_JVIEWER_TBUF_JOTTER_NOTE                0x34203005
+#define R_JVIEWER_TBUF_SAVED                      0x34203006
+#define R_JVIEWER_PANIC_CATEGORY                  0x34203007
+#define R_JVIEWER_JOTTER_APP                      0x34203008
+#define R_JVIEWER_BUTTONS_CANCEL_SAVE             0x34203009
+#define R_JVIEWER_DIALOG_RECEIVE_NOTE             0x3420300a

@@ -1,0 +1,33 @@
+// SOCKERR.RA
+//
+// Copyright (c) 1999 Symbian Ltd. All rights reserved.
+//
+
+#include "sockerr.rls"
+
+RESOURCE ARRAY r_error_res_socket_errors
+	{
+	items=
+		{
+		SINGLE_ERROR
+			{
+			text=r_error_res_socket_net_unreach;			// -190
+			},
+		SINGLE_ERROR
+			{
+			text=r_error_res_socket_host_unreach;			// -191
+			},
+		SINGLE_ERROR
+			{
+			text=r_error_res_socket_wrong_protocol;			// -192
+			},
+		SINGLE_ERROR
+			{
+			flags=EErrorResPanicErrorFlag;					// -193
+			}
+		};
+	}
+
+RESOURCE TBUF r_error_res_socket_net_unreach			{ buf=STRING_r_error_res_socket_net_unreach		; }
+RESOURCE TBUF r_error_res_socket_host_unreach			{ buf=STRING_r_error_res_socket_host_unreach		; }
+RESOURCE TBUF r_error_res_socket_wrong_protocol			{ buf=STRING_r_error_res_socket_wrong_protocol		; }

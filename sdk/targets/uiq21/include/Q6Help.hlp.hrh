@@ -1,0 +1,247 @@
+//
+// Q6Help.hlp.hrh
+//
+
+//
+// File generated on 13:2:21 21/5/2003
+// by cshlpcmp Version 010
+//
+
+#ifndef __Q6HELP_HLP_HRH__
+#define __Q6HELP_HLP_HRH__
+
+
+_LIT(KQA_Agenda_displays,"QA_Agenda_displays"); //Tag for Menu Help topic called Agenda displays
+_LIT(KQA_Move_Agenda_Todo,"QA_Move_Agenda_Todo"); //Tag for Menu Help topic called Moving Agenda and To Do entries
+_LIT(KQA_remove_entries,"QA_remove_entries"); //This topic was part of Changing entries, previously called changing and deleting entries
+_LIT(KQA_Entry_details,"QA_Entry_details"); //Tag for Menu Help topic called Entry details
+_LIT(KQA_Entry_types,"QA_Entry_types"); //Tag for Menu Help topic called Entry details
+_LIT(KQA_Folders_in_Agenda,"QA_Folders_in_Agenda"); //Tag for Menu Help topic called Folders in Agenda
+_LIT(KQA_Preferences_general_dialog,"QA_Preferences_general_dialog");
+_LIT(KQA_Preferences_alarm_dialog,"QA_Preferences_alarm_dialog");
+_LIT(KQA_Remove_dialog,"QA_Remove_dialog");
+_LIT(KQA_Repeat_dialog,"QA_Repeat_dialog");
+_LIT(KQA_MoveTo_Todo,"QA_MoveTo_Todo");
+_LIT(KQA_Add_Category_dialog,"QA_Add_Category_dialog");
+_LIT(KQA_Edit_Category_dialog,"QA_Edit_Category_dialog");
+_LIT(KQAppIn_What_dialog,"QAppIn_What_dialog");
+_LIT(KQAppIn_Where_dialog,"QAppIn_Where_dialog");
+_LIT(KQAppIn_Cannot_dialog,"QAppIn_Cannot_dialog");
+_LIT(KQAppIn_Security_dialog,"QAppIn_Security_dialog");
+_LIT(KQAppIn_Replace_dialog,"QAppIn_Replace_dialog");
+_LIT(KQAppIn_memory_dialog,"QAppIn_memory_dialog");
+_LIT(KQAppIn_Sec_Warn_dialog,"QAppIn_Sec_Warn_dialog");
+_LIT(KQAppIn_Inst_Softw_dialog,"QAppIn_Inst_Softw_dialog");
+_LIT(KQAppIn_Sign_Rev_dialog,"QAppIn_Sign_Rev_dialog");
+_LIT(KQAppL__Set_folders_dialog,"QAppL__Set_folders_dialog");
+_LIT(KQAppL_Delete_dialog,"QAppL_Delete_dialog"); // NB. This
+_LIT(KQApppicker_Prefs_dialog,"QApppicker_Prefs_dialog");
+_LIT(KQBT_Bluetooth_devices_dialog,"QBT_Bluetooth_devices_dialog");
+_LIT(KQBT_Bluetooth_setgs_dialog,"QBT_Bluetooth_setgs_dialog");
+_LIT(KQBT_Bluetooth_device_dialog,"QBT_Bluetooth_device_dialog");
+_LIT(KQBT_Beam_Received_dialog,"QBT_Beam_Received_dialog");
+_LIT(KQBT_Avail_DevicesSpec_dialog,"QBT_Avail_DevicesSpec_dialog");
+_LIT(KQBT_Available_Devices_dialog,"QBT_Available_Devices_dialog");
+_LIT(KQBT_BT_not_enabled_dialog,"QBT_BT_not_enabled_dialog");
+_LIT(KQBT_Search_Results_dialog,"QBT_Search_Results_dialog");
+_LIT(KQBT_Secure_conn_dialog,"QBT_Secure_conn_dialog"); // 
+_LIT(KQBT_BT_conn_request_dialog,"QBT_BT_conn_request_dialog"); // 
+_LIT(KQCalculator,"QCalculator");
+_LIT(KQCon_Show_in_list_dialog,"QCon_Show_in_list_dialog");
+_LIT(KQCon_Preferences_dialog,"QCon_Preferences_dialog");
+_LIT(KQCon_contact_Manager_dialog,"QCon_contact_Manager_dialog");
+_LIT(KQCon_Preferences_IM_dialog,"QCon_Preferences_IM_dialog");
+_LIT(KQCon_Overview,"QCon_Overview");
+_LIT(KQCon_Contact_others,"QCon_Contact_others");
+_LIT(KQCon__SIM_contacts,"QCon__SIM_contacts");
+_LIT(KQCon_IM,"QCon_IM");
+_LIT(KQCon_Sharing_details,"QCon_Sharing_details");
+_LIT(KQCon_ring_tones,"QCon_ring_tones");
+_LIT(KQCon_Enter_view_details,"QCon_Enter_view_details");
+_LIT(KQCon__Own_details,"QCon__Own_details");
+_LIT(KQCon_Dialog_Find,"QCon_Dialog_Find");
+_LIT(KQCon_Dialog_Found,"QCon_Dialog_Found");
+_LIT(KQCP_Set_folders_dialog,"QCP_Set_folders_dialog"); // Display this topic with the Set groups dialog
+_LIT(KQCP_Certificates_dialog,"QCP_Certificates_dialog"); // Display this topic with the Certificate manager dialog
+_LIT(KQCP_Datetime_date_dialog,"QCP_Datetime_date_dialog"); // Display this topic with the Time & date tab of the Time & date dialog
+_LIT(KQCP_Datetime_format_dialog,"QCP_Datetime_format_dialog"); // Display this topic with the Format tab of the Time & date dialog
+_LIT(KQCP_Datetime_workdays_dialog,"QCP_Datetime_workdays_dialog"); // Display this topic with the Workdays tab of the Time & date dialog
+_LIT(KQCP_Intl_location_dialog,"QCP_Intl_location_dialog"); // Display this topic with the Location tab of the International dialog
+_LIT(KQCP_Intl_numbers_dialog,"QCP_Intl_numbers_dialog"); // Display this topic with the Numbers tab of the International dialog
+_LIT(KQCP_Password_dialog,"QCP_Password_dialog"); // Display this topic with the Password dialog
+_LIT(KQCP_Link_desktop_dialog,"QCP_Link_desktop_dialog");
+_LIT(KQCP_Batteries_dialog,"QCP_Batteries_dialog"); // Display this topic with the Power dialog
+_LIT(KQCP_Machine_info_dialog,"QCP_Machine_info_dialog");
+_LIT(KQCP_HWR_pri_dialog,"QCP_HWR_pri_dialog"); //Display this topic with the Primary tab of the Text input dialog
+_LIT(KQCP_HWR_alt_dialog,"QCP_HWR_alt_dialog"); //Display this topic with the Alternative tab of the Text input dialog
+_LIT(KQCP_HWR_method_dialog,"QCP_HWR_method_dialog"); //Display this topic with the Text input method dialog
+_LIT(KQCP_Format_drive_dialog,"QCP_Format_drive_dialog"); //Display this topic with the Format dialog
+_LIT(KQCP_Formatting_drive_dialog,"QCP_Formatting_drive_dialog"); //Display this topic with the Formatting dialog
+_LIT(KQCP_Screen_dialog,"QCP_Screen_dialog"); // Display this topic with the Screen dialog
+_LIT(KQCP_IPSecManager_dialog,"QCP_IPSecManager_dialog");
+_LIT(KQCP_WIMMan_dialog,"QCP_WIMMan_dialog");
+_LIT(KQCP_Master_reset,"QCP_Master_reset");
+_LIT(KQCP_Select_language,"QCP_Select_language");
+_LIT(KQCP_Themes_dialog,"QCP_Themes_dialog");
+_LIT(KQCP_Display_dialog,"QCP_Display_dialog");
+_LIT(KQCP_SoundAlerts_dialog,"QCP_SoundAlerts_dialog");
+_LIT(KQCP_SoundAlerts_mess_dialog,"QCP_SoundAlerts_mess_dialog");
+_LIT(KQCP_SoundAlerts_other_dialog,"QCP_SoundAlerts_other_dialog");
+_LIT(KQGen_email_wap_accounts,"QGen_email_wap_accounts");
+_LIT(KQGen_Internet_accounts,"QGen_Internet_accounts");
+_LIT(KQGen_Add_hardware,"QGen_Add_hardware");
+_LIT(KQGen_Add_remove_apps,"QGen_Add_remove_apps");
+_LIT(KQGen_Backup_restore,"QGen_Backup_restore");
+_LIT(KQGen_Powering_device,"QGen_Powering_device");
+_LIT(KQGen_Bluetooth,"QGen_Bluetooth");
+_LIT(KQGen_Maintaining_device,"QGen_Maintaining_device");
+_LIT(KQGen_Entering_text,"QGen_Entering_text");
+_LIT(KQGen_Find,"QGen_Find");
+_LIT(KQGen_Folders,"QGen_Folders");
+_LIT(KQGen_Getting_around,"QGen_Getting_around");
+_LIT(KQGen_Using_keys,"QGen_Using_keys");
+_LIT(KQGen_GPRS_and_device,"QGen_GPRS_and_device");
+_LIT(KQGen_Use_device_PC,"QGen_Use_device_PC");
+_LIT(KQGen_GPRS,"QGen_GPRS");
+_LIT(KQGen_Personalising_device,"QGen_Personalising_device");
+_LIT(KQGen_Private_entries,"QGen_Private_entries");
+_LIT(KQGen_Security,"QGen_Security");
+_LIT(KQGen_Sending_entries,"QGen_Sending_entries");
+_LIT(KQGen_Sounds,"QGen_Sounds");
+_LIT(KQGen_Sync,"QGen_Sync");
+_LIT(KQGen_SIM,"QGen_SIM");
+_LIT(KQ_Connect_info_GPRS_dialog,"Q_Connect_info_GPRS_dialog"); // Display this topic with dialog.GPRS.information
+_LIT(KQ_Connect_info_dialup_dialog,"Q_Connect_info_dialup_dialog"); // Display this topic with dialog.dial-up.information
+_LIT(KQ_Connect_info_high_dialog,"Q_Connect_info_high_dialog"); // Display this topic with  dialog.highSpeed.information
+_LIT(KQ_Connect_Internet__dialog,"Q_Connect_Internet__dialog"); //Display this topic with dialog.connect
+_LIT(KQ_Connect_Inet_manual_dialog,"Q_Connect_Inet_manual_dialog"); // Display this topic with dialog.connect.Manually
+_LIT(KQMess_Image_Editor,"QMess_Image_Editor");
+_LIT(KQCP_All_Inet_accs_dialog,"QCP_All_Inet_accs_dialog"); //Display this topic with dialog.setup.allAccounts
+_LIT(KQCP_Int_acc_dialup_dialog,"QCP_Int_acc_dialup_dialog"); //Display this topic with dialog.setup.InternetAccount
+_LIT(KQCP_Adv_Inet_server_dialogG,"QCP_Adv_Inet_server_dialogG"); // Display this topic with the Server tab of dialog.setup.advancedGPRS
+_LIT(KQCP_Adv_Inet_login_dialogG,"QCP_Adv_Inet_login_dialogG"); // Display this topic with the Log in tab of dialog.setup.advancedGPRS
+_LIT(KQCP_Adv_Inet_browser_dialogG,"QCP_Adv_Inet_browser_dialogG"); // Display this topic the Proxy tab of dialog.setup.advancedGPRS
+_LIT(KQCP_Adv_Inet_other_dialogG,"QCP_Adv_Inet_other_dialogG"); // Display this topic with the Other tab of dialog.setup.advancedGPRS
+_LIT(KQCP_Adv_Inet_login_dialog,"QCP_Adv_Inet_login_dialog"); // Display this topic with the Log in tab of dialog.setup.advancedDial-up
+_LIT(KQCP_Adv_Inet_script_dialog,"QCP_Adv_Inet_script_dialog"); // Display this topic with the Script tab of dialog.setup.advancedDial-up
+_LIT(KQCP_Adv_Inet_browser_dialog,"QCP_Adv_Inet_browser_dialog"); // Display this topic with the Proxy tab of dialog.setup.advancedDial-up
+_LIT(KQCP_Adv_Inet_speed_dialogHS,"QCP_Adv_Inet_speed_dialogHS"); // Display this topic with the Speed tab of dialog.setup.advancedDial-up for high-speed dial-up accounts
+_LIT(KQCP_Adv_Inet_other_dialog,"QCP_Adv_Inet_other_dialog");
+_LIT(KQCP_All_Inet_accs_other_dialog,"QCP_All_Inet_accs_other_dialog");
+_LIT(KQIS_Login_dialog,"QIS_Login_dialog");
+_LIT(KQJotter_send_as,"QJotter_send_as");
+_LIT(KQJotter_Undoing_changes,"QJotter_Undoing_changes");
+_LIT(KQJotter_Pasting_new_note,"QJotter_Pasting_new_note");
+_LIT(KQjotter_Sendas_beam_dialog,"Qjotter_Sendas_beam_dialog");
+_LIT(KQMM_Delete_file_dialog,"QMM_Delete_file_dialog"); // Display this topic with the Dialog.Lost.Data.Found dialog
+_LIT(KQMM_Info_dialog,"QMM_Info_dialog"); // Display this topic with the Low on storage space dialog
+_LIT(KQMM_Details_dialog,"QMM_Details_dialog"); // Display this topic with the Storage manager dialog
+_LIT(KQMM_Files_dialog,"QMM_Files_dialog");
+_LIT(KQMM_Close_app_dialog,"QMM_Close_app_dialog");
+_LIT(KQMess_UISetPreferences_dialog,"QMess_UISetPreferences_dialog");
+_LIT(KQMess_UIHeaderNotif_dialog,"QMess_UIHeaderNotif_dialog"); // Display this topic with QueryDialog.email.downloadCompleteEmail
+_LIT(KQMess_UIForwardAttach_dialog,"QMess_UIForwardAttach_dialog");
+_LIT(KQMess_UIConfData_dialog,"QMess_UIConfData_dialog");
+_LIT(KQMess_UIPassW_dialog,"QMess_UIPassW_dialog");
+_LIT(KQMess_UISendSave_dialog,"QMess_UISendSave_dialog");
+_LIT(KQMess_soundRecorder_dialog,"QMess_soundRecorder_dialog");
+_LIT(KQMess_slideDuration_dialog,"QMess_slideDuration_dialog");
+_LIT(KQMess_Preferences_dialog,"QMess_Preferences_dialog");
+_LIT(KQMess_FormatText_dialog,"QMess_FormatText_dialog");
+_LIT(KQMess_FormatText_Style_dialog,"QMess_FormatText_Style_dialog");
+_LIT(KQmess_Before,"Qmess_Before");
+_LIT(KQMess_Overview,"QMess_Overview");
+_LIT(KQMess_Attach_receive,"QMess_Attach_receive");
+_LIT(KQMess_Attach_send,"QMess_Attach_send");
+_LIT(KQMess_Disconnect_connect,"QMess_Disconnect_connect");
+_LIT(KQMess_Find,"QMess_Find");
+_LIT(KQMess_Edit_pictures,"QMess_Edit_pictures");
+_LIT(KQMess_Folders,"QMess_Folders");
+_LIT(KQMess_Receive_mess,"QMess_Receive_mess");
+_LIT(KQMess_Insert_objects,"QMess_Insert_objects");
+_LIT(KQMess_MMS,"QMess_MMS");
+_LIT(KQMess_Move_mess_to_SIM,"QMess_Move_mess_to_SIM");
+_LIT(KQMess_Play_objects,"QMess_Play_objects");
+_LIT(KQMess_Email_receive,"QMess_Email_receive");
+_LIT(KQMess_Saving_contact_details,"QMess_Saving_contact_details");
+_LIT(KQMess_Save_objects,"QMess_Save_objects");
+_LIT(KQMess_Email_send,"QMess_Email_send");
+_LIT(KQMess_SMS,"QMess_SMS");
+_LIT(KQMess_Email_sync,"QMess_Email_sync");
+_LIT(KQMess_View_MMS,"QMess_View_MMS");
+_LIT(KQMess_Create_accounts,"QMess_Create_accounts");
+_LIT(KQMess_Create_MMS,"QMess_Create_MMS");
+_LIT(KQCP_Mess_setup_email_dialog,"QCP_Mess_setup_email_dialog"); // Display this topic with the Email tab of dialog.setup.messaging
+_LIT(KQCP_Email_account_dialog,"QCP_Email_account_dialog"); // Display this topic with dialog.setup.synchedEmailAccount
+_LIT(KQCP_Email_basic_dialog,"QCP_Email_basic_dialog"); // Display this topic with the Basic tab of dialog.setup.emailAccount
+_LIT(KQCP_Email_incoming_dialog,"QCP_Email_incoming_dialog"); // Display this topic with the Incoming tab of  dialog.setup.emailAccount
+_LIT(KQCP_Email_schedule_dialog,"QCP_Email_schedule_dialog"); // Display this topic with dialog.setup.schedule
+_LIT(KQCP_Email_outgoing_dialog,"QCP_Email_outgoing_dialog"); // Display this topic with the Outgoing tab of dialog.setup.emailAccount
+_LIT(KQCP_Email_advanced_dialog,"QCP_Email_advanced_dialog"); // Display this topic with the Advanced tab of dialog.setup.emailAccount
+_LIT(KQCP_SMS_messages_dialog,"QCP_SMS_messages_dialog"); // Display this topic with the SMS tab of dialog.setup.messaging
+_LIT(KQCP_Faxes_basic_dialog,"QCP_Faxes_basic_dialog"); // Display this topic with the Fax tab of dialog.setup.messaging
+_LIT(KQCP_MMS_messages_dialog,"QCP_MMS_messages_dialog");
+_LIT(KQSecurity_changePIN_dialog,"QSecurity_changePIN_dialog");
+_LIT(KQSecurity_addCert_dialog,"QSecurity_addCert_dialog");
+_LIT(KQSecurity_addCert_URL_dialog,"QSecurity_addCert_URL_dialog");
+_LIT(KQSecurity_unblockPIN_dialog,"QSecurity_unblockPIN_dialog");
+_LIT(KQSecurity_ChooseCert_dialog,"QSecurity_ChooseCert_dialog");
+_LIT(KQSecurity_signInfo_dialog,"QSecurity_signInfo_dialog");
+_LIT(KQSecurity_enterPIN_dialog,"QSecurity_enterPIN_dialog");
+_LIT(KQSecurity_secConn_dialog,"QSecurity_secConn_dialog");
+_LIT(KQSecurity_saveCert_dialog,"QSecurity_saveCert_dialog");
+_LIT(KQSyncML_Synctask_dialog,"QSyncML_Synctask_dialog");
+_LIT(KQsyncML_Settings_dialog,"QsyncML_Settings_dialog");
+_LIT(KQsyncML_Settings_protocol_dial,"QsyncML_Settings_protocol_dial");
+_LIT(KQsyncML_Overview,"QsyncML_Overview");
+_LIT(KQTime_Set_alarm_dialog,"QTime_Set_alarm_dialog");
+_LIT(KQTime_Set_date_time_dialog,"QTime_Set_date_time_dialog");
+_LIT(KQTime_Alarm_dialog,"QTime_Alarm_dialog");
+_LIT(KQTime_Before_start,"QTime_Before_start");
+_LIT(KQTime_Locations,"QTime_Locations");
+_LIT(KQTime_Responding_alarms,"QTime_Responding_alarms");
+_LIT(KQTime_Setting_alarms,"QTime_Setting_alarms");
+_LIT(KQTime_Setting_locations,"QTime_Setting_locations");
+_LIT(KQTime_Alarm_sounds,"QTime_Alarm_sounds");
+_LIT(KQTo_do_Preference_dialog,"QTo_do_Preference_dialog"); // 
+_LIT(KQTo_do_Delete_comptd_dialog,"QTo_do_Delete_comptd_dialog"); // 
+_LIT(KQA_MoveTo_Agenda,"QA_MoveTo_Agenda");
+_LIT(KQTodo_Overview,"QTodo_Overview");
+_LIT(KQTodo_Completed_entries,"QTodo_Completed_entries");
+_LIT(KQTodo_Add_Todo_Agenda,"QTodo_Add_Todo_Agenda");
+_LIT(KQViewers_vCal,"QViewers_vCal");
+_LIT(KQViewers_web,"QViewers_web"); //This is the topic for the web page viewer dialog. 
+_LIT(KQViewers_web_bookmark,"QViewers_web_bookmark"); //This is the topic for the web bookmark viewer dialog. 
+_LIT(KQVoiceviewer_dialog,"QVoiceviewer_dialog");
+_LIT(KQUnrecognised_dialog,"QUnrecognised_dialog");
+_LIT(KQSaveUnrecognised_dialog,"QSaveUnrecognised_dialog");
+_LIT(KQSaveWhere_dialog,"QSaveWhere_dialog");
+_LIT(KQFolderExternal_dialog,"QFolderExternal_dialog");
+_LIT(KQViewers_theme,"QViewers_theme");
+_LIT(KQSaveOrReplaceFile_dialog,"QSaveOrReplaceFile_dialog");
+_LIT(KQVoice_Overview,"QVoice_Overview");
+_LIT(KQVoice_Locating_notes,"QVoice_Locating_notes");
+_LIT(KQVoice_Making_most_of_Voice,"QVoice_Making_most_of_Voice");
+_LIT(KQVoice_Record_note,"QVoice_Record_note");
+_LIT(KQVoice_Replay_note,"QVoice_Replay_note");
+_LIT(KQWeb_Security_info_dialog,"QWeb_Security_info_dialog"); //This topic should be displayed with the dialog.web.securityInfo dialog.
+_LIT(KQWeb_Open_web_page_dialog,"QWeb_Open_web_page_dialog");
+_LIT(KQWeb_Prefs_dialog_General,"QWeb_Prefs_dialog_General");
+_LIT(KQWeb_Prefs_dialog_Display,"QWeb_Prefs_dialog_Display");
+_LIT(KQWeb_Prefs_dialog_Plugs,"QWeb_Prefs_dialog_Plugs");
+_LIT(KQWeb_Page_information_dialog,"QWeb_Page_information_dialog");
+_LIT(KQWeb_Find_dialog,"QWeb_Find_dialog");
+_LIT(KQWeb_Cookie_dialog,"QWeb_Cookie_dialog");
+_LIT(KQWeb_Before_you_use_Web,"QWeb_Before_you_use_Web");
+_LIT(KQWeb_multiple_windows,"QWeb_multiple_windows");
+_LIT(KQWeb__open_window,"QWeb__open_window");
+_LIT(KQWeb_toggle__window,"QWeb_toggle__window");
+_LIT(KQWeb_Beaming_web_pages,"QWeb_Beaming_web_pages");
+_LIT(KQWeb_Displaying_Web_images,"QWeb_Displaying_Web_images");
+_LIT(KQWeb_Moving_page_new_folder,"QWeb_Moving_page_new_folder");
+_LIT(KQWeb_Optimising_connection,"QWeb_Optimising_connection");
+_LIT(KQWeb_Renaming_bookmarked_pages,"QWeb_Renaming_bookmarked_pages");
+_LIT(KQWeb_Renaming_saved_pages,"QWeb_Renaming_saved_pages");
+_LIT(KQWeb_saving_page_with_frames,"QWeb_saving_page_with_frames");
+
+#endif

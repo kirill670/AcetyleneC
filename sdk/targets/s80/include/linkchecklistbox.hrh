@@ -1,0 +1,11 @@
+// linkchecklistbox.hrh
+// Copyright (c) Nokia Corporation 2002. All rights reserved.
+//
+enum
+	{
+	// use this enum as control type in dialog resource
+	ELinkMdlCtScrollingCheckBoxList=0x900,
+	// use this enum as control id in dialog resource
+	ELinkMdlCidScrollingCheckBoxList=0x910
+	};
+

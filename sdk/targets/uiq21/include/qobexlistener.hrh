@@ -1,0 +1,22 @@
+// QObexListener.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+#ifndef QObexListnerH
+#define QObexListnerH
+enum TQOBexDlgButCommand
+	{
+	EQOBexButSendToApp = 0x5000,
+
+	EQOBexCidIcon,
+	EQOBexCIDSendText1,
+	EQOBexCIDSendText2,
+	EQOBexCIDSendProgress,
+	EQOBexCIDSendText3,
+	EObexBeamListBox,
+	EObexViewItem,
+	EObexItemList,
+	EObexBeamDone
+	};
+	#endif
+

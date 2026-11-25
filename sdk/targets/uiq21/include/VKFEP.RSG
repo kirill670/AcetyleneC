@@ -1,0 +1,13 @@
+#define R_VKFEP_MOVER_BUTTON_DONE                 0x61482002
+#define R_VKFEP_EDIT_CUT                          0x61482003
+#define R_VKFEP_EDIT_COPY                         0x61482004
+#define R_VKFEP_EDIT_PASTE                        0x61482005
+#define R_MENU_TEST_TICKS                         0x61482006
+#define R_VKFEP_SETUP                             0x61482007
+#define R_VKFEP_EDIT_SELECTALL                    0x61482008
+#define R_VKFEP_MOVER_BUTTON_UP                   0x61482009
+#define R_VKFEP_MOVER_BUTTON_DOWN                 0x6148200a
+#define R_VKFEP_SELECT_KEYBOARD_LAYOUT_DIALOG_BUTTONS 0x6148200b
+#define R_VKFEP_SELECT_KEYBOARD_LAYOUT_DIALOG     0x6148200c
+#define R_VKFEP_USERFRIENDLY_NAME                 0x6148200d
+#define R_VKFEP_NOTHING_TO_SETUP                  0x6148200e

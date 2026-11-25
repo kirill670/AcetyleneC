@@ -1,0 +1,1 @@
+start netcards.exe -A

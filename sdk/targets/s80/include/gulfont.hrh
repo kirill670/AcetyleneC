@@ -1,0 +1,35 @@
+// GULFONT.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+/**
+@publishedAll 
+@released 
+*/
+#define EGulFontFlagBold			0x01
+
+/**
+@publishedAll 
+@released 
+*/
+#define EGulFontFlagItalic			0x02
+
+/**
+@publishedAll 
+@released 
+*/
+#define EGulFontFlagMono			0x04
+
+/**
+@publishedAll 
+@released 
+*/
+#define EGulFontFlagDoubleWidth		0x08
+
+/**
+@publishedAll 
+@released 
+*/
+#define EGulFontFlagDoubleHeight	0x10
+

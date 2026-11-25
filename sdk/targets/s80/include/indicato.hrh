@@ -1,0 +1,8 @@
+#include <ckind.hrh>
+
+#define EStatusPaneUidAppNameIndicatorWide KUidHildonStatusPaneTitleArea
+
+//There used to be around 8 panes in the v6 status bar - there are now only two
+//but the mapping below is equivalent
+#define EStatusPaneUidAppIconIndicatorWide KUidHildonStatusPaneTitleArea
+#define EAppNameIndicatorWide EHildonStatusPaneAppNameControl

@@ -1,0 +1,9 @@
+#define R_APPICKER_GRAPHICS                       0x7c2c004
+#define R_APP_SLOTS                               0x7c2c005
+#define R_APPS                                    0x7c2c006
+#define R_APPICKER_PREF_DIALOG                    0x7c2c007
+#define R_APPICKER_APP_NOT_AVAILABLE              0x7c2c008
+#define R_APPICKER_CANT_START_APP                 0x7c2c009
+#define R_APPICKER_NOT_ENOUGH_MEMORY              0x7c2c00a
+#define R_SMALLAPP_SLOTS                          0x7c2c00b
+#define R_SMALLAPPS                               0x7c2c00c

@@ -1,0 +1,16 @@
+// CQMMSMTMUI.HRH
+//
+// Copyright (c) 2001 Symbian Ltd.  All rights reserved.
+//
+
+#include <MTMUIDEF.HRH>
+
+//Function id's
+
+#define KMtmUiCreateDefaultSettings    KMtmFirstFreeMtmUiFunctionId
+#define KMtmUiCreateMmsMessage		   KMtmFirstFreeMtmUiFunctionId+1
+
+enum
+	{
+	ESendFailedDlgBidOk=0x06000
+	};

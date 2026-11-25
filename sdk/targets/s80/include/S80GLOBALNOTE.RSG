@@ -1,0 +1,11 @@
+#define R_GLOBALNOTE_NOTIFIER                     0x23df8002
+#define R_GLOBALNOTE_BUTTONS_NONE                 0x23df8003
+#define R_GLOBALNOTE_BUTTONS_OK                   0x23df8004
+#define R_GLOBALNOTE_BUTTONS_EXIT                 0x23df8005
+#define R_GLOBALNOTE_BUTTONS_CANCEL               0x23df8006
+#define R_GLOBALNOTE_BUTTONS_BACK                 0x23df8007
+#define R_GLOBALNOTE_BUTTONS_CLOSE                0x23df8008
+#define R_GLOBALNOTE_BUTTONS_QUIT                 0x23df8009
+#define R_GLOBALNOTE_BUTTONS_OKCANCEL             0x23df800a
+#define R_GLOBALNOTE_BUTTONS_YESNO                0x23df800b
+#define R_GLOBALNOTE_BUTTONS_ANSWEREXIT           0x23df800c

@@ -1,0 +1,6 @@
+#define R_MASTER_RESET_TITLE                      0x41b63004
+#define R_MASTER_RESET_CAPTION                    0x41b63005
+#define R_MASTER_RESET_CONFIRMATION_CAPTION       0x41b63006
+#define R_MASTER_RESET_FEEDBACK_CAPTION           0x41b63007
+#define R_MASTER_RESET_DIALOG                     0x41b63008
+#define R_MASTER_RESET_BUTTONS                    0x41b63009

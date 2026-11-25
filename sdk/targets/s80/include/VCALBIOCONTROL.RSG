@@ -1,0 +1,17 @@
+#define R_VCALB_HEADER_LABEL                      0x69e94003
+#define R_VCALB_B_CME_SEND                        0x69e94004
+#define R_VCALB_B_CME_RECIPIENT                   0x69e94005
+#define R_VCALB_B_CME_OPTIONS                     0x69e94006
+#define R_VCALB_B_CME_CLOSE                       0x69e94007
+#define R_VCALB_B_CMV_ADDTOCAL                    0x69e94008
+#define R_VCALB_B_CMV_REMFROMCAL                  0x69e94009
+#define R_VCALB_B_CMV_DELETE                      0x69e9400a
+#define R_VCALB_B_CMV_CLOSE                       0x69e9400b
+#define R_VCALB_DELETE_QUERY                      0x69e9400c
+#define R_VCAL_N_IB_CMV_COPIED                    0x69e9400d
+#define R_VCAL_N_IB_CMV_UPDATED                   0x69e9400e
+#define R_VCAL_N_CO_CMV_OLDINFORMATION            0x69e9400f
+#define R_VCAL_N_IB_CMV_REMOVED                   0x69e94010
+#define R_VCAL_N_IB_CMV_NOTFOUND                  0x69e94011
+#define R_VCAL_N_IB_CMV_NOCALENDAR                0x69e94012
+#define R_VCAL_N_CONVERTING_CAL                   0x69e94013

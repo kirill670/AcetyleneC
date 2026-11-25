@@ -1,0 +1,50 @@
+// NERPRINT.RA
+//
+// Copyright (c) 1998 Symbian Ltd. All rights reserved.
+//
+// Internet message printing resource file
+
+
+#include <muiu.hrh>
+#include "imum.rls"
+//
+// Printing resources
+
+RESOURCE TBUF64 r_nerr_print_subject_prefix		{ buf=EMM_G_PRINT_SUBJECT; }
+RESOURCE TBUF64 r_nerr_print_bcc_prefix			{ buf=EMM_G_PRINT_BCC; }
+RESOURCE TBUF64 r_nerr_print_cc_prefix			{ buf=EMM_G_PRINT_CC; }
+RESOURCE TBUF64 r_nerr_print_to_prefix			{ buf=EMM_G_PRINT_TO; }
+RESOURCE TBUF64 r_nerr_print_from_prefix		{ buf=EMM_G_PRINT_FROM; }
+RESOURCE TBUF64 r_nerr_print_date_format		{ buf=EMM_G_PRINT_DATE_FMT; }
+
+RESOURCE DLG_BUTTONS r_nerr_print_progress_buttons_cancel
+    {
+    buttons=
+        {
+        DLG_BUTTON { id=KMtuiBIDPrintProgressCancel; button=CMBUT {txt=STRING_r_nerr_print_progress_buttons_cancel2;}; hotkey='C';}
+        };
+    }
+
+RESOURCE DIALOG r_nerr_print_progress_dialog
+	{
+	title=STRING_r_nerr_print_progress_dialog1;
+    flags=EEikDialogFlagWait|EEikDialogFlagNotifyEsc;
+	buttons=r_nerr_print_progress_buttons_cancel;
+	items=
+		{
+		DLG_LINE
+			{
+			id=EEikCidPrintProgressBar;
+			type=EEikCtProgInfo;
+			control=PROGRESSINFO { };
+			},
+		DLG_LINE
+			{
+			type=EEikCtLabel;
+			id=EEikCidPrinterNameWithPort;
+			control=LABEL { txt=""; };
+			}
+		};
+	}
+
+

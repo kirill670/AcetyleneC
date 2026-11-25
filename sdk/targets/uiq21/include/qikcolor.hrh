@@ -1,0 +1,24 @@
+// QIKCOLOR.HRH
+//
+// Copyright (c) 1997-2000 Symbian Ltd.  All rights reserved.
+//
+
+#ifndef __QIKCOLOR_HRH__
+#define __QIKCOLOR_HRH__
+
+// Note: These color defines should typically not be used directly in code. 
+// Instead use logical colors obtained from CEikonEnv.
+
+// For use in code.
+#define KRgbQuartzLightBlue		TRgb(204,255,255)
+#define KRgbQuartzBlue			TRgb(153,204,255)
+#define KRgbQuartzMidBlue		TRgb(102,153,255)
+#define KRgbQuartzDarkBlue		TRgb(51,102,204)
+
+// For use in resource file.
+#define KQikRgbQuartzLightBlue	{red=204;green=255;blue=255;}
+#define KQikRgbQuartzBlue		{red=153;green=204;blue=255;}
+#define KQikRgbQuartzMidBlue	{red=102;green=153;blue=255;}
+#define KQikRgbQuartzDarkBlue	{red=51; green=102;blue=204;}
+
+#endif	// __QIKCOLOR_HRH__

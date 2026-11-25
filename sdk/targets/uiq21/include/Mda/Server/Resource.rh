@@ -1,0 +1,129 @@
+// Mda\Common\Resource.rh
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#include <Mda\Common\Resource.hrh>
+
+// ---------------------------------------------------
+// Resource entry structure
+STRUCT MDARES_ENTRY
+	{
+	BYTE name_string_id=0; // ASCII/UNICODE Displayable name - Defaults to first string
+	BYTE usage=EMdaResUsageSrcAndDst; // Src&|Dst - Defaults to both
+	LEN BYTE STRUCT configdef[]; // Configuration package definition - Optional 
+	LEN BYTE STRUCT signature[]; // Identification signatures - Optional
+	LEN BYTE STRUCT capabilities[]; // Datatypes - Optional
+	LEN BYTE STRUCT extension[]; // Formats, Codecs, etc. - Optional
+	//
+	LEN BYTE STRUCT strings[]; // All strings contained here - referenced by zero index
+	}
+
+STRUCT MDARES_TEXT
+	{
+	BYTE stringtype=EMdaResStringText;
+	LTEXT text;
+	}
+STRUCT MDARES_DATA
+	{
+	BYTE stringtype=EMdaResStringData;
+	LTEXT8 data;
+	}
+STRUCT MDARES_BINARY
+	{
+	BYTE stringtype=EMdaResStringData;
+	LEN BYTE BYTE binary[];
+	}
+
+// ---------------------------------------------------
+// Resource entry config package definition structures
+
+// Writable Choice list
+STRUCT MDARES_CONFIGDEF_CHOICE
+	{
+	BYTE type=EMdaResConfigDefChoiceList;
+	BYTE size; // Must be set to 4 + number of choices
+	WORD package_size=4; // TInt32
+	BYTE name_string_id;
+	LEN BYTE BYTE choice_string_ids[];
+	}
+// Display only option from list
+STRUCT MDARES_CONFIGDEF_CHOICE_READONLY
+	{
+	BYTE type=EMdaResConfigDefChoiceListReadOnly;
+	BYTE size; // Must be set to 4 + number of choices
+	WORD package_size=4; // TInt32
+	BYTE name_string_id;
+	LEN BYTE BYTE choice_string_ids[];
+	}
+
+// Integer selection
+STRUCT MDARES_CONFIGDEF_INTEGER
+	{
+	BYTE type=EMdaResConfigDefInteger;
+	BYTE size=15; 
+	WORD package_size=4; // TInt32
+	BYTE name_string_id;
+	LONG min=0;
+	LONG max=0;
+	LONG default=0;
+	}
+// Display only integer
+STRUCT MDARES_CONFIGDEF_INTEGER_READONLY
+	{
+	BYTE type=EMdaResConfigDefIntegerReadOnly;
+	BYTE size=3; 
+	WORD package_size=4; // TInt32
+	BYTE name_string_id;
+	}
+
+// Text selection
+STRUCT MDARES_CONFIGDEF_TEXT
+	{
+	BYTE type=EMdaResConfigDefText;
+	BYTE size=3;
+	WORD package_size; 
+	BYTE name_string_id;
+	}
+// Display only text
+STRUCT MDARES_CONFIGDEF_TEXT_READONLY
+	{
+	BYTE type=EMdaResConfigDefIntegerReadOnly;
+	BYTE size=3;
+	WORD package_size; 
+	BYTE name_string_id;
+	}
+
+// ---------------------------------------------------
+// Resource entry signature definition structures
+
+STRUCT MDARES_SIG_DATA
+	{
+	BYTE type=EMdaResSigTypeData;
+	BYTE size=2;
+	BYTE wildcard='?';
+	BYTE data_string_id;
+	}
+STRUCT MDARES_SIG_NAME_PATTERN
+	{
+	BYTE type=EMdaResSigTypeNamePattern;
+	BYTE size=1;
+	BYTE name_string_id;
+	}
+STRUCT MDARES_SIG_MIME_TYPE
+	{
+	BYTE type=EMdaResSigTypeMime;
+	BYTE size=1;
+	BYTE mime_type_string_id;
+	}
+
+// ---------------------------------------------------
+// Resource entry extention structure
+
+STRUCT MDARES_EXTENSION
+	{
+	BYTE type=0; 
+	BYTE size=5;
+	BYTE type_string_id; // ASCII/UNICODE displayable type, e.g. "Format","Encoding",etc.
+	LONG type_uid;
+	}

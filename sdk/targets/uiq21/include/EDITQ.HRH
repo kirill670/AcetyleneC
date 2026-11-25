@@ -1,0 +1,61 @@
+// EditQ.hrhrrakech Team
+
+/** @author SSELAPE */
+/** @version $Header: /Marrakech/QMsgeik/EditQInc\EditQ.hrh 1     9/16/99 11:19a Sselape $History: CImedQModel.h $ */
+/**/
+
+
+
+enum EditQCommandIds
+    {
+  EEditQCut=0x2000,
+EEditQCopy,
+EEditQPaste,
+EEditQUndo,
+EEditQZoom,
+EEditQPref,
+EEditQHelp,
+EEditQClose,
+EEditQSelectAll,
+EEditSaveContact,
+EEditQFind,
+EEditQFindNext,
+EEditQDelete,
+EEditQDisconnect
+};
+
+enum TEditQDialogControls
+	{
+	EEditCIDQueryLabel1= 0x1000,
+	EEditCIDPrefsReply,
+	EEditCIDPrefsFont,
+	ESelectAddressListbox,
+	EEditContactList,
+	EEditContactField,
+	EEditContactFirstName,
+	EEditContactLastName,
+	EEditSendNow,
+	EEditSaveOutbox,
+	EEditQUpDirection,
+	EEditQDownDirection,
+	EEditQDirection,
+	EEditFindInput,
+	EEditSendNowLater,
+	EEditQBeamDlgList,
+	EEditQCIDFileName
+	};
+
+enum TEditQButtons
+	{
+	EEditBidQueryNewMessage=123,
+	EEditBidYes,
+	EEditPrintProgressCancel,
+	EEditFind,
+	EEditBidOk
+	};
+
+
+enum TEditQCustomControls
+{
+	EEditQBeamListBox = 0x2000
+};

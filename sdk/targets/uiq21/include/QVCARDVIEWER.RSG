@@ -1,0 +1,10 @@
+#define R_QVC_VIEWER_DIALOG                       0x55a0b004
+#define R_QVC_VIEWER_BUTTONS                      0x55a0b005
+#define R_QVC_VIEWER_DIALOG_MULTIPLE              0x55a0b006
+#define R_QVC_VIEWER_MULTIPLE_BUTTONS             0x55a0b007
+#define R_QVC_INVALID_CARD                        0x55a0b008
+#define R_QVC_SAVED_TO_CONTACTS                   0x55a0b009
+#define R_QVC_TEMP_DATABASE                       0x55a0b00a
+#define R_QVC_UNFILED_CATEGORYNAME                0x55a0b00b
+#define R_QVC_CONTACTS_RESOURCEFILE_PATH          0x55a0b00c
+#define STRING_R_QVC_MULTIPLE_DIALOG_TEXT         0x55a0b00d

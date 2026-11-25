@@ -1,0 +1,4 @@
+#define R_PARSE_MAIL_MENU_PANE                    0x2efb003
+#define R_PARSE_MAIL_TASK_ARRAY                   0x2efb004
+#define R_OTHER_CHARACTERS                        0x2efb005
+#define R_PARSE_MAIL_STATE_MATRIX                 0x2efb006

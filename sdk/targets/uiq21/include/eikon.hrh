@@ -1,0 +1,246 @@
+#if !defined(__EIKON_HRH__)
+#define __EIKON_HRH__
+
+#include <uikon.hrh>
+
+// Quartz specific dialog flags
+#define EQikDlgAutoWrappingOff				0x2000
+#define EQikDlgButtonsStackedAtBottom			0x4000
+
+// Quartz specific dialog item flags
+#define EQikDlgItemCaptionAboveControl		0x2000
+#define EQikDlgItemDenselyPacked			0x4000
+#define EQikDlgItemUseFullWidth				0x8000
+
+
+// EIKCFDLG.HRH
+
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+ 
+#define EEikCidFileNameSel			10
+#define EEikCidFileNameEd			20 
+#define EEikCidFolderNameSel		30
+#define EEikCidFolderNameEd			40
+#define EEikCidDriveNameSel			50
+
+#define EEikCidUseNewFileChbx		100
+
+#define EEikBidCreateFile			150
+
+#define EEikBidBrowse				200
+
+// EIKDIAL.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EDialPhoneNumberEdwinWidth 15
+#define EDialPhoneNumberMaxLength  27
+#define EDialDialogMaxLabelLength  12
+
+enum
+	{
+	EDialDlgButFreeDial=1,
+	EDialDlgButDial,
+	EDialDlgButDialOut,
+	EFreeDialDlgButClear,
+	EFreeDialDlgButRedial,
+	EDialDlgEdwin1,
+	EDialDlgEdwin2,
+	EDialDlgEdwin3,
+	EDialDlgEdwin4,
+	EDialDlgEdwin5,
+	EFreeDialDlgEdwin
+	};
+
+// EIKFBROW.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EEikFileBrowseHideRom				0x0001
+#define EEikFileBrowseShowSystem			0x0020
+#define EEikFileBrowseShowHidden			0x0040
+#define EEikFileBrowseAllowFolderCreation	0x0200
+
+// EIKTIME.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define KEikTimeMaxYear					2099
+#define KEikTimeMinYear					1980
+
+#define KEikTimeCityCountryNameWidth	15
+
+#define EEikTimeCidSetCityCity			0x1901
+#define EEikTimeCidSetCityCountry		0x1902
+#define EEikTimeCidSetTimeTime			0x1911
+#define EEikTimeCidSetTimeDate			0x1912
+#define EEikTimeCidSetTimeSummerTime	0x1913
+#define EEikTimeCidDstHome				0x1971
+#define EEikTimeCidDstEuropean			0x1972
+#define EEikTimeCidDstNorthern			0x1973
+#define EEikTimeCidDstSouthern			0x1974
+#define EEikTimeCidTimeFormat			0x1802
+#define EEikTimeCidTimeSeparator		0x1803
+#define EEikTimeCidDateFormat			0x1813
+#define EEikTimeCidDateSeparator		0x1814
+#define EEikTimeCidWorkayMonday			0x1770
+#define EEikTimeCidWorkayTuesday		0x1771
+#define EEikTimeCidWorkayWednesday		0x1772
+#define EEikTimeCidWorkayThursday		0x1773
+#define EEikTimeCidWorkayFriday			0x1774
+#define EEikTimeCidWorkaySaturday		0x1775
+#define EEikTimeCidWorkaySunday			0x1776
+#define EEikTimeCidWorkdaysFirstDayOfWeek   0x1778
+#define EEikTimeCidDialogDescription	0x1961
+
+// EIKCHLST.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+#define EEikChlistArrayOwnedExternally	0x01
+#define EEikChlistIncrementalMatching	0x02
+#define EEikChlistNoPopout				0x04
+
+// EIKCAL.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EEikCalendarFlagStartMonthIsAlwaysJanuary	0x01
+#define EEikCalendarFlagNavigateChronologically		0x02
+
+// EIKCLOCK.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+enum
+	{
+	EEikLocaleConformantClockTypeChangesFormatAccordingToLocale,
+	EEikLocaleConformantClockTypeDigital,
+	EEikLocaleConformantClockTypeAnalog
+	};
+
+enum
+	{
+	EEikResourceConstructedClockDigitalDisplayHorizontalTextAlignmentLeft,
+	EEikResourceConstructedClockDigitalDisplayHorizontalTextAlignmentCenter,
+	EEikResourceConstructedClockDigitalDisplayHorizontalTextAlignmentRight
+	};
+
+enum
+	{
+	EEikResourceConstructedClockDigitalDisplayVerticalTextAlignmentTop,
+	EEikResourceConstructedClockDigitalDisplayVerticalTextAlignmentCenterInclDescent,
+	EEikResourceConstructedClockDigitalDisplayVerticalTextAlignmentCenterExclDescent,
+	EEikResourceConstructedClockDigitalDisplayVerticalTextAlignmentBottomInclDescent,
+	EEikResourceConstructedClockDigitalDisplayVerticalTextAlignmentBottomExclDescent
+	};
+
+enum
+	{
+	EEikResourceConstructedClockAnalogDisplayHandOneRevPer12Hours,
+	EEikResourceConstructedClockAnalogDisplayHandOneRevPerHour,
+	EEikResourceConstructedClockAnalogDisplayHandOneRevPerMinute
+	};
+
+enum
+	{
+	EEikResourceConstructedClockAnalogDisplayHandFeatureLine,
+	EEikResourceConstructedClockAnalogDisplayHandFeaturePolyLine,
+	EEikResourceConstructedClockAnalogDisplayHandFeatureCircle
+	};
+
+
+// EIKPROGI.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+
+enum TEikProgressTextType
+	{
+	EEikProgressTextNone,
+	EEikProgressTextPercentage,
+	EEikProgressTextFraction
+	};
+
+// EIKRTED.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EEikRTedShowAllPicturesAsIconic	0x00100000
+#define EEikRTedTextParsers				0x00200000
+#define EEikRTedShowParserPopup			0x00400000
+
+// EIKSPACE.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EEikSpacerClear			0
+#define EEikSpacerWhite			1
+#define EEikSpacerDitheredGray	2
+#define EEikSpacerGray			3
+#define EEikSpacerDarkGray		4
+#define EEikSpacerBlack			5
+
+// EIKWSEL.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EEikWorldSelNoBorder				0x0001
+#define EEikWorldSelSecondSelector			0x0008
+#define EEikWorldSelCountrySelector			0x1000
+
+// EIKCFDLG.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+ 
+#define EEikCidFileNameSel			10
+#define EEikCidFileNameEd			20 
+#define EEikCidFolderNameSel		30
+#define EEikCidFolderNameEd			40
+#define EEikCidDriveNameSel			50
+
+#define EEikCidUseNewFileChbx		100
+
+#define EEikBidCreateFile			150
+
+#define EEikBidBrowse				200
+
+// EIKFBROW.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EEikFileBrowseHideRom				0x0001
+#define EEikFileBrowseShowSystem			0x0020
+#define EEikFileBrowseShowHidden			0x0040
+#define EEikFileBrowseAllowFolderCreation	0x0200
+
+// EIKFILE.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+
+enum
+	{
+	EEikCidImageType=1
+	};
+
+enum TQikButtonPanelTypes
+	{
+	EQikBrButtonPanel = 600
+	};
+
+#endif

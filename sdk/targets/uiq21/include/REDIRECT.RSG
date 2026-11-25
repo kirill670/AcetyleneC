@@ -1,0 +1,6 @@
+#define R_REDIR_HOTKEYS                           0x576a8004
+#define R_REDIR_MENUBAR                           0x576a8005
+#define R_REDIR_STREAM_MENU                       0x576a8006
+#define R_REDIR_SELECT_MENU                       0x576a8007
+#define R_REDIR_CONFIG_FILE_DIALOG                0x576a8008
+#define R_REDIR_CONFIG_FILE_TEXT                  0x576a8009

@@ -1,0 +1,17 @@
+// <mead:applicationname/>.mmp
+//
+
+TARGET			<mead:applicationname/>.app
+TARGETTYPE		app
+UID			0x100039ce <mead:guiuid/>
+TARGETPATH		\system\apps\<mead:applicationname/>
+SOURCEPATH		..\gui
+SOURCE			<mead:applicationname/>.cpp
+RESOURCE		<mead:applicationname/>.rss
+USERINCLUDE		..\inc
+SYSTEMINCLUDE		\epoc32\include \epoc32\include\techview
+LIBRARY			<mead:applicationname/>eng.lib
+LIBRARY			euser.lib
+LIBRARY			apparc.lib
+LIBRARY			cone.lib
+LIBRARY			eikcore.lib      

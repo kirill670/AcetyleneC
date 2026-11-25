@@ -1,0 +1,247 @@
+// POP3SET.H
+//
+// Copyright (c) 1998-2003 Symbian Ltd.  All rights reserved. 
+//
+
+#if !defined (__POP3SET_H__)
+#define __POP3SET_H__
+
+
+#include <MSVUIDS.H>
+#include "miutset.h"
+#include "miut_err.h"
+
+/** Settings stream version. */
+const TUint16 KImPop3SettingsVersion = 3;
+
+/** Default POP3 server port number. */
+const TUint32 KPOP3DefaultPortNumber = 110;
+
+/** @deprecated */
+const TInt32 KImPop3SynchroniseAll	 = -1;
+
+/** @deprecated */
+const TInt32 KImPop3SynchroniseNone	 = 0;
+
+/**
+Specifies which parts of a POP3 message to download. Used when configuring the
+POP3 service settings.
+
+@see
+CImPop3Settings 
+
+@publishedAll
+@released
+*/
+enum TPop3GetMailOptions
+	{
+	/** Message headers only. */
+	EGetPop3EmailHeaders,
+	/** Complete message. */
+	EGetPop3EmailMessages
+	};			   
+
+
+class TPop3Progress
+/**
+Progress information for a POP3 operation. 
+
+@publishedAll
+@released
+*/
+	{
+public:
+	IMPORT_C TInt ConnectionState() const;
+	IMPORT_C TInt ConnectionIAP() const;
+
+public:
+	/** Defines types of POP3 operations. */
+	enum TPop3ProgressType 
+		{
+	/** Refreshing view of remote mail box. */
+		EPopRefreshing,
+	/** Copying messages. */
+		EPopCopying,
+	/** Deleting messages. */
+		EPopDeleting,
+	/** Connecting to remote mail box. */
+		EPopConnecting,
+	/** Internal reorganisation. */
+		EPopTidying,
+	/** Connected to remote mail box and no current operations. */
+		EPopConnectedAndIdle,
+	/** Disconnecting from remote mail box. */
+		EPopDisconnecting,
+	/** Disconnected from remote mail box. */
+		EPopDisconnected,
+	/** Moving messages. */
+		EPopMoving,
+	/** Copying new messages. */
+		EPopCopyNewMail,
+	/** Moving new messages. */
+		EPopMoveNewMail,
+	/** Copying a selection of messages. */
+		EPopCopyMailSelection,
+	/** Moving a selection of messages. */
+		EPopMoveMailSelection,
+	/** Copying all messages. */
+		EPopCopyAllMail,
+	/** Moving all messages. */
+		EPopMoveAllMail,
+	/** Populating view of remote mail box. */
+		EPopPopulating,
+	/** Cancelling all off-line operations. */
+		EPopCancellingOfflineOps,
+	/** Defines the maximum value for this enumeration. */
+		EPopMaxProgressValue=EPopCancellingOfflineOps
+		};
+
+	/** Type of operation for which progress is being reported. */
+	TPop3ProgressType	iPop3Progress;	// holds the progress for a 'super operation'
+	/** When in the EPopConnecting state, this member holds the connection 
+	stage. Otherwise it holds the total number of messages for the operation. */
+	TInt				iTotalMsgs;
+	/** Remaining number of messages to process. */
+	TInt				iMsgsToProcess;
+	/** Number of bytes processed by the operation. */
+	TInt				iBytesDone;
+	/** When in the EPopConnecting state, this member holds the connection 
+	iap value. Otherwise it holds the total number of bytes to progress for the
+	operation. */
+	TInt				iTotalBytes;
+	/** Operation error code. */
+	TInt				iErrorCode; // client side needs to be informed of an error
+	/** Type of the sub-operation, where a nested operations is occurring. */
+	TPop3ProgressType	iPop3SubStateProgress; // holds the progress for the substate of the 'super operation'
+	/** Service performing the operation. */
+	TMsvId				iServiceId;
+	/** The total size of messages to be downloaded. */
+	TInt				iTotalSize; // The total size of messages to be downloaded.
+	};
+
+
+class TImPop3GetMailInfo
+/**
+Use to specify the maximum message size and the destination folder ID for
+certian POP3 operations.
+
+@see
+CPop3ClientMtm
+
+@publishedAll
+@released
+*/
+	{
+public:
+	/** Maximum message size for the operation. */
+	TInt32		iMaxEmailSize;
+	/** ID of the destination folder for the operation. */
+	TMsvId		iDestinationFolder;
+	};
+
+
+class CImPop3Settings : public CImBaseEmailSettings
+/**
+Run-time configuration settings for POP3.
+
+Messaging clients should use an instance of this class to specify
+and retrieve configuration settings that are used by the POP3 service when
+executing email operations.  
+
+Service settings such as the user name and password, whether to authenticate
+using APOP or plain text, the maximum size of an email to download, and the
+maximum number of messages to synchronise can be specified using this class.
+Storing and restoring from the message store is also supported.
+
+To use this class to change a setting:
+1) Set the current context to the POP3 service entry using CMsvStore.
+2) Create an instance of CImPop3Settings and put it on the cleanup stack.
+3) Retrieve the existing settings by calling CImPop3Settings::RestoreL().
+4) Change the inbox synchronisation limit setting by calling CImPop3Settings::SetInboxSynchronisationLimit().
+5) Save the new settings by calling CImPop3Settings::StoreL().
+6) Pop and destroy the CImPop3Settings instance.
+
+@see CMsvStore
+@publishedAll
+@released
+*/
+	{
+public:
+	IMPORT_C CImPop3Settings();
+	IMPORT_C virtual ~CImPop3Settings();
+	IMPORT_C void Reset();
+	IMPORT_C void InternalizeL(RMsvReadStream&);
+	IMPORT_C void ExternalizeL(RMsvWriteStream&) const;
+	IMPORT_C void RestoreL(CMsvStore& aMessageStore);
+	IMPORT_C void StoreL  (CMsvStore& aMsvStore) const;
+	IMPORT_C const TPtrC8 LoginName() const;
+	IMPORT_C void SetLoginNameL(const TDesC8&);
+	IMPORT_C const TPtrC8 Password() const;
+	IMPORT_C void SetPasswordL(const TDesC8&);
+	IMPORT_C const TBool AutoSendOnConnect() const;
+	IMPORT_C void SetAutoSendOnConnect(TBool aFlag);
+	IMPORT_C const TBool Apop() const;
+	IMPORT_C void SetApop(TBool aFlag);
+	IMPORT_C const TBool DisconnectedUserMode() const;
+	IMPORT_C void SetDisconnectedUserMode(TBool aFlag);
+	IMPORT_C const TBool DeleteEmailsWhenDisconnecting() const;
+	IMPORT_C void SetDeleteEmailsWhenDisconnecting(TBool aFlag);
+	IMPORT_C const TBool AcknowledgeReceipts() const;
+	IMPORT_C void SetAcknowledgeReceipts(TBool aFlag);
+	IMPORT_C const TInt MaxEmailSize() const;
+	IMPORT_C void SetMaxEmailSize(const TInt aMaxEmailSize);
+	IMPORT_C const TPop3GetMailOptions GetMailOptions() const;
+	IMPORT_C void SetGetMailOptions(TPop3GetMailOptions aGetMailOptions);
+	IMPORT_C CImPop3Settings& CopyL(const CImPop3Settings& aCImPop3Settings);
+	IMPORT_C TBool operator==(const CImPop3Settings& aCImPop3Settings) const;
+	IMPORT_C const TInt32 InboxSynchronisationLimit() const;
+	IMPORT_C void SetInboxSynchronisationLimit(const TInt32 aInboxSyncLimit);
+
+private:
+	class TImPop3SettingsExtension
+		{
+	public:
+		inline TImPop3SettingsExtension();
+	public:
+		HBufC8* iLoginName;
+		HBufC8* iPassword;
+		};
+
+	inline TImPop3SettingsExtension* Extension() const;
+	inline void CheckExtensionExistsL();
+
+	enum TImPop3EmailSettings
+		{
+		KPop3SettingsClearFlag					= 0x00000000,
+		KPop3BaseEmailSettingsLastUsedFlag		= CImBaseEmailSettings::EBaseEmailSettingsLastUsedFlag,	//0x00000001
+		KPop3ApopFlag							= KPop3BaseEmailSettingsLastUsedFlag << 1,		//0x00000002
+		KPop3AutoSendFlag						= KPop3ApopFlag << 1,							//0x00000004
+		KPop3DisconnectedModeFlag				= KPop3AutoSendFlag << 1,						//0x00000008
+		KPop3DeleteEmailsWhenDisconnectingFlag	= KPop3DisconnectedModeFlag << 1,				//0x00000010
+		KPop3AcknowledgeReceipts				= KPop3DeleteEmailsWhenDisconnectingFlag << 1,	//0x00000020
+		KPop3EmailSettingsLastUsedFlag			= KPop3AcknowledgeReceipts						//0x00000020
+		};
+
+	TImPop3SettingsExtension*	iExtension; // renamed iReceiptAddress
+	TInt32  iInboxSyncLimit;
+	TInt32	iMaxEmailSize;
+	TPop3GetMailOptions iGetMailOptions;
+	};
+
+
+inline CImPop3Settings::TImPop3SettingsExtension* CImPop3Settings::Extension() const
+	{
+	return iExtension;
+	}
+
+inline void CImPop3Settings::CheckExtensionExistsL()
+	{
+	if (!iExtension)
+		iExtension=new (ELeave) CImPop3Settings::TImPop3SettingsExtension;
+	}
+
+inline CImPop3Settings::TImPop3SettingsExtension::TImPop3SettingsExtension() : iLoginName(NULL) , iPassword(NULL)
+	{
+	}
+
+#endif // #define __POP3SET_H__

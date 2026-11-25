@@ -1,0 +1,89 @@
+// V32SA1100.H
+//
+// Copyright (c) 1995-2001 Symbian Ltd.  All rights reserved.
+//
+
+#ifndef __V32SA1100_H__
+#define __V32SA1100_H__
+#include <e32std.h>
+#include <e32pccd.h>
+#include <e32hal.h>
+#include <m32std.h>
+#include <kc_arm.h>
+#include <v32spi.h>
+
+const TInt KMemConfigByteAccess=1;
+const TInt KMaxExtInterrupts=64;
+const TUint8 KExtIntNone=0;
+const TUint8 KExtIntUnBound=0xFF;
+const TInt KAllExtIntsDisabled=0x1;
+const TInt KAllExtIntsCleared=0x2;
+const TInt KFirstExtIntEnabled=0x3;
+
+class Custom
+	{
+public:
+	// Boot
+	virtual void Init1()=0;
+	virtual void Init2()=0;
+	virtual void Init3()=0;
+	virtual void Init4()=0;
+	virtual void Init5()=0;
+	virtual TBool TestBootSequence()=0;
+	// Information
+	virtual TBool XYInputPresent()=0;
+	virtual TSize XYInputSize()=0;
+	virtual TPoint OffsetToDisplayInPixels()=0;
+	virtual TInt ProcessorClockInKHz()=0;
+	virtual TInt SpeedFactor()=0;
+	virtual TTimeIntervalMicroSeconds32 TickPeriod()=0;
+	// Debug
+	virtual TInt DebugInit()=0;
+	virtual void DebugOutput(TUint aLetter)=0;
+	// Power
+	virtual void PowerReset()=0;
+	virtual void WokeUp()=0;
+	virtual void ApplyBackupBatteryLoad()=0;
+	virtual void RemoveBackupBatteryLoad()=0;
+	virtual void QuickEmergencyStandby()=0;
+	virtual TBool EmergencyStandby()=0;
+	virtual TInt MainBatteryInMilliVolts(TInt aReading,TInt aReference)=0;
+	virtual TInt BackupBatteryInMilliVolts(TInt aReading,TInt aReference)=0;
+	virtual TInt PcCardInMilliVolts(TInt aReading,TInt aReference)=0;
+	virtual TInt DcJackInMilliVolts(TInt aReading,TInt aReference)=0;
+	virtual TInt MainBatteryLowInMilliVolts()=0;
+	virtual TInt MainBatteryReplaceInMilliVolts()=0;
+	virtual TInt MainBatteryNotPresentInMilliVolts()=0;
+	virtual TInt BackupBatteryGoodToLowInMilliVolts()=0;
+	virtual TInt BackupBatteryLowToGoodInMilliVolts()=0;
+	virtual TInt BackupBatteryLowToReplaceInMilliVolts()=0;
+	virtual TInt BackupBatteryReplaceToLowInMilliVolts()=0;
+	virtual TInt BackupBatteryNotPresentInMilliVolts()=0;
+	virtual TInt IdleCurrentInMilliAmps()=0;
+	virtual TInt RunningCurrentInMilliAmps()=0;
+	virtual TInt MainBatteryMaxMilliVolts()=0;
+	virtual TInt BackupBatteryMaxMilliVolts()=0;
+	virtual TBool ExternalPowerPresent() =0;
+	virtual TSupplyStatus MainBatteryStatus() =0;
+	virtual TInt MainBatteryMilliVolts() =0;
+	virtual TSupplyStatus BackupBatteryStatus() =0;
+	virtual TInt BackupBatteryMilliVolts() =0;
+	// Drive Info
+	virtual TInt TotalSupportedDrives()=0;
+	virtual TLDriveAssignInfo DeviceInfoFromDrive(TInt aDriveNumber)=0;
+	virtual TMediaDevice DeviceFromMedia(TInt aMediaNumber)=0;
+	virtual TMediaDeviceAssignInfo MediaInfoFromDevice(TMediaDevice aDevice)=0;
+	virtual TPBusNum PeriphBusFromMediaDevice(TMediaDevice aDevice)=0;
+	virtual TInt DriveSettings()=0;
+	// Interrupts
+	virtual TPtrC8 ExtInterruptSource()=0;
+	virtual TInt EnableExtInterrupt(TExtInterruptID anId)=0;
+	virtual TInt DisableExtInterrupt(TExtInterruptID anId)=0;
+	virtual TInt ClearExtInterrupt(TExtInterruptID anId)=0;
+	virtual TExtInterruptID ActiveExtInterrupt()=0;
+	// Miscellaneous
+	virtual void StartupReason(TMachineStartupType &aReason)=0;
+	};
+
+#endif
+

@@ -1,0 +1,4 @@
+#define R_MMS_PLAYER_MENU_TEXT                    0x541d4003
+#define R_MMS_PLAYER_ERROR_MSG_VIDEO              0x541d4004
+#define R_MMS_PLAYER_ERROR_MSG_CORRUPT            0x541d4005
+#define R_MMS_PLAYER_BUTTONBAR                    0x541d4006

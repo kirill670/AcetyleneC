@@ -1,0 +1,84 @@
+// qikon.hrh
+//
+// Copyright (c) 2003 Symbian Ltd.  All rights reserved.
+
+#ifndef __QIKON_HRH__
+#define __QIKON_HRH__
+
+#include <qikstockcontrols.hrh> // Exported by quiklaf
+#include <QikCategory.hrh>
+
+//
+// Zoom constants
+//
+#define EQikCmdZoomLevel1		0x1001
+#define EQikCmdZoomLevel2		0x1002
+#define EQikCmdZoomLevel3		0x1003
+
+#define EQikCmdToolbarAdded		0x1004
+#define EQikCmdToolbarRemoved	0x1005
+
+//
+// CQikTabGroup constants
+//
+#define EQikTabGroupAllTabsTheSameWidth			0
+#define EQikTabGroupAllTabsAsWideAsTheWidest	1
+#define EQikTabGroupEachTabAsWideAsNeeded		2
+
+#define EQikTabGroupTabContentLeftAligned		0
+#define EQikTabGroupTabContentCenterAligned		1
+
+//
+// CQikSlider constants
+//
+#define EQikSliderSnapToMarker			0x01
+#define EQikSliderVerticalLayout		0x02
+
+//
+// The values of the following must be reflected in CQikTTimeEditor
+//
+#define	EQikDateWithoutPopoutCalendar	1
+#define EQikTimeWithoutPopoutPicker		2
+#define EQikTimeForce24HourFormat		4
+#define EQikTimeFiveMinuteSteps			8
+
+//
+// defines for the CQikKeytopControl
+//
+#define EQikKeytopKeyChangedByCaps		0x01
+#define EQikKeytopKeyIsCapsLockKey		0x02
+#define EQikKeytopKeyIsLeftShift		0x04
+#define EQikKeytopKeyIsRightShift		0x08
+#define EQikKeytopKeyIsLeftCtrl			0x10
+#define EQikKeytopKeyIsRightCtrl		0x20
+#define EQikKeytopKeyIsLeftAlt			0x40
+#define EQikKeytopKeyIsRightAlt			0x80
+#define EQikKeytopKeyIsTopReturn		0x0100
+#define EQikKeytopKeyIsBottomReturn		0x0200
+
+#define EQikKeytopTypeAlphabetic			0x01
+#define EQikKeytopTypeExtendedAlphabetic	0x02
+#define EQikKeytopTypeNumeric				0x04
+
+//
+// defines for the CQikToolBar
+//
+
+#define EQikToolbarHeight     27
+#define EQikToolbarHorMargins 5
+#define EQikToolbarTopMargin  3
+#define EQikToolbarSpacing    5
+#define EQikToolbarLeft       0
+#define EQikToolbarCenter     1
+#define EQikToolbarRight      2
+
+//
+// defines for the CQikColorSelector
+//
+
+#define EQikColorSelDisplayNoText	0x01
+#define EQikColorSelStandardColor	0x02
+#define EQikColorSelStandard16		0x04
+#define EQikColorSelCustomPalette	0x08
+
+#endif

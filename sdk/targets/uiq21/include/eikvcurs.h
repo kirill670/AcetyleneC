@@ -1,0 +1,64 @@
+// eikvcurs.h
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+//
+// class TEikVirtualCursor
+//
+
+#ifndef __EIKVCURS_H__
+#define __EIKVCURS_H__
+
+#include <e32std.h>
+
+/**
+ *
+ * Provides support for the virtual cursor's state within an application.
+ *
+ * There is one instance of this object per <code>CEikonEnv</code>.
+ *
+ * @since 6.0
+ * @lib "eikcore.lib"
+ */
+class TEikVirtualCursor
+	{
+public:
+	/**
+	 * Specifies the virtual cursor's state.
+	 *
+	 * The state may be on, off or suspended. The suspended state is for use
+	 * by applications that wish to temporarily disable the cursor, but do
+	 * not want to switch it off completely. For example, an editor control
+	 * which when focused needs to capture arrow keys would disable the
+	 * virtual cursor when it gained focus, and enable it when unfocused.
+	 */
+	enum TState
+		{
+		EOff=0,			/** Sets the virtual cursor off. */
+		EOn,			/** Sets the virtual cursor on. */
+		ESuspended		/** Sets the virtual cursor as suspended. */
+		};
+public:
+	TEikVirtualCursor();
+private: //prevent passing by value
+	inline TEikVirtualCursor(const TEikVirtualCursor&);
+public:
+	IMPORT_C void SetCursorStateL(TState aState, CCoeEnv& aEnv);
+	IMPORT_C TState CursorState(CCoeEnv& aEnv);
+public: // but not exported
+	void HandleAppToForeground(CCoeEnv& aEnv);
+private:
+	void SwitchOffEmulationAndBitmap(CCoeEnv& aEnv);
+	void SwitchOnEmulationAndBitmap(CCoeEnv& aEnv);
+private:
+	TState iState;
+	};
+
+
+// inlines
+
+inline TEikVirtualCursor::TEikVirtualCursor(const TEikVirtualCursor&)
+	{}
+
+#endif

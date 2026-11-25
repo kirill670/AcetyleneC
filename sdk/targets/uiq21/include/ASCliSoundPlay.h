@@ -1,0 +1,70 @@
+// ASCLISOUNDPLAY.H
+//
+// Copyright (c) 1999-2001 Symbian Ltd. All rights reserved.
+//
+#ifndef __ASCLISOUNDPLAY_H__
+#define __ASCLISOUNDPLAY_H__
+
+// System includes
+#include <e32base.h>
+
+// User includes
+#include "asshddefs.h"
+
+// Type definitions
+
+// Constants
+
+// Enumerations
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+// ----> TASCliSoundPlayDefinition (header)
+///////////////////////////////////////////////////////////////////////////////////////
+class TASCliSoundPlayDefinition
+	{
+///////////////////////////////////////////////////////////////////////////////////////
+public:										// CONSTRUCT
+///////////////////////////////////////////////////////////////////////////////////////
+
+	inline TASCliSoundPlayDefinition();
+
+	inline TASCliSoundPlayDefinition(TTimeIntervalMinutes aOffset, TTimeIntervalSeconds aDuration);
+
+////////////////////////////////////////////////////////////////////////////////////////
+public:										// ACCESS
+///////////////////////////////////////////////////////////////////////////////////////
+
+	inline TTimeIntervalMinutes				Offset() const { return iOffset; }
+
+	inline TTimeIntervalSeconds				Duration() const { return iDuration; }
+
+//////////////////////////////////////////////////////////////////////////////////////
+private:									// MEMBER DATA
+///////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * From the time an alarm is first displayed
+	 */
+	TTimeIntervalMinutes					iOffset;
+
+	/**
+	 * How long the alarm playing lasts
+	 */
+	TTimeIntervalSeconds					iDuration;
+	};
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+// ----> TASCliSoundPlayDefinition (inlines)
+///////////////////////////////////////////////////////////////////////////////////////
+inline TASCliSoundPlayDefinition::TASCliSoundPlayDefinition()
+:	iOffset(KDefaultSoundPlayOffsetInSeconds), iDuration(KDefaultSoundPlayDurationInSeconds)
+	{}
+inline TASCliSoundPlayDefinition::TASCliSoundPlayDefinition(TTimeIntervalMinutes aOffset, TTimeIntervalSeconds aDuration)
+:	iOffset(aOffset), iDuration(aDuration)
+	{}
+
+#endif

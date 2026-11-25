@@ -1,0 +1,6 @@
+STRUCT IND_APPLICATION_NAME
+	{
+	LTEXT appname="";
+	}
+
+

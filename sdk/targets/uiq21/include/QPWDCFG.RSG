@@ -1,0 +1,9 @@
+#define R_CTRLPNL_OWNER_INFO                      0x54b14004
+#define R_CTRLPNL_NO_WRITING_ALLOWED              0x54b14005
+#define R_CTRLPNL_PASSWORD_IS_CLEARED             0x54b14006
+#define R_CTRLPNL_PASSWORD_IS_SET                 0x54b14007
+#define R_CTRLPNL_PASSWORD_IS_NONE                0x54b14008
+#define R_CTRLPNL_TITLE_PASSWORD                  0x54b14009
+#define R_CTRLPNL_DIALOG_PASSWORD                 0x54b1400a
+#define R_CTRLPNL_PASSWORD_BUTTONS                0x54b1400b
+#define R_CTRLPNL_OPTIONS_PASSWORD                0x54b1400c

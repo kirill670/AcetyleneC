@@ -1,0 +1,23 @@
+treechildren:-moz-tree-image(addflag)
+{
+  list-style-image: url("chrome://global/skin/menu/menu-check.gif");
+}
+
+treechildren:-moz-tree-cell-text(makebold)
+{
+  font-weight: bold;
+}
+
+treechildren:-moz-tree-cell-text(makebold,open)
+{
+   font-style: italic;
+}
+
+
+treechildren:-moz-tree-cell-text(statsclass)
+{
+  font-family: monospace, serif;
+  font-size: 9pt;
+}
+
+

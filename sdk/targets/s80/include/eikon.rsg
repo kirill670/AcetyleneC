@@ -1,0 +1,15 @@
+//
+// EIKON.RSG
+//
+// This file is a concatenation of all Uikon's dynamic dll resource files so that applications
+// don't have to be rewritten to include the precise resource files needed
+//
+//
+
+#include <eikcore.rsg>
+#include <eikcoctl.rsg>
+#include <eikctl.rsg>
+#include <eikdlg.rsg>
+#include <eikcdlg.rsg>
+#include <eikfile.rsg>
+#include <eikmisc.rsg>

@@ -1,0 +1,181 @@
+// CKNCTL.RH
+//
+// Copyright (c) 1999 Symbian Ltd.  All rights reserved.
+// Copyright (c) Nokia Corporation 2002. All rights reserved.
+//
+
+STRUCT ANIM
+	{
+	// specify either a MBM path or a MBM skin UID 
+	LTEXT bmpfile = "";	
+	LONG bmpUid = 0;
+	WORD frameinterval = 0xffff;				// defines global frame rate for the animation
+	WORD animationmode = ECknAnimationModePlay;	// can be play, cycle or bounce
+	BYTE flash = ECknAnimationNotFlashing;		// can be flashing or not flashing
+	LLINK backgroundframe = 0;					// can set a background frmame for the animation
+	LLINK frames = 0;							// must link to array of animation frames
+	}
+
+STRUCT ANIMFRAME
+	{
+    WORD bmpid = 0xffff;
+    WORD bmpmask = 0xffff;
+	WORD timeoffset = 0xffff; // time offset here overrides overall frame interval
+	WORD xoffset = 0; // x offset between frames
+	WORD yoffset = 0; // y offset between frames
+	}
+
+STRUCT INPUTFRAME
+	{
+	// specify either a MBM path or a MBM skin UID 
+	LTEXT bitmap = "";
+	LONG bmpUid = 0;
+	WORD bitmapid = 0;	
+	WORD bitmapmaskid = 0;
+	WORD flags = 0;
+	WORD type;
+	LTEXT infotext = "";
+	STRUCT control;
+	}
+
+STRUCT CONTROLBAR
+    {
+    LONG width = 63;
+    LONG height = 14;
+    LONG finalvalue = 5;
+    }
+
+
+STRUCT CKN_IP_FIELD_EDITOR
+    {
+    STRUCT minValues;	// minimum values for IP fields
+    STRUCT maxValues;	// minimum values for IP fields
+    BYTE flags=0;		// flags
+    }
+
+
+STRUCT CKN_IP_ADDRESS
+    {
+    BYTE FieldA;	// value in the first field of an IP address
+    BYTE FieldB;	// value in the second field of an IP address
+    BYTE FieldC;	// value in the third field of an IP address
+    BYTE FieldD;	// value in the fourth field of an IP address
+    }
+
+STRUCT APPTITLE
+	{
+	WORD type=ECknCtAppTitle;
+	WORD id=0;
+	WORD flags=EEikToolBarCtrlIsStretchable;
+	WORD length=0;
+	LTEXT maintitle = "";
+	LTEXT extension = "";
+	LTEXT subtitle = "";
+	LTEXT additionalinfo = "";
+	WORD titletype = ECknAppTitleTypeWindow;
+	WORD iconwidth = 0;
+	WORD iconheight = 0;
+	}
+
+STRUCT NOTIFIERLISTBOX
+	{
+	BYTE version=0;
+	WORD flags = 0;
+	WORD height = 0;		//in items
+	WORD column1width = 5;  //in pixels
+	WORD column2width = 5;  //in pixels
+	WORD column3width = 5;  //in pixels
+	WORD column4width = 5;  //in pixels
+	LLINK array_id = 0;
+	}
+
+STRUCT SEARCHFIELD
+	{
+	WORD type=ESearchFieldStyleSearch;
+	WORD widthinchars=12;
+	WORD maxlength=30;
+	LTEXT bitmap = "";
+	WORD bitmapid = -1;	
+	WORD bitmapmaskid = -1;
+	}
+
+STRUCT COLUMNEDTEXT
+	{
+	BYTE columns=1;
+	WORD columnWidth=240;
+	}
+
+STRUCT VOLUMEBAR
+	{
+	WORD minvolume = 0;
+	WORD maxvolume = 100;
+	WORD granularity = 1; 
+	BYTE orientation = EVolumeBarOrientationHorizontal;
+	BYTE muteicon = EVolumeBarMuteIconShown;
+	}
+
+STRUCT ICONWITHTEXT
+	{
+	WORD columnWidth=240; //temp awaiting spec
+	}
+
+STRUCT SEEKBAR
+	{
+	WORD starttimeseconds = 0;
+	WORD endtimeseconds = 60;
+	WORD granularityseconds = 1;
+	WORD length = 150;
+	BYTE timeindicatorposition = ESeekBarTimeIndicatorAbove;
+	BYTE mode = ESeekBarModeNormal;
+	}
+
+STRUCT PHONENUMBER
+	{
+	WORD width = 10;
+	WORD flags = EPhoneNumberCharactersFormatted;
+	}
+
+STRUCT ITU9CONTROL
+	{
+	WORD flags = ECknItu9QuestionMarkLegal;
+	}
+
+STRUCT SECRETEDITOR
+	{
+ 	WORD num_letters=256;
+	WORD max_displayed_letters=12;
+	WORD font_height=0;
+	}
+
+STRUCT CELLSELECTOR
+	{
+	WORD flags=0;
+	WORD rows=0;
+	WORD cellwidth=20;
+	WORD cellheight=20;
+	WORD celldistance=5;
+	LTEXT txt="";
+	}
+STRUCT ICONCHOICELIST
+	{
+	WORD flags = 0;
+	WORD maxdisplaychar = 0;
+	LLINK icons;
+	LLINK items;
+	}
+
+STRUCT ICONCHOICELIST_ICONS
+	{
+	STRUCT icons[]; // IMAGEs
+	}
+
+STRUCT ICONCHOICELIST_ITEMS
+	{
+	STRUCT items[]; // ICON_CHOICE_ITEMs
+	}
+
+STRUCT ICONCHOICELIST_ITEM
+	{
+	WORD icon_index = -1;
+	LTEXT txt = "";
+	}

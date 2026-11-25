@@ -1,0 +1,12 @@
+#define R_BIOUD_NOT_SUPPORTED                     0xb5ab003
+#define R_BIOUD_PRINT_NOT_SUPPORTED               0xb5ab004
+#define R_BIOUI_DEFAULT_SERVICENAME               0xb5ab005
+#define R_BIOUI_PERCENT_PROGRESS                  0xb5ab006
+#define R_BIOUI_WAITING_PROGRESS                  0xb5ab007
+#define R_BIOUI_CREATING_PROGRESS                 0xb5ab008
+#define R_BIOUI_PARSING_PROGRESS                  0xb5ab009
+#define R_BIOUI_PROCESSING_PROGRESS               0xb5ab00a
+#define R_BIOUI_EDITING_PROGRESS                  0xb5ab00b
+#define R_BIOUI_GENERAL_ERROR_TITLE               0xb5ab00c
+#define R_BIOUI_PARSE_ERROR_TITLE                 0xb5ab00d
+#define R_BIOUI_UNKNOWN_ERROR                     0xb5ab00e

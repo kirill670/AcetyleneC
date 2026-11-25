@@ -1,0 +1,11 @@
+#define R_COLOR_SCHEME_LIST                       0x5518c002
+#define R_COLOR_ITEMS_GRAY                        0x5518c003
+#define R_COLOR_ITEMS_BLUE_SLATE                  0x5518c004
+#define R_COLOR_ITEMS_BEACH_SAND                  0x5518c005
+#define R_COLOR_ITEMS_SKY_BLUE                    0x5518c006
+#define R_COLOR_ITEMS_LILAC                       0x5518c007
+#define R_COLOR_ITEMS_JUNGLE                      0x5518c008
+#define R_COLOR_ITEMS_CITRUS_YELLOW               0x5518c009
+#define R_COLOR_ITEMS_RAIN_BLUE                   0x5518c00a
+#define R_COLOR_ITEMS_MARBLE_PINK                 0x5518c00b
+#define R_COLOR_ITEMS_BLUEBERRY                   0x5518c00c

@@ -1,0 +1,12 @@
+#define R_SENDUI_MENUITEM_SEND                    0x5c494002
+#define R_SENDUI_UNABLE_TO_SEND_FOLDERS           0x5c494003
+#define R_DUMMY_1                                 0x5c494004
+#define R_SENDUI_ONE_PROTECTED                    0x5c494005
+#define R_SENDUI_MANY_PROTECTED                   0x5c494006
+#define R_TITLE_CONVERSION                        0x5c494007
+#define R_CANCEL_CONVERSION                       0x5c494008
+#define R_SENDUI_MENU                             0x5c494009
+#define R_SENDAS_DIALOG                           0x5c49400a
+#define R_SENDAS_BUTTONS_CANCEL_OK                0x5c49400b
+#define R_SENDUI_SELECT_ONLY_ONE_CONTACT_CARD     0x5c49400c
+#define R_SENDUI_SELECT_ONLY_ONE_DOCUMENT         0x5c49400d

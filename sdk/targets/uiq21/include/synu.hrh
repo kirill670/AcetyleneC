@@ -1,0 +1,20 @@
+//  Synu.hrh
+//
+// Copyright (c) 1998 Symbian Ltd.  All rights reserved.
+//
+
+enum // Sync Transfer email type dialog
+	{
+	ESyncCIDTransferType,
+	ESyncCIDSetDirection,
+	ESyncCIDSetAccount,
+	ESyncCIDExplanation,
+	ESyncCIDTransferProgress,
+	ESyncCIDAccntDelWarn1,
+	ESyncCIDAccntDelWarn2,
+	ESyncCIDAccntDelRemoveMessages,
+	ESyncCIDAccntsettings,
+	ESyncCIDAccntIsDefault,
+	ESyncCIDDeleteCurrent,
+	ESyncCIDDeleteNumber
+	};

@@ -1,0 +1,3 @@
+rls_string STRING_r_error_res_socket_net_unreach	"Could not connect to the network. Currently unreachable" 
+rls_string STRING_r_error_res_socket_host_unreach	"Could not connect to the specified server" 
+rls_string STRING_r_error_res_socket_wrong_protocol	"The specified server refuses the selected protocol" 

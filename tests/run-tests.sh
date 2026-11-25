@@ -370,5 +370,21 @@ grep -q '"name":"acetylene-ide"' "$WORK/bridge.log" && ok "stdio bridge returns 
 kill $BRIDGE_PID 2>/dev/null
 wait $BRIDGE_PID 2>/dev/null
 
+echo '== legacy EPOC targets =='
+for t in s60v1 s60v2 s80 uiq21; do
+    L="$ROOT/sdk/targets/$t"
+    if [ ! -d "$L/lib" ] || [ -z "$(ls "$L/lib" 2>/dev/null)" ]; then
+        bad "$t library set missing"
+        continue
+    fi
+    "$BIN/acetylene-cc.exe" -I "$ROOT/sdk/include" -I "$ROOT/sdk/include/tcc" -c "$ROOT/examples/hello/hello.c" -o "$WORK/lg_$t.o" 2>"$WORK/lg_$t.log"
+    "$BIN/acetylene-cc.exe" -I "$ROOT/sdk/include" -I "$ROOT/sdk/include/tcc" -c "$ROOT/sdk/runtime/e32main_shim_legacy.c" -o "$WORK/lgs_$t.o" 2>>"$WORK/lg_$t.log"
+    check "$t sources compile" $? "$(tail -3 "$WORK/lg_$t.log")"
+    "$BIN/acetylene-pe.exe" -o "$WORK/lg_$t.app" "$WORK/lg_$t.o" "$WORK/lgs_$t.o"         -entry _E32Startup -uid1 0x100039CE -uid2 0xE0000001 -uid3 0         -heap 0x1000 0x100000 -stack 0x2000         -L "$L/lib" -leexe -lecrt0 -lestlib -leuser >>"$WORK/lg_$t.log" 2>&1
+    check "$t links a legacy EPOC image" $? "$(tail -3 "$WORK/lg_$t.log")"
+    python -I "$ROOT/tests/check-epoc.py" "$WORK/lg_$t.app" >"$WORK/lgchk_$t.log" 2>&1
+    check "$t image passes the EPOC structure check" $? "$(cat "$WORK/lgchk_$t.log")"
+done
+
 printf '\n%d passed, %d failed\n' "$PASS" "$FAIL"
 [ "$FAIL" = 0 ]

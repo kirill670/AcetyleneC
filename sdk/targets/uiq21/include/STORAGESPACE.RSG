@@ -1,0 +1,2 @@
+#define R_DATASIZENOT_DLG_BUTTONS                 0x5efde002
+#define R_DATASIZENOT_DLG                         0x5efde003

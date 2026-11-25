@@ -1,0 +1,3 @@
+#define R_EVENT_WATCHER                           2
+#define R_HUNG_WATCHER                            3
+#define R_STORAGE_SYSTEM_OWNED_FILES_ARRAY        4

@@ -1,0 +1,18 @@
+// ckind.hrh
+//
+// Copyright (c) Nokia Corporation 2002. All rights reserved.
+//
+
+#define KUidHildonStatusPaneTitleArea		0x10005817
+#define KUidHildonStatusPaneContainer		0x10005818
+
+enum TIndicatorControls
+	{
+	EHildonStatusPaneAppNameControl = 8000,
+	EHildonStatusPaneContainer
+	};
+
+enum TThirdParyFepListControl
+	{
+	EFepInputSelectDlgLbx = 1
+	};

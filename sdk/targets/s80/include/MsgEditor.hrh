@@ -1,0 +1,167 @@
+/*
+ * NOKIA MOBILE PHONES
+ * DIGITAL CONVERGENCE
+ * LINDA SW
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *           Message Editor Enumerations
+ *           -------------------------
+ * 
+ *           SW Include Document - C++
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Module name:    MsgEditor
+ * 
+ * $Archive: /Erin messaging/Implementation/msgeditorview/Inc/MsgEditor.hrh $
+ * 
+ * $Revision: 4 $
+ * 
+ * 
+ * Copyright (c) 1998. Nokia Mobile Phones
+ * 
+ * 
+ * Change History:
+ * 
+ * History: MsgEditor.hrh $
+ * 
+ *
+ *---------------------------------------------------------------------------
+ */
+
+
+/*
+-----------------------------------------------------------------------------
+
+    DESCRIPTION
+
+    Defines enums for MsgEditor.
+
+-----------------------------------------------------------------------------
+*/
+
+
+#ifndef __MSGEDITOR_HRH__
+#define __MSGEDITOR_HRH__
+
+
+#define KMsgFormatAddressControlSpaces  "  "
+#define KMsgFormatAddressControlPrefix  "("
+#define KMsgFormatAddressControlSuffix  ")"
+
+enum TMsgFormComponent
+    {
+    EMsgHeader = 0,
+    EMsgBody
+    };
+
+enum TMsgControlType
+    {
+    EMsgExpandableControl=0,
+    EMsgAddressControl,
+    EMsgDateTimeControl,
+    EMsgFirstFreeCustomControlType,
+	EMsgLabelControl
+    };
+
+enum TMsgControlId
+    {
+    EMsgComponentIdNull= 0,
+    EMsgComponentIdTo = 1,
+    EMsgComponentIdFrom,
+    EMsgComponentIdCc,
+    EMsgComponentIdBcc,
+    EMsgComponentIdSubject,
+    EMsgComponentIdBody,
+    EMsgComponentIdDateTime,
+    EMsgComponentIdFirstFreeEditorSpecificId
+    };
+
+enum TMsgFocusDirection
+    {
+    EMsgFocusUp = -1,
+    EMsgFocusDown = 1
+    };
+
+enum TMsgZoomCommand
+    {
+    EMsgZoomIn = 0,
+    EMsgZoomOut
+    };
+
+enum TMsgControlIndex
+    {
+    EMsgAppendControl = -1,
+    EMsgFirstControl = 0
+    };
+
+enum TMsgClipboardFunc
+    {
+    EMsgNoClipboard = 0,
+    EMsgCopy,
+    EMsgCut,
+    EMsgPaste,
+    EMsgPasteSpecial
+    };
+
+enum TMsgEditFunc
+    {
+    EMsgUndo = 0,
+    EMsgSelectAll,
+    EMsgFindDialog
+    };
+
+enum TMsgCursorLocation
+    {
+    EMsgTop = 0,
+    EMsgBottom
+    };
+
+enum TMsgControlModeFlags
+    {
+    EMsgControlModeNone					= 0x000000,
+    EMsgControlModeReadOnly				= 0x000001,     // Indicates read only state
+	EMsgControlModePlainTextMode		= 0x000002,     // Indicates plain text mode
+    EMsgControlModeSizeFixedToOneLine	= 0x000004,     // Forces control to one line heigh
+    EMsgControlModeUseSystemFont		= 0x000008,     // Forces control to use system font
+	EMsgControlModeSizeChanging			= 0x000010,     // Indicates control's size change
+    EMsgControlModeSegmentedStorage     = 0x000020,     // Advises control to use segmented storage
+	EMsgControlModeFirstReservedFlag	= 0x001000,     // Reserved for standard controls
+    EMsgControlModeFirstFreeFlag		= 0x100000
+    };
+
+
+enum TMsgViewEvent
+    {
+    EMsgViewEventPrepareFocusTransitionUp,
+    EMsgViewEventPrepareFocusTransitionDown,
+    EMsgViewEventPrepareForViewing,
+    EMsgViewEventPrepareForZooming,
+    EMsgViewEventFormHeightChanged,
+    EMsgViewEventFormScrolled
+    };
+
+#endif //__MSGEDITOR_HRH__
+
+//End of file
+
+
+
+
+
+
+
+

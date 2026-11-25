@@ -1,0 +1,28 @@
+// CKNDLG.RH
+//
+// Copyright (c) 1999 Symbian Ltd.  All rights reserved.
+//
+
+
+#include <ckndlg.hrh>
+
+#define FLASH_NOTE_TIME			5	// In seconds
+#define SHORT_FLASH_NOTE_TIME	3	// In seconds
+#define DEAD_ZONE				1	// In seconds
+
+STRUCT CKN_NOTE_CONTENTS
+    {
+	WORD flags=0;
+    LTEXT title="";
+	LTEXT message="";
+	LTEXT iconfile="";
+	WORD bitmapid=-1;
+	WORD maskid=-1;
+    }
+
+STRUCT CKN_FIELD_INFO
+	{
+	LONG field;
+	LTEXT txt;
+	}
+

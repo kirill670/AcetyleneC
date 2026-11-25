@@ -1,0 +1,4 @@
+rls_string STRING_r_error_res_etel_call_dropped "Problem communicating with receiving device. Call was unexpectedly dropped" 
+rls_string STRING_r_error_res_etel_number_busy "Phone number is busy. Wait before trying again" 
+rls_string STRING_r_error_res_etel_call_not_answered "Call was not answered" 
+rls_string STRING_r_error_res_etel_phone_off "Phone is turned off or not ready. Check phone and try again" 

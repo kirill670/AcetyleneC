@@ -1,0 +1,123 @@
+# Last edited: 29 July 2003
+# Based on Modular Architecture Design v1.14 with JetStream Components removed
+
+#---------------------------------------------------------------------------------------------
+
+#========
+# Nucleus
+#========
+
+# App-Framework subsystem
+APPARC
+CONE
+EGUL
+ETEXT
+# part of FORM
+form.dll
+tagma.dll
+VIEWSRV
+UIKON
+FEPBASE
+EMIME
+
+
+# Application-Protocols subsystem
+ECOM 
+
+# App-services subsystem
+ALARMSERVER
+SYSAGENT
+SCHSVR
+
+# Base subsystem
+E32
+LOCE32
+F32
+DBMS
+BAFL
+PWRCLI
+STORE
+# part of CHARCONV
+charconv.dll	# converters are optional
+
+# Comms-infras subsystem
+COMMDB
+ESOCK
+NIFMAN
+
+# Graphics subsystem 
+BITGDI
+FBSERV
+FNTSTORE
+GDI
+WSERV
+
+
+# Messaging subsystem
+# part of MSG
+msexe.exe
+msgs.dll
+
+# Networking subsystem
+TCPIP6
+DND
+INSOCK
+PPP
+INHOOK6
+
+# Security subsystem
+EZLIB 
+# part of CRYPTALG
+hash.dll
+
+# Ser-comms subsystem
+#part of C32
+c32.dll
+c32exe.exe
+
+# Telephony subsystem
+ETELMM
+# part of ETEL
+etel.dll
+DIAL
+
+#===================
+# Reference Nucleus
+#===================
+# Base subsystem
+ASSABETB
+LUBBOCK
+# LUBBOCK and ASSABETB items are both 'linked as' the following names and have these names in ROM (variant layer)
+hal.dll
+ecust.dll
+exyin.dll
+videodriver.dll
+# LUBBOCK items are 'linked as' the following names and have these names in ROM  (variant layer)
+ekdata.dll
+ekeyb.dll
+eserky.dll
+epbusmv.dll
+epbuspv.dll
+videodriver.ldd
+
+# Graphics subsystem
+SCREENDRIVER
+KEYCLICKREF
+
+# Telephony subsystem
+MMTSY
+
+# Toolkit-techview subsystem
+EIKSTD # all except the following
+-eikir.dll
+-eikmisc.dll
+-eikprint.dll 
+
+UIKLAF
+
+#======
+# Other
+#======
+-dummy.dll # there are a few of these in different components
+
+# [eof]

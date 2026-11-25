@@ -1,0 +1,11 @@
+// <mead:applicationname/>.hrh
+//
+
+
+enum T<mead:variablename/>MenuCommands
+	{
+	E<mead:variablename/>Cmd1 = 0x06000,
+	E<mead:variablename/>Cmd2,
+	E<mead:variablename/>Cmd3,
+	E<mead:variablename/>Cmd4
+	};

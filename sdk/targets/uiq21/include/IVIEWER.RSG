@@ -1,0 +1,15 @@
+#define R_IV_DEFAULT_FILE                         0x2f520002
+#define R_WVIEWER_VERTOPBUT_ZOOM                  0x2f520004
+#define R_IVIEWER_BUTTONS_DONE                    0x2f520005
+#define R_IVIEWER_DIALOG_INFORMATION              0x2f520006
+#define R_IVIEWER_DIALOG_ZOOM                     0x2f520007
+#define R_FORMAT_UTILS_SIZE_FORMAT_KILO           0x2f520008
+#define R_FORMAT_UTILS_SIZE_FORMAT_MEGA           0x2f520009
+#define R_FORMAT_UTILS_SIZE_FORMAT_GIGA           0x2f52000a
+#define R_IV_UI_PARAMS                            0x2f52000b
+#define R_IV_CANTOPENFILE                         0x2f52000c
+#define R_IV_ALERT_TITLE                          0x2f52000d
+#define R_IV_DATE_FORMAT_STRING                   0x2f52000e
+#define R_IV_SAVE_BUTTON_TEXT                     0x2f52000f
+#define R_IVIEWER_MENUBAR                         0x2f520010
+#define R_IVIEWER_IMAGE_MENUPANE                  0x2f520011

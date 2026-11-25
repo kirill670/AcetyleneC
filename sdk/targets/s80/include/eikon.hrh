@@ -1,0 +1,445 @@
+// EIKON.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+#if !defined(__EIKON_HRH__)
+#define __EIKON_HRH__
+
+#include <uikon.hrh>
+#include <ckon.hrh>
+#include <lafpublc.hrh>
+
+// EIKCFDLG.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+ 
+#define EEikCidFileNameSel			10
+#define EEikCidFileNameEd			20 
+#define EEikCidFolderNameSel		30
+#define EEikCidFolderNameEd			40
+#define EEikCidDriveNameSel			50
+
+#define EEikCidUseNewFileChbx		100
+
+#define EEikBidCreateFile			150
+
+#define EEikBidBrowse				200
+
+// EIKDIAL.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EDialPhoneNumberEdwinWidth 15
+#define EDialPhoneNumberMaxLength  27
+#define EDialDialogMaxLabelLength  12
+
+enum
+	{
+	EDialDlgButFreeDial=1,
+	EDialDlgButDial,
+	EDialDlgButDialOut,
+	EFreeDialDlgButClear,
+	EFreeDialDlgButRedial,
+	EDialDlgEdwin1,
+	EDialDlgEdwin2,
+	EDialDlgEdwin3,
+	EDialDlgEdwin4,
+	EDialDlgEdwin5,
+	EFreeDialDlgEdwin
+	};
+// EIKFBROW.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EEikFileBrowseHideRom				0x0001
+#define EEikFileBrowseShowSystem			0x0020
+#define EEikFileBrowseShowHidden			0x0040
+#define EEikFileBrowseAllowFolderCreation	0x0200
+// EIKTIME.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define KEikTimeMaxYear					2060
+#define KEikTimeMinYear					1980
+
+#define KEikTimeCityCountryNameWidth	15
+
+#define EEikTimeCidSetCityCity			0x1901
+#define EEikTimeCidSetCityCountry		0x1902
+#define EEikTimeCidSetTimeTime			0x1911
+#define EEikTimeCidSetTimeDate			0x1912
+#define EEikTimeCidDstHome				0x1971
+#define EEikTimeCidDstEuropean			0x1972
+#define EEikTimeCidDstNorthern			0x1973
+#define EEikTimeCidDstSouthern			0x1974
+#define EEikTimeCidTimeFormat			0x1802
+#define EEikTimeCidTimeSeparator		0x1803
+#define EEikTimeCidDateFormat			0x1813
+#define EEikTimeCidDateSeparator		0x1814
+#define EEikTimeCidWorkayMonday			0x1770
+#define EEikTimeCidWorkayTuesday		0x1771
+#define EEikTimeCidWorkayWednesday		0x1772
+#define EEikTimeCidWorkayThursday		0x1773
+#define EEikTimeCidWorkayFriday			0x1774
+#define EEikTimeCidWorkaySaturday		0x1775
+#define EEikTimeCidWorkaySunday			0x1776
+#define EEikTimeCidDialogDescription	0x1961
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EEikChlistArrayOwnedExternally			0x01
+#define EEikChlistIncrementalMatching			0x02
+#define EEikChlistNoPopout						0x04
+#define EEikChlistIncrementalMatchingTimeout	0x08
+#define EEikChlistEventStateChangedAlways		0x10
+
+// EIKCAL.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EEikCalendarFlagStartMonthIsAlwaysJanuary	0x01
+#define EEikCalendarFlagNavigateChronologically		0x02
+// EIKCLOCK.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define	EEikLocaleConformantClockTypeChangesFormatAccordingToLocale 0x00
+#define	EEikLocaleConformantClockTypeDigital						0x01
+#define	EEikLocaleConformantClockTypeAnalog							0x02
+#define	EEikUsesDefaultSystemColors									0x04
+
+enum
+	{
+	EEikResourceConstructedClockDigitalDisplayHorizontalTextAlignmentLeft,
+	EEikResourceConstructedClockDigitalDisplayHorizontalTextAlignmentCenter,
+	EEikResourceConstructedClockDigitalDisplayHorizontalTextAlignmentRight
+	};
+
+enum
+	{
+	EEikResourceConstructedClockDigitalDisplayVerticalTextAlignmentTop,
+	EEikResourceConstructedClockDigitalDisplayVerticalTextAlignmentCenterInclDescent,
+	EEikResourceConstructedClockDigitalDisplayVerticalTextAlignmentCenterExclDescent,
+	EEikResourceConstructedClockDigitalDisplayVerticalTextAlignmentBottomInclDescent,
+	EEikResourceConstructedClockDigitalDisplayVerticalTextAlignmentBottomExclDescent
+	};
+
+enum
+	{
+	EEikResourceConstructedClockAnalogDisplayHandOneRevPer12Hours,
+	EEikResourceConstructedClockAnalogDisplayHandOneRevPerHour,
+	EEikResourceConstructedClockAnalogDisplayHandOneRevPerMinute
+	};
+
+enum
+	{
+	EEikResourceConstructedClockAnalogDisplayHandFeatureLine,
+	EEikResourceConstructedClockAnalogDisplayHandFeaturePolyLine,
+	EEikResourceConstructedClockAnalogDisplayHandFeatureCircle
+	};
+
+// EIKGYSEL.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EEikGraySelIncrementalMatching		0x0001
+#define EEikGraySelDisplay4Gray				0x0002
+#define EEikGraySelDisplay16Gray			0x0004
+#define EEikGraySelDisplayNoText			0x0010
+#define EEikGraySelDisplay16Color			0x0020
+#define EEikGraySelDisplay2Gray				0x0040
+#define EEikGraySelDisplaySkinDefinedColors		0x0080
+#define EEikGraySelColorIfAvailable			0x1000
+
+// EIKMENU.HRH device dependant re-definitions
+//
+// Copyright (c) 2001 Symbian Ltd.  All rights reserved.
+//
+#define EEikMenuItemSuperHotKeyHash			EEikMenuItemSuperHotKeyOne
+#define EEikMenuItemSuperHotKeyStar			EEikMenuItemSuperHotKeyTwo
+
+// EIKMFNE.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EEikMfneNumberFlagFillWithLeadingZeros			0x1
+#define EEikMfneNumberFlagPreserveOldWidthBeforeEditing	0x2
+#define EEikMfneNumberFlagRepresentsYear				0x4
+//
+#define EEikMfneLatLongFlagAddSecondsField				0x8
+#define EEikMfneLatLongFlagAddTrailingSign				0x10
+#define EEikMfneLatLongFlagDirectionIsPrefix			0x20 // default is that the direction is a suffix
+//
+// The values of the following must be reflected in CTimeEditor in eikmfne.cpp
+//
+#define EEikTimeWithoutSecondsField			0x0001
+#define EEikDateWithoutPopoutCalendar		0x0002
+#define EEikTimeWithoutHoursField			0x0004
+#define EEikTimeForce24HourFormat			0x0008
+#define EEikHideTimeIcon        			0x0010
+#define EEikHideDateIcon        			0x0020
+#define EEikMfneWithCheckBoxField			0x0040
+#define EEikDurationAbsoluteTimeWithDays	0x0080
+#define EEikDurationRelativeTimeWithDays	0x0100
+#define EEikTimeWithoutPopoutTimePicker		0x0200
+#define EEikMfneWithCheckBoxGap				0x0400
+#define EEikMfneInlineEditing				0x0800
+
+// EIKPROGI.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+
+enum TEikProgressTextType
+	{
+	EEikProgressTextNone,
+	EEikProgressTextPercentage,
+	EEikProgressTextFraction
+	};
+
+// EIKRTED.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EEikRTedShowAllPicturesAsIconic	0x00100000
+#define EEikRTedNoTextParsers			0x00200000
+
+// EIKSPACE.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EEikSpacerClear			0
+#define EEikSpacerWhite			1
+#define EEikSpacerDitheredGray	2
+#define EEikSpacerGray			3
+#define EEikSpacerDarkGray		4
+#define EEikSpacerBlack			5
+// EIKTELED.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+enum 
+	{
+	EEikTelephoneNumberEditorModeCoerceFormat=0,
+	EEikTelephoneNumberEditorModeFreeFormat
+	};
+
+#define EEikTelephoneNumberEditorFlagSeedWithHome	0x0001
+#define EEikTelephoneNumberEditorCountryReadOnly	0x0002
+#define EEikTelephoneNumberEditorHideNumber			0x0004
+#define EEikTelephoneNumberEditorCountryOnly		0x0008
+
+// EIKWSEL.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EEikWorldSelNoBorder				0x0001
+#define EEikWorldSelSecondSelector			0x0008
+#define EEikWorldSelCountrySelector			0x1000
+// EIKDIALG.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EEikDlgCidBorderPlace			0x001
+#define EEikDlgCidBorderStyle			0x002
+#define EEikDlgCidBorderColor			0x004
+#define EEikDlgCidBorderPreview			0x008
+#define EEikStyleChoiceList				0x1000
+#define EEikBorderPlaceChoiceList		0x2000
+ 
+#define EEikDialogFlagWait					0x001
+#define EEikDialogFlagNotifyEsc				0x002
+#define EEikDialogFlagButtonsBelow			0x004
+#define EEikDialogFlagButtonsRight			0x008
+#define EEikDialogFlagNoUserExit			0x010
+#define EEikDialogFlagModeless				0x020
+#define EEikDialogFlagNoTitleBar			0x040
+#define EEikDialogFlagAllKeysToButtons		0x080
+#define EEikDialogFlagFillScreen			0x100
+#define EEikDialogFlagNoDrag				0x200
+#define EEikDialogFlagDensePacking			0x400
+#define EEikDialogFlagNoBackup				0x800
+#define EEikDialogFlagIgnorePreferredHeight	0x1000
+#define EEikDialogFlagHelpButton			0x2000
+#define EEikDialogFlagNoShadow				0x4000
+#define EEikDialogFlagNoRepositionByFep		0x8000
+#define EEikDialogFlagDisableNextKeyEvent	0x1000000
+
+#define EEikDlgItemNoSeparator		0
+#define EEikDlgItemSeparatorAfter	1
+#define EEikDlgItemColumnEnd		2
+#define EEikDlgItemSeparatorMask	0x03
+#define EEikDlgItemLatent			0x04
+#define EEikDlgItemLglf				0x08
+#define EEikDlgItemTakesEnterKey	0x10
+#define EEikDlgItemOfferAllHotKeys	0x20
+#define EEikDlgItemNoBorder			0x40	/* deprecated */
+#define EEikDlgItemNonFocusing		0x80
+#define EEikDlgItemAsLabel			0xc0
+#define EEikDlgItemTrailerAfterEar	0x100
+#define EEikDlgItemCtlMinHeightOrLess	0x200
+#define EEikDlgItemCtlMinWidthOrLess	0x400
+#define EEikDlgItemCtlMinSizeOrLess		0x600
+#define EEikDlgItemCtlGetsWidthFirst	0x800
+#define EEikDlgItemCtlSharesWidth		0x1000
+#define EEikDlgItemMandatoryInput       0x2000
+#define EEikDlgItemAlignToControls      0x4000
+#define EEikDlgItemCaptionPositionCenter 0x8000
+
+#define EEikBidCancel       -1
+#define EEikBidOk           -2
+#define EEikBidTab          -3
+#define EEikBidDelete		-4
+#define EEikBidSpace		-5
+
+#define EEikDlgItemIndirect		-1
+#define EEikDlgMainPageIndirect -1
+// EIKCFDLG.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+ 
+#define EEikCidFileNameSel			10
+#define EEikCidFileNameEd			20 
+#define EEikCidFolderNameSel		30
+#define EEikCidFolderNameEd			40
+#define EEikCidDriveNameSel			50
+
+#define EEikCidUseNewFileChbx		100
+
+#define EEikBidCreateFile			150
+
+#define EEikBidBrowse				200
+
+// EIKFBROW.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+#define EEikFileBrowseHideRom				0x0001
+#define EEikFileBrowseShowSystem			0x0020
+#define EEikFileBrowseShowHidden			0x0040
+#define EEikFileBrowseAllowFolderCreation	0x0200
+// EIKFILE.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+
+#define EEikBidSetTab			7
+#define EEikBidClearTab			8
+#define EEikTabDlgStdPage		9
+#define EEikTabDlgCusPage		10
+
+
+// Find and Replace Dialog
+
+#define EEikFindRepDlgBidFind				1
+#define EEikFindRepDlgBidReplace			2
+#define EEikFindRepDlgBidOptions			3
+#define EEikFindRepDlgBidClose				4
+#define	EEikFindRepDlgBidFindAgain			5
+#define EEikFindRepDlgBidReplaceAll			6
+#define	EEikCidFindAndReplaceFind			7
+#define	EEikCidFindAndReplaceReplace		8
+#define EEikCidFindReplaceOpCaseSensitive	9
+#define EEikCidFindReplaceOpReplaceAll		10
+#define EEikCidFindReplaceOpMatchWhole		11
+#define EEikFindRepDlgBidFindTemp			12
+#define EEikFindRepDlgBidReplaceTemp		13
+#define EEikCidFindReplaceOptions			14
+
+// Yes No option button array
+
+#define EEikCidOpButYes	1
+#define EEikCidOpButNo	2
+
+// Ckon Dialog Buttons
+
+#define EEikDlgBidPreview	-10
+#define EEikDlgBidClose		-20
+
+// Font preview dialog
+
+#define EEikFontPrevDlgCidLabel 3
+#define EEikFontPrevDlgCidLabelChn 4
+
+// Font dialog
+
+#define EEikFontDlgPageStyle		1
+#define EEikFontDlgPageFormatting	2
+#define EEikFontDlgPageOther		3
+
+// Alignment Dialog
+
+#define EEikAlignDlgBidSet		1
+
+// Ckon Command additions
+
+#define EEikCmdCalSelect		0x1000
+#define EEikCmdCalNext			0x1001
+#define EEikCmdCalPrev			0x1002
+#define EEikCmdHotLinkSelect	0x1003
+#define EEikBidChange		0x1004
+#define EEikIncreaseVolume 	0x1005
+#define EEikDecreaseVolume	0x1006
+#define EEikMute		0x1007
+#define EEikIncrease	0x1008
+#define EEikDecrease	0x1009
+
+#define EEikStepForward		0x100a
+#define EEikStepBackward	0x100b
+
+//ids for dialog pages
+#define EEikCharmapCharacters 1
+#define EEikCharmapCharacters2 2
+#define EEikCharmapCharacters3 3
+#define EEikCharmapMathematical 4
+#define EEikCharmapSymbols 5
+#define EEikBorderPageLineStyle 1
+#define EEikBorderPageColor 2
+
+#define EEikPageSetupSize 1
+#define EEikPageSetupMargins 2
+#define EEikPageSetupHeader 3
+#define EEikPageSetupFooter 4
+#define EEikPageSetupOther 5 
+
+#define EEikSerialPort 1
+#define EEikSerialHandshake 2
+
+// EIKCBA.HRH
+//
+// Copyright (c) 2000 Symbian Ltd.  All rights reserved.
+//
+
+// not available before Release 6.1
+// values here start start at 100 to compensate for uikon's TEikStockButtonGroupControls
+// enum values (defined in uikon.hrh)
+enum TEikReferenceButtonGroupControls
+	{
+	EEikBgCba=ELafBgCba
+	};
+
+
+#define EEikComboBoxInfoPrintNothingInHistoryList 0x0004
+
+// additional edwin flags
+#define EEikEdwinNoCursorChangeEvent 0x00100000
+
+#endif

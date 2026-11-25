@@ -1,0 +1,11 @@
+// CSY.RH
+//
+// Copyright (c) 1998 Symbian Ltd.  All rights reserved.
+//
+
+/** @file CSY.RH */
+
+STRUCT CSY_INFORMATION
+	{
+	LTEXT humanreadablename;
+	}

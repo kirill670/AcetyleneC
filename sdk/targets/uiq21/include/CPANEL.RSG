@@ -1,0 +1,3 @@
+#define R_CPANEL_DIALOGS                          0x115bf002
+#define R_DEFAULT_AIF                             0x115bf003
+#define R_DEFAULT_MBM                             0x115bf004

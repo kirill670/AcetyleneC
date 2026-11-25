@@ -1,0 +1,230 @@
+// CKNLOGICALFONT.HRH
+//
+// Copyright (c) Nokia Corporation 2002. All rights reserved.
+//
+
+#ifndef __CKNLOGICALFONT_HRH__
+#define __CKNLOGICALFONT_HRH__
+
+/**
+ * The following Logical Font categories define a font by the screen element
+ * for which it is used, for example dialog title, menu item, or application view.
+ */
+enum
+    {
+    /** application title font */
+    ECknLogicalFontAppTitle=100,
+    /** application sub-name (optional text to right of title) font */
+    ECknLogicalFontViewSelector,
+    /** normal CBA button font */
+    ECknLogicalFontCommandButtonFontNormal,
+    /** small CBA button font; used when label text is too long for normal font */
+    ECknLogicalFontCommandButtonFontSmall,
+    /** clock under CBA font */
+    ECknLogicalFontCBBClock,
+    /** plain text editor (edwin) font */
+    ECknLogicalFontPlainTextEditorFont,
+    /** rich text editor font */
+    ECknLogicalFontRichTextEditorFont,
+    /** application view level 1 font in default zoom */
+    ECknLogicalFontViewLevel1ZoomDefaultFont,
+    /** application view level 2 font in default zoom */
+    ECknLogicalFontViewLevel2ZoomDefaultFont,
+    /** application view level 3 font in default zoom */
+    ECknLogicalFontViewLevel3ZoomDefaultFont,
+    /** application view level 4 font in default zoom */
+    ECknLogicalFontViewLevel4ZoomDefaultFont,
+    /** application view level 1 font in small zoom (zoomed out) */
+    ECknLogicalFontViewLevel1ZoomSmallFont,
+    /** application view level 2 font in small zoom (zoomed out) */
+    ECknLogicalFontViewLevel2ZoomSmallFont,
+    /** application view level 3 font in small zoom (zoomed out) */
+    ECknLogicalFontViewLevel3ZoomSmallFont,
+    /** application view level 4 font in small zoom (zoomed out) */
+    ECknLogicalFontViewLevel4ZoomSmallFont,
+    /** application view level 1 font in big zoom (zoomed in) */
+    ECknLogicalFontViewLevel1ZoomBigFont,
+    /** application view level 2 font in big zoom (zoomed in) */
+    ECknLogicalFontViewLevel2ZoomBigFont,
+    /** application view level 3 font in big zoom (zoomed in) */
+    ECknLogicalFontViewLevel3ZoomBigFont,
+    /** application view level 4 font in big zoom (zoomed in) */
+    ECknLogicalFontViewLevel4ZoomBigFont,
+    /** dialog title font */
+    ECknLogicalFontDialogTitleFont,
+    /** dialog tab font */
+    ECknLogicalFontDialogTabFont,
+    /** dialog caption font */
+    ECknLogicalFontDialogCaptionFont,
+    /** dialog trailer font */
+    ECknLogicalFontDialogTrailerFont,
+    /** dialog label font */
+    ECknLogicalFontDialogLabelFont,
+    /** dialog button font */
+    ECknLogicalFontDialogButtonFont,
+    /** dialog subtitle font */
+    ECknLogicalFontDialogSubTitleFont,
+    /** first level menu item font */
+    ECknLogicalFontMenuItemFont,
+    /** second level menu item font */
+    ECknLogicalFontMenuItemFontSecondLevel,
+    /** third level menu item font */
+    ECknLogicalFontMenuItemFontThirdLevel,
+    /** menu shortcut font */
+    ECknLogicalFontMenuShortcut,
+    /** banner (info message) font */
+    ECknLogicalFontBannerFont,
+    /** progress bar font */
+    ECknLogicalFontProgressBarFont,
+    /** calendar month name font */
+    ECknLogicalFontCalendarMonthNameFont,
+    /** calendar day initial (for example, MoTuWeThFrSaSu) font */
+    ECknLogicalFontCalendarDayInitialFont,
+    /** calendar week number font */
+    ECknLogicalFontCalendarWeekNumberFont,
+    /** calendar day number font */
+    ECknLogicalFontCalendarDayNumberFont,
+    /** grid field font */
+    ECknLogicalFontGridFieldFont,
+    /** grid label font */
+    ECknLogicalFontGridLabelFont,
+    /** charmap font */
+    ECknLogicalFontCharmapFont,
+    /** time-picker font */
+    ECknLogicalFontTimePickerFont,
+    /** symbol font */
+    ECknLogicalFontSymbolFont,
+    /** note font, used in panic dialog, installation dialog, alarm notifier, etc. */
+    ECknLogicalFontNoteFont,
+    /** view button font */
+    ECknLogicalFontViewButtonFont,
+    /** a fixed width font */
+    ECknLogicalFontMonospaceFont,
+    /** big digital clock am/pm font */
+    ECknLogicalFontBigDigitalAmPmFont,
+    /** big digital clock number font */
+    ECknLogicalFontBigDigitalNumberFont,
+    /** small digital clock am/pm font */
+    ECknLogicalFontSmallDigitalAmPmFont,
+    /** small digital clock number font */
+    ECknLogicalFontSmallDigitalNumberFont,
+    /** big analog clock am/pm font */
+    ECknLogicalFontBigAnalogFont,
+    /** small analog clock am/pm font */
+    ECknLogicalFontSmallAnalogFont,
+    /** calendar appointment day initial (for example, MoTuWeThFrSaSu) font */
+    ECknLogicalFontCalendarAppointmentDayInitialFont,
+    /** not used */
+    ECknLogicalFontListItemRemovedDefault,
+    /** not used */
+    ECknLogicalFontListItemRemovedSmall,
+    /** not used */
+    ECknLogicalFontListItemRemovedBig,
+    /** not used */
+    ECknLogicalFontListItemWaitingDefault,
+    /** not used */
+    ECknLogicalFontListItemWaitingSmall,
+    /** not used */
+    ECknLogicalFontListItemWaitingBig,
+    /** total result in calculation line in Calculator basic view */
+    ECknLogicalFontCalculatorBasicCalculationLine,
+    /** call header button label font */
+    ECknLogicalFontCallHeaderButton,
+    /** am/pm font in time-picker control */
+    ECknLogicalFontTimePickerFormatFont,
+    /** virtual keyboard in default zoom */
+    ECknLogicalFontVirtualKeyboardZoomDefault,
+    /** virtual keyboard in small zoom (zoomed out) */
+    ECknLogicalFontVirtualKeyboardZoomSmall,
+    /** virtual keyboard in big zoom (zoomed in) */
+    ECknLogicalFontVirtualKeyboardZoomBig,
+    /** partial mode date time */
+    ECknLogicalFontPartialModeDateTime,
+    /** profile text in partial mode */
+    ECknLogicalFontPartialModeProfileText,
+    /** unread messages in default zoom */
+    ECknLogicalFontMarkedItemZoomDefault,
+    /** unread messages in small zoom (zoomed out) */
+    ECknLogicalFontMarkedItemZoomSmall,
+    /** unread messages in big zoom (zoomed in) */
+    ECknLogicalFontMarkedItemZoomBig,
+    /** left and right indicators in calculation line in Calculator */
+    ECknLogicalFontCalculatorFunctionalIndicator,
+    /** calculation line font in Calculator TillRoll view */
+    ECknLogicalFontCalculatorTillRollCalculationLine,
+    /** call status text font */
+    ECknLogicalFontCallStatusText,
+    /** dialer button number font */
+    ECknLogicalFontDialerButtonNumber,
+    /** dialer button letter font */
+    ECknLogicalFontDialerButtonLetter,
+    /** dialer input in big zoom (zoomed in) */
+    ECknLogicalFontDialerInputZoomBig,
+    /** dialer input in default zoom */
+    ECknLogicalFontDialerInputZoomMiddleSize,
+    /** dialer input in small zoom (zoomed out) */
+    ECknLogicalFontDialerInputZoomSmall,
+    /** dialer indicator font */
+    ECknLogicalFontDialerIndicator,
+    /** dialer operator name font */
+    ECknLogicalFontDialerOperatorName,
+    /** web view font */
+    ECknLogicalFontWebView,
+    /** toolbar font */
+    ECknLogicalFontToolbar,
+    /** plain text editor bold font */
+    ECknLogicalFontPlainTextEditorBold,
+    /** application view level 1 bold font in default zoom */
+    ECknLogicalFontViewLevel1ZoomDefaultBold,
+    /** application view level 1 bold font in small zoom (zoomed out) */
+    ECknLogicalFontViewLevel1ZoomSmallBold,
+    /** application view level 1 bold font in big zoom (zoomed in) */
+    ECknLogicalFontViewLevel1ZoomBigBold,
+    /** calendar day entry font */
+    ECknLogicalFontCalendarDayEntry,
+    /** weekday picker font */
+    ECknLogicalFontWeekdayPicker,
+    /** the font for the seek bar */
+    ECknLogicalFontSeekBarFont,
+    /** name info of the station */
+    ECknLogicalFontRadioStationNameFont,
+    /** font for frequency */
+    ECknLogicalFontRadioFrequencyFont,
+    /** layout selectors at normal zoom level */
+    ECknLogicalFontPeninputButtonDefault,
+    /** layout selectors at small zoom level */
+    ECknLogicalFontPeninputButtonSmall,
+    /** layout selectors at big zoom level */
+    ECknLogicalFontPeninputButton,
+    /** language indicator at normal zoom level*/
+    ECknLogicalFontPeninputLangDefault,
+    /** language indicator at small zoom level */
+    ECknLogicalFontPeninputLangSmall,
+    /** language indicator at big zoom level */
+    ECknLogicalFontPeninputLangBig,
+    /** dialog marked */
+    ECknLogicalFontDialogMarked,                    
+    /** MMS text editor title font in default zoom */
+    ECknLogicalFontMMSTextEditorTitleZoomDefault,   
+    /** MMS text editor title in small zoom (zoomed out) */
+    ECknLogicalFontMMSTextEditorTitleZoomSmall, 
+    /** MMS text editor title in big zoom (zoomed in) */
+    ECknLogicalFontMMSTextEditorTitleZoomBig,       
+    /** used in a dialog to indicate the header for body text/captions */ 
+    // (was supposed to be <code>ETitleFont</code>) 
+    ECknLogicalFontDialogHeader,                    
+    /** the font is for progress banner text in browser application */
+    ECknLogicalFontBrowserProgressBannerFont,                 
+    /** main title font - specific to Series 80 */
+    ECknLogicalFontMainTitleFont,
+    /** used as the title font for information and confirmation notes */
+    ECknLogicalFontNoteTitleFont,
+    /** font used to annotate things */
+    ECknLogicalFontAnnotaionFont,
+    /** font used for listbox descriptive column */
+    ECknLogicalFontListItemDescriptive,
+    /** font used below icon as caption font where zooming is not possible */
+    ECknLogicalFontIconCaptionFont
+    };
+
+#endif

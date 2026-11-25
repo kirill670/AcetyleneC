@@ -1,0 +1,3 @@
+#define R_PLUGIN_BUTTONS_DONE                     0x7bbe002
+#define R_PLUGIN_INFO_COMPLETE_ICON               0x7bbe003
+#define R_INSTALLATION_COMPLETE_TITLE             0x7bbe004

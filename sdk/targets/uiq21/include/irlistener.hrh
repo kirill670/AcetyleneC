@@ -1,0 +1,15 @@
+// IrObjUse.HRH
+//
+// Copyright (c) 1997-1999 Symbian Ltd.  All rights reserved.
+//
+
+enum TDlgButCommand
+	{
+	EButSendToApp,
+
+	EIrCidIcon,
+	EIrCIDSendText1,
+	EIrCIDSendText2,
+	EIrCIDSendProgress
+	};
+

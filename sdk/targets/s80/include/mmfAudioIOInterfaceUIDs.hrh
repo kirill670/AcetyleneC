@@ -1,0 +1,18 @@
+//   mmfAudioIOInterfaceUIDs.hrh
+//
+// Copyright (c) 2002 Symbian Ltd.  All rights reserved.
+//
+
+#ifndef __MMF_AUDIOIOINTERFACEUIDS_HRH__
+#define __MMF_AUDIOIOINTERFACEUIDS_HRH__
+
+
+// These are the ECOM Interface UIDs for the Multi Media Framework Plugins
+
+#define KMmfUidAudioOutputInterfaceDllUid	0x101F53B8
+#define KMmfUidAudioOutputInterface			0x101F53B9
+#define KMmfUidAudioInputInterfaceDllUid	0x101F53BA
+#define KMmfUidAudioInputInterface			0x101F53BB
+
+
+#endif
