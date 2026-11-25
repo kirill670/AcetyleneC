@@ -57,6 +57,7 @@ typedef struct {
     int modified;
     int top_line;
     int undo_pos;
+    int saved_undo_pos;
     int undo_count;
     struct UndoRec *undo;
     int lex_lang;
@@ -119,6 +120,7 @@ typedef struct {
     HANDLE build_proc;
     Project proj;
     int show_output;
+    int hide_tree;
     int menu_open;
     int menu_index;
     int menu_hover;
@@ -205,6 +207,8 @@ void doc_scroll_to_caret(Doc *d);
 
 
 void ide_host_run_named(const char *id);
+int ide_target_is_legacy(const char *target);
+void run_build_legacy(void);
 
 void plugins_load(void);
 int plugins_command_count(void);

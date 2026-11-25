@@ -4,14 +4,15 @@
 #include <ctype.h>
 #include <stdarg.h>
 
-#define TREE_ROWS_TOP 58
+#define TREE_ROWS_TOP 44
+#define TREE_ROW_H 20
 
 Ide g_ide;
 
 static void ide_command(int cmd);
-static void ide_set_active_index(int i);
 static int path_exists(const char *p);
 static void path_normalize(const char *in, char *out, int cap);
+static void tree_add_file(const char *path);
 
 
 #define C_BG        RGB(24, 26, 30)
@@ -36,6 +37,27 @@ static void path_normalize(const char *in, char *out, int cap);
 #define C_ERR       RGB(244, 135, 113)
 #define C_WARN      RGB(220, 200, 120)
 #define C_OK        RGB(120, 200, 120)
+#define C_HOVER     RGB(48, 53, 60)
+#define C_SCROLLBAR RGB(44, 48, 55)
+#define C_THUMB     RGB(78, 86, 96)
+#define C_MATCHHL   RGB(88, 74, 34)
+
+#define GUTTER_PAD_L 8
+#define GUTTER_PAD_R 10
+#define EDIT_PAD_X   8
+
+static int gutter_width(Doc *d)
+{
+    int digits = 1;
+    int n = d ? d->nlines : 1;
+    if (n < 1)
+        n = 1;
+    while (n >= 10) {
+        n /= 10;
+        digits++;
+    }
+    return GUTTER_PAD_L + digits * g_ide.char_w + GUTTER_PAD_R + EDIT_PAD_X;
+}
 
 typedef struct {
     const char *label;
@@ -70,17 +92,26 @@ enum {
     CMD_SET_EMU = 350,
     CMD_TOGGLE_OUTPUT = 400,
     CMD_TOGGLE_TREE,
+    CMD_SAVE_ALL = 450,
+    CMD_DUP_LINE,
+    CMD_DEL_LINE,
+    CMD_TOGGLE_COMMENT,
+    CMD_FIND_NEXT,
+    CMD_FIND_PREV,
+    CMD_NEW_FILE,
     CMD_ABOUT = 500,
     CMD_LICENSE
 };
 
 static const MenuItem k_file[] = {
-    {"New Project", "Ctrl+N", CMD_NEW_PROJECT, 0},
-    {"Open Project...", "Ctrl+O", CMD_OPEN_PROJECT, 0},
-    {"Open File...", "", CMD_OPEN_FILE, 0},
+    {"New File", "Ctrl+N", CMD_NEW_FILE, 0},
+    {"New Project", "Ctrl+Shift+N", CMD_NEW_PROJECT, 0},
+    {"Open Project...", "Ctrl+Shift+O", CMD_OPEN_PROJECT, 0},
+    {"Open File...", "Ctrl+O", CMD_OPEN_FILE, 0},
     {"", "", 0, 1},
     {"Save", "Ctrl+S", CMD_SAVE, 0},
-    {"Save As...", "", CMD_SAVE_AS, 0},
+    {"Save As...", "Ctrl+Shift+S", CMD_SAVE_AS, 0},
+    {"Save All", "", CMD_SAVE_ALL, 0},
     {"Close Tab", "Ctrl+W", CMD_CLOSE_TAB, 0},
     {"", "", 0, 1},
     {"Exit", "Alt+F4", CMD_EXIT, 0},
@@ -95,8 +126,14 @@ static const MenuItem k_edit[] = {
     {"Paste", "Ctrl+V", CMD_PASTE, 0},
     {"Select All", "Ctrl+A", CMD_SELECT_ALL, 0},
     {"", "", 0, 1},
-    {"Find / Replace", "Ctrl+F", CMD_FIND, 0},
+    {"Find", "Ctrl+F", CMD_FIND, 0},
+    {"Find Next", "F3", CMD_FIND_NEXT, 0},
+    {"Find Previous", "Shift+F3", CMD_FIND_PREV, 0},
     {"Go to Line", "Ctrl+G", CMD_GOTO, 0},
+    {"", "", 0, 1},
+    {"Toggle Line Comment", "Ctrl+/", CMD_TOGGLE_COMMENT, 0},
+    {"Duplicate Line", "Ctrl+D", CMD_DUP_LINE, 0},
+    {"Delete Line", "Ctrl+Shift+K", CMD_DEL_LINE, 0},
 };
 
 static const MenuItem k_build[] = {
@@ -104,8 +141,8 @@ static const MenuItem k_build[] = {
     {"Rebuild All", "Ctrl+F7", CMD_REBUILD, 0},
     {"Clean", "", CMD_CLEAN, 0},
     {"", "", 0, 1},
-    {"Package SISX", "", CMD_PACKAGE, 0},
-    {"Sign Package", "", CMD_SIGN, 0},
+    {"Package SISX", "Ctrl+P", CMD_PACKAGE, 0},
+    {"Sign Package", "F9", CMD_SIGN, 0},
     {"", "", 0, 1},
     {"Set Emulator...", "", CMD_SET_EMU, 0},
     {"", "", 0, 1},
@@ -114,7 +151,7 @@ static const MenuItem k_build[] = {
 
 static const MenuItem k_view[] = {
     {"Toggle Output", "Ctrl+`", CMD_TOGGLE_OUTPUT, 0},
-    {"Toggle Project Tree", "", CMD_TOGGLE_TREE, 0},
+    {"Toggle Project Tree", "Ctrl+B", CMD_TOGGLE_TREE, 0},
 };
 
 static const MenuItem k_help[] = {
@@ -211,14 +248,6 @@ static int utf8_to_w(const char *s, int len, wchar_t *out, int max)
     return MultiByteToWideChar(CP_UTF8, 0, s, len, out, max);
 }
 
-static char *utf8_from_w(const wchar_t *s)
-{
-    int n = WideCharToMultiByte(CP_UTF8, 0, s, -1, NULL, 0, NULL, NULL);
-    char *out = ac_alloc((size_t)n + 1);
-    WideCharToMultiByte(CP_UTF8, 0, s, -1, out, n, NULL, NULL);
-    return out;
-}
-
 Doc *doc_active(void)
 {
     if (g_ide.active < 0 || g_ide.active >= g_ide.ndocs)
@@ -281,11 +310,14 @@ void ide_layout(void)
 {
     RECT rc;
     int top = 26 + 30;
+    int tree_w = 0;
     GetClientRect(g_ide.hwnd, &rc);
     if (g_ide.split_x < 120)
         g_ide.split_x = 120;
     if (g_ide.split_x > rc.right - 300)
         g_ide.split_x = rc.right - 300;
+    if (!g_ide.hide_tree)
+        tree_w = g_ide.split_x;
     if (g_ide.split_y == 0)
         g_ide.split_y = rc.bottom * 62 / 100;
     if (g_ide.split_y < 120)
@@ -298,17 +330,17 @@ void ide_layout(void)
     g_ide.rc_toolbar.bottom = 26 + 30;
     g_ide.rc_tree.left = 0;
     g_ide.rc_tree.top = top;
-    g_ide.rc_tree.right = g_ide.split_x;
-    g_ide.rc_tree.bottom = rc.bottom - 22;
-    g_ide.rc_tabs.left = g_ide.split_x + 1;
+    g_ide.rc_tree.right = tree_w;
+    g_ide.rc_tree.bottom = g_ide.hide_tree ? top : (rc.bottom - 22);
+    g_ide.rc_tabs.left = tree_w + (g_ide.hide_tree ? 0 : 1);
     g_ide.rc_tabs.top = top;
     g_ide.rc_tabs.right = rc.right;
     g_ide.rc_tabs.bottom = top + 26;
-    g_ide.rc_editor.left = g_ide.split_x + 1;
+    g_ide.rc_editor.left = tree_w + (g_ide.hide_tree ? 0 : 1);
     g_ide.rc_editor.top = top + 26;
     g_ide.rc_editor.right = rc.right;
     g_ide.rc_editor.bottom = g_ide.show_output ? g_ide.split_y : rc.bottom - 22;
-    g_ide.rc_output.left = g_ide.split_x + 1;
+    g_ide.rc_output.left = tree_w + (g_ide.hide_tree ? 0 : 1);
     g_ide.rc_output.top = g_ide.show_output ? g_ide.split_y + 1 : rc.bottom - 22;
     g_ide.rc_output.right = rc.right;
     g_ide.rc_output.bottom = rc.bottom - 22;
@@ -417,6 +449,7 @@ static void panel_draw(HDC dc, int px, int py, const CtxItem *items, int count, 
     }
     {
         int y = py + 4;
+        int ty = (24 - 15) / 2;
         for (k = 0; k < count; k++) {
             const CtxItem *it = &items[k];
             if (it->sep) {
@@ -425,10 +458,10 @@ static void panel_draw(HDC dc, int px, int py, const CtxItem *items, int count, 
                 continue;
             }
             if (k == hover)
-                fill(dc, (RECT){px + 1, y, px + wmax - 1, y + 24}, C_SEL);
-            text_at(dc, px + 12, y + 7, it->label, C_TEXT, g_ide.font_ui);
+                fill(dc, (RECT){px + 2, y, px + wmax - 2, y + 24}, C_SEL);
+            text_at(dc, px + 14, y + ty, it->label, C_TEXT, g_ide.font_ui);
             if (it->shortcut[0])
-                text_at(dc, px + wmax - text_w(dc, it->shortcut, g_ide.font_ui) - 12, y + 7,
+                text_at(dc, px + wmax - text_w(dc, it->shortcut, g_ide.font_ui) - 12, y + ty,
                         it->shortcut, C_DIM, g_ide.font_ui);
             y += 24;
         }
@@ -480,14 +513,6 @@ static void ctx_close(void)
     g_ctx_kind = CTX_NONE;
     g_ctx_items = NULL;
     g_ctx_count = 0;
-}
-
-static void find_insert(const char *s)
-{
-    size_t len = strlen(g_ide.find_text);
-    size_t add = strlen(s);
-    if (len + add < sizeof(g_ide.find_text) - 1)
-        memcpy(g_ide.find_text + len, s, add + 1);
 }
 
 static void find_cut_cb(int cut)
@@ -578,23 +603,27 @@ static void ctx_execute(int cmd)
     case 903:
         if (d) {
             while (g_ide.ndocs > 1) {
+                int before = g_ide.ndocs;
                 int keep = g_ide.active;
                 int victim = (keep == 0) ? 1 : 0;
-                ide_set_active_index(keep);
                 ide_close_file(victim);
+                if (g_ide.ndocs == before)
+                    break;
+                g_ide.active = keep - ((victim < keep) ? 1 : 0);
             }
         }
         break;
+    case CMD_SAVE_ALL:
     case 904:
         {
             int i;
             int keep = g_ide.active;
             for (i = 0; i < g_ide.ndocs; i++) {
-                g_ide.active = i;
                 if (g_ide.docs[i].path && g_ide.docs[i].modified)
                     ide_save_file(i, 0);
             }
             g_ide.active = keep;
+            ide_set_status("all saved");
         }
         break;
     case 905:
@@ -656,10 +685,12 @@ static void ctx_show_at(int x, int y)
     } else if (PtInRect(&g_ide.rc_editor, (POINT){x, y})) {
         Doc *d = doc_active();
         if (d)
-            doc_set_caret(d, doc_hit_test(d, x - g_ide.rc_editor.left - 52, y - g_ide.rc_editor.top - 2), 0);
+            doc_set_caret(d, doc_hit_test(d, x - g_ide.rc_editor.left - gutter_width(d), y - g_ide.rc_editor.top - 2), 0);
         ctx_open(x, y, k_ctx_editor, (int)(sizeof(k_ctx_editor) / sizeof(k_ctx_editor[0])), CTX_EDITOR);
     }
 }
+
+static int g_bar_hot = -1;
 
 static void draw_menu_bar(HDC dc, int w)
 {
@@ -669,8 +700,11 @@ static void draw_menu_bar(HDC dc, int w)
         int tw = text_w(dc, k_menus[i].title, g_ide.font_ui) + 20;
         RECT r = {x, 0, x + tw, 26};
         if (g_ide.menu_index == i)
-            fill(dc, r, C_PANEL2);
-        text_at(dc, x + 10, 5, k_menus[i].title, g_ide.menu_index == i ? C_TEXT : C_DIM, g_ide.font_ui);
+            fill(dc, r, C_SEL);
+        else if (g_bar_hot == i)
+            fill(dc, r, C_HOVER);
+        text_at(dc, x + 10, 5, k_menus[i].title,
+                (g_ide.menu_index == i || g_bar_hot == i) ? C_TEXT : C_DIM, g_ide.font_ui);
         x += tw;
     }
     {
@@ -693,25 +727,51 @@ static void draw_menu_bar(HDC dc, int w)
     fill(dc, (RECT){0, 25, w, 26}, C_BORDER);
 }
 
+static const char *k_tool_btns[] = {"Build", "Rebuild", "Package", "Sign", "Run"};
+static const int k_tool_ids[] = {CMD_BUILD, CMD_REBUILD, CMD_PACKAGE, CMD_SIGN, CMD_RUN};
+static int g_tool_hot = -1;
+
+static int toolbar_hit(int x, int y)
+{
+    int bx = 10, i;
+    HDC dc;
+    if (y < 30 || y > 53)
+        return -1;
+    dc = GetDC(g_ide.hwnd);
+    for (i = 0; i < 5; i++) {
+        int tw = text_w(dc, k_tool_btns[i], g_ide.font_ui) + 26;
+        if (x >= bx && x < bx + tw) {
+            ReleaseDC(g_ide.hwnd, dc);
+            return i;
+        }
+        bx += tw + 7;
+    }
+    ReleaseDC(g_ide.hwnd, dc);
+    return -1;
+}
+
 static void draw_toolbar(HDC dc, int w)
 {
-    int x = 8;
-    static const char *btns[] = {"Build", "Rebuild", "Package", "Sign", "Run"};
-    static const int ids[] = {CMD_BUILD, CMD_REBUILD, CMD_PACKAGE, CMD_SIGN, CMD_RUN};
+    int x = 10;
     int i;
     fill(dc, g_ide.rc_toolbar, C_PANEL);
     for (i = 0; i < 5; i++) {
-        int tw = text_w(dc, btns[i], g_ide.font_ui) + 24;
-        RECT r = {x, 31, x + tw, 51};
-        fill(dc, r, (ids[i] == CMD_BUILD) ? RGB(46, 84, 122) : C_PANEL2);
-        frame(dc, r, C_BORDER);
-        text_at(dc, x + 12, 32, btns[i], C_TEXT, g_ide.font_ui);
-        x += tw + 6;
+        int tw = text_w(dc, k_tool_btns[i], g_ide.font_ui) + 26;
+        RECT r = {x, 30, x + tw, 53};
+        COLORREF bg = C_PANEL2;
+        if (k_tool_ids[i] == CMD_BUILD)
+            bg = RGB(46, 84, 122);
+        if (g_tool_hot == i)
+            bg = (k_tool_ids[i] == CMD_BUILD) ? RGB(58, 102, 145) : C_HOVER;
+        fill(dc, r, bg);
+        frame(dc, r, (k_tool_ids[i] == CMD_BUILD) ? RGB(84, 130, 172) : C_BORDER);
+        text_at(dc, x + 13, 33, k_tool_btns[i], C_TEXT, g_ide.font_ui);
+        x += tw + 7;
     }
     {
         char tgt[128];
         snprintf(tgt, sizeof(tgt), "target: %s", g_ide.proj.target);
-        text_at(dc, w - text_w(dc, tgt, g_ide.font_ui) - 14, 32, tgt, C_ACCENT, g_ide.font_ui);
+        text_at(dc, w - text_w(dc, tgt, g_ide.font_ui) - 14, 33, tgt, C_ACCENT, g_ide.font_ui);
     }
     fill(dc, (RECT){0, 55, w, 56}, C_BORDER);
 }
@@ -795,17 +855,16 @@ static void draw_popup(HDC dc, int w, int h)
         }
         for (k = 0; k < g_menu_count; k++) {
             const CtxItem *it = &g_menu_items[k];
-            RECT r = {px + 1, y + 4, px + wmax - 1, y + 4 + 24};
             if (it->sep) {
                 fill(dc, (RECT){px + 8, y + 8, px + wmax - 8, y + 9}, C_BORDER);
                 y += 8;
                 continue;
             }
             if (g_ide.menu_hover == k)
-                fill(dc, r, C_SEL);
-            text_at(dc, px + 12, y + 7, it->label, C_TEXT, g_ide.font_ui);
+                fill(dc, (RECT){px + 2, y + 4, px + wmax - 2, y + 28}, C_SEL);
+            text_at(dc, px + 14, y + 9, it->label, C_TEXT, g_ide.font_ui);
             if (it->shortcut[0])
-                text_at(dc, px + wmax - text_w(dc, it->shortcut, g_ide.font_ui) - 12, y + 7, it->shortcut, C_DIM, g_ide.font_ui);
+                text_at(dc, px + wmax - text_w(dc, it->shortcut, g_ide.font_ui) - 12, y + 9, it->shortcut, C_DIM, g_ide.font_ui);
             y += 24;
         }
     }
@@ -813,52 +872,77 @@ static void draw_popup(HDC dc, int w, int h)
     (void)h;
 }
 
+static int g_tree_hot = -1;
+
 static void draw_tree(HDC dc)
 {
     RECT r = g_ide.rc_tree;
     int y = r.top + 6;
     int i;
-    int pad = 6;
     fill(dc, r, C_PANEL);
-    text_at(dc, r.left + 10, y, g_ide.proj.name, C_TEXT, g_ide.font_bold);
-    y += 24;
-    text_at(dc, r.left + 10, y, g_ide.proj.target, C_DIM, g_ide.font_ui);
+    text_at(dc, r.left + 12, y, "PROJECT", C_DIM, g_ide.font_ui);
+    y += 18;
+    text_at(dc, r.left + 12, y, g_ide.proj.name, C_TEXT, g_ide.font_bold);
     y += 20;
     fill(dc, (RECT){r.left + 8, y, r.right - 8, y + 1}, C_BORDER);
-    y += 8;
     for (i = g_ide.tree_scroll; i < g_ide.tree_files.count; i++) {
         RECT ir = {r.left + 4, y, r.right - 4, y + 20};
         const char *p = g_ide.tree_files.items[i];
-        if (y > r.bottom - 20)
+        if (y + 20 > r.bottom)
             break;
         if (i == g_ide.tree_sel)
             fill(dc, ir, C_SEL);
-        text_at(dc, r.left + 14, y + 2, ac_basename(p), i == g_ide.tree_sel ? C_TEXT : C_DIM, g_ide.font_ui);
+        else if (i == g_tree_hot)
+            fill(dc, ir, C_HOVER);
+        text_at(dc, r.left + 16, y + 3, ac_basename(p), i == g_ide.tree_sel ? C_TEXT : C_DIM, g_ide.font_ui);
         y += 20;
     }
     fill(dc, (RECT){r.right, r.top, r.right + 1, r.bottom}, C_BORDER);
 }
 
+static int g_tab_hot = -1;
+static int g_tab_close_hot = -1;
+
+static int tab_rect(HDC dc, int i, RECT *out)
+{
+    int x = g_ide.rc_tabs.left + 4;
+    int k;
+    for (k = 0; k < g_ide.ndocs; k++) {
+        Doc *d = &g_ide.docs[k];
+        char label[300];
+        int tw;
+        snprintf(label, sizeof(label), "%s%s", d->name, d->modified ? " *" : "");
+        tw = text_w(dc, label, g_ide.font_ui) + 34;
+        if (k == i) {
+            *out = (RECT){x, g_ide.rc_tabs.top + 2, x + tw, g_ide.rc_tabs.bottom - 1};
+            return 1;
+        }
+        x += tw + 2;
+    }
+    return 0;
+}
+
 static void draw_tabs(HDC dc)
 {
-    int x = g_ide.rc_tabs.left + 2;
     int i;
     fill(dc, g_ide.rc_tabs, C_PANEL);
     for (i = 0; i < g_ide.ndocs; i++) {
         Doc *d = &g_ide.docs[i];
         char label[300];
-        int tw;
         RECT r;
+        if (!tab_rect(dc, i, &r))
+            continue;
         snprintf(label, sizeof(label), "%s%s", d->name, d->modified ? " *" : "");
-        tw = text_w(dc, label, g_ide.font_ui) + 28;
-        r = (RECT){x, g_ide.rc_tabs.top + 2, x + tw, g_ide.rc_tabs.bottom - 1};
         if (i == g_ide.active) {
             fill(dc, r, C_BG);
             fill(dc, (RECT){r.left, r.top, r.right, r.top + 2}, C_ACCENT);
+        } else if (i == g_tab_hot) {
+            fill(dc, r, C_HOVER);
         }
-        text_at(dc, x + 10, r.top + 5, label, i == g_ide.active ? C_TEXT : C_DIM, g_ide.font_ui);
-        text_at(dc, x + tw - 18, r.top + 5, "x", C_DIM, g_ide.font_ui);
-        x += tw + 2;
+        text_at(dc, r.left + 10, r.top + 6, label, i == g_ide.active ? C_TEXT : C_DIM, g_ide.font_ui);
+        if (i == g_tab_close_hot)
+            fill(dc, (RECT){r.right - 23, r.top + 5, r.right - 7, r.top + 21}, C_SEL);
+        text_at(dc, r.right - 18, r.top + 6, "x", i == g_tab_close_hot ? C_TEXT : C_DIM, g_ide.font_ui);
     }
     fill(dc, (RECT){g_ide.rc_tabs.left, g_ide.rc_tabs.bottom - 1, g_ide.rc_tabs.right, g_ide.rc_tabs.bottom}, C_BORDER);
 }
@@ -903,11 +987,70 @@ static int cols_between(const char *data, int from, int to)
     return col;
 }
 
+static int match_brace(Doc *d, int pos, int *other)
+{
+    const char *data = (const char *)d->data.data;
+    int len = (int)d->data.len;
+    int at = -1;
+    int dir = 0;
+    char open, close;
+    if (pos < len && strchr("(){}[]", data[pos]))
+        at = pos;
+    else if (pos > 0 && pos <= len && strchr("(){}[]", data[pos - 1]))
+        at = pos - 1;
+    if (at < 0)
+        return 0;
+    if (strchr("({[", data[at])) {
+        dir = 1;
+        open = data[at];
+    } else {
+        dir = -1;
+        open = data[at];
+    }
+    close = (open == '(') ? ')' : (open == '{') ? '}' : (open == '[') ? ']' :
+            (open == ')') ? '(' : (open == '}') ? '{' : '[';
+    {
+        int depth = 0;
+        int i = at;
+        while (i >= 0 && i < len) {
+            char c = data[i];
+            if (c == open)
+                depth++;
+            else if (c == close) {
+                depth--;
+                if (depth == 0) {
+                    *other = i;
+                    return 1;
+                }
+            }
+            i += dir;
+        }
+    }
+    return 0;
+}
+
+static void highlight_line_range(HDC dc, Doc *d, int line, int a, int b, int x0, int y, COLORREF c)
+{
+    int start = d->lines[line];
+    int end = doc_line_end(d, line);
+    int c1, c2;
+    if (a < start)
+        a = start;
+    if (b > end)
+        b = end;
+    if (a >= b)
+        return;
+    c1 = cols_between((const char *)d->data.data, start, a);
+    c2 = c1 + cols_between((const char *)d->data.data, a, b);
+    fill(dc, (RECT){x0 + c1 * g_ide.char_w - d->scroll_x, y,
+                    x0 + c2 * g_ide.char_w - d->scroll_x, y + g_ide.line_h}, c);
+}
+
 static void draw_editor(HDC dc)
 {
     Doc *d = doc_active();
     RECT r = g_ide.rc_editor;
-    int gutter = 52;
+    int gutter = gutter_width(d);
     int x0 = r.left + gutter;
     int y = r.top + 2;
     int i;
@@ -916,8 +1059,8 @@ static void draw_editor(HDC dc)
     int has_sel;
 
     fill(dc, r, C_BG);
-    fill(dc, (RECT){r.left, r.top, r.left + gutter, r.bottom}, C_GUTTER);
-    fill(dc, (RECT){r.left + gutter, r.top, r.left + gutter + 1, r.bottom}, C_BORDER);
+    fill(dc, (RECT){r.left, r.top, r.left + gutter - EDIT_PAD_X, r.bottom}, C_GUTTER);
+    fill(dc, (RECT){r.left + gutter - EDIT_PAD_X, r.top, r.left + gutter - EDIT_PAD_X + 1, r.bottom}, C_BORDER);
     if (!d) {
         text_at(dc, r.left + 24, r.top + 24, "No file open. Use File > Open File, or create a project.", C_DIM, g_ide.font_ui);
         return;
@@ -959,14 +1102,33 @@ static void draw_editor(HDC dc)
         end = doc_line_end(d, line);
         len = end - start;
         snprintf(ln, sizeof(ln), "%d", line + 1);
-        text_at(dc, r.left + gutter - 8 - text_w(dc, ln, g_ide.font), y, ln, C_GUTTERTXT, g_ide.font);
+        text_at(dc, r.left + gutter - EDIT_PAD_X - GUTTER_PAD_R - text_w(dc, ln, g_ide.font), y, ln,
+                (doc_line_of(d, d->caret) == line) ? C_ACCENT : C_GUTTERTXT, g_ide.font);
 
-        if (has_sel && sel_b > start && sel_a < end) {
-            int sx = sel_a > start ? sel_a : start;
-            int ex = sel_b < end ? sel_b : end;
-            int c1 = cols_between(d->data.data, start, sx);
-            int c2 = c1 + cols_between(d->data.data, sx, ex);
-            fill(dc, (RECT){x0 + c1 * g_ide.char_w - d->scroll_x, y, x0 + c2 * g_ide.char_w - d->scroll_x, y + g_ide.line_h}, C_SEL);
+        if (has_sel && sel_b > start && sel_a < end)
+            highlight_line_range(dc, d, line, sel_a > start ? sel_a : start, sel_b < end ? sel_b : end, x0, y, C_SEL);
+
+        if (g_ide.find_text[0] && !g_ide.find_focus) {
+            int nlen = (int)strlen(g_ide.find_text);
+            int scan = start;
+            while (scan + nlen <= end) {
+                int k, ok = 1;
+                for (k = 0; k < nlen; k++) {
+                    char ca = d->data.data[scan + k];
+                    char cb = g_ide.find_text[k];
+                    if (ca >= 'A' && ca <= 'Z')
+                        ca = (char)(ca - 'A' + 'a');
+                    if (cb >= 'A' && cb <= 'Z')
+                        cb = (char)(cb - 'A' + 'a');
+                    if (ca != cb) {
+                        ok = 0;
+                        break;
+                    }
+                }
+                if (ok)
+                    highlight_line_range(dc, d, line, scan, scan + nlen, x0, y, C_MATCHHL);
+                scan++;
+            }
         }
 
         if (len > 0) {
@@ -1012,6 +1174,29 @@ static void draw_editor(HDC dc)
         y += g_ide.line_h;
     }
 
+    if (!doc_has_selection(d)) {
+        int at = -1;
+        if (d->caret < (int)d->data.len && strchr("(){}[]", d->data.data[d->caret]))
+            at = d->caret;
+        else if (d->caret > 0 && strchr("(){}[]", d->data.data[d->caret - 1]))
+            at = d->caret - 1;
+        if (at >= 0) {
+            int other = -1;
+            if (match_brace(d, d->caret, &other)) {
+                int la = doc_line_of(d, at);
+                int lb = doc_line_of(d, other);
+                if (la >= d->top_line && la < d->top_line + visible) {
+                    int yy = r.top + 2 + (la - d->top_line) * g_ide.line_h;
+                    highlight_line_range(dc, d, la, at, at + 1, x0, yy, RGB(70, 96, 120));
+                }
+                if (lb >= d->top_line && lb < d->top_line + visible) {
+                    int yy = r.top + 2 + (lb - d->top_line) * g_ide.line_h;
+                    highlight_line_range(dc, d, lb, other, other + 1, x0, yy, RGB(70, 96, 120));
+                }
+            }
+        }
+    }
+
     if (g_ide.blink_on) {
         int caret_line = doc_line_of(d, d->caret);
         int cy = r.top + 2 + (caret_line - d->top_line) * g_ide.line_h;
@@ -1022,6 +1207,49 @@ static void draw_editor(HDC dc)
             fill(dc, (RECT){cxp, cy, cxp + 2, cy + g_ide.line_h}, C_TEXT);
         }
     }
+}
+
+static void editor_scrollbar_metrics(Doc *d, int *track_top, int *track_h, int *thumb_top, int *thumb_h)
+{
+    RECT r = g_ide.rc_editor;
+    int total;
+    int max;
+    *track_top = r.top + 2;
+    *track_h = r.bottom - r.top - 4;
+    if (*track_h < 20)
+        *track_h = 20;
+    total = d ? d->nlines : 1;
+    if (total < 1)
+        total = 1;
+    max = total - ((r.bottom - r.top - 4) / (g_ide.line_h ? g_ide.line_h : 16));
+    if (max < 1)
+        max = 1;
+    {
+        int vis = (r.bottom - r.top - 4) / (g_ide.line_h ? g_ide.line_h : 16);
+        float frac = (float)vis / (float)total;
+        int th;
+        if (frac > 1.0f)
+            frac = 1.0f;
+        th = (int)(*track_h * frac);
+        if (th < 24)
+            th = 24;
+        *thumb_h = th;
+        *thumb_top = *track_top + (int)((*track_h - th) * ((float)(d ? d->top_line : 0) / (float)max));
+    }
+}
+
+static void draw_editor_scrollbar(HDC dc)
+{
+    Doc *d = doc_active();
+    RECT r = g_ide.rc_editor;
+    int tt, thh, bt, bh;
+    RECT track;
+    if (!d || g_ide.ndocs <= 0)
+        return;
+    track = (RECT){r.right - 9, r.top + 2, r.right - 1, r.bottom - 2};
+    editor_scrollbar_metrics(d, &tt, &thh, &bt, &bh);
+    fill(dc, track, C_SCROLLBAR);
+    fill(dc, (RECT){track.left, bt, track.right, bt + bh}, C_THUMB);
 }
 
 static void draw_output(HDC dc)
@@ -1127,10 +1355,10 @@ static void comp_compute_pos(void)
         return;
     line = doc_line_of(d, d->caret) - d->top_line;
     col = doc_col_of(d, d->caret);
-    g_ide.comp_x = g_ide.rc_editor.left + 52 + col * g_ide.char_w - d->scroll_x;
+    g_ide.comp_x = g_ide.rc_editor.left + gutter_width(d) + col * g_ide.char_w - d->scroll_x;
     g_ide.comp_y = g_ide.rc_editor.top + 2 + (line + 1) * g_ide.line_h;
     if (g_ide.comp_y > g_ide.rc_editor.bottom - 40)
-        g_ide.comp_y = g_ide.rc_editor.bottom - 40 - 18 * g_ide.comp_count;
+        g_ide.comp_y = g_ide.rc_editor.bottom - 40 - 20 * g_ide.comp_count;
 }
 
 static void comp_update(void)
@@ -1138,7 +1366,7 @@ static void comp_update(void)
     Doc *d = doc_active();
     char prefix[64];
     char out[1024];
-    int p, s, n, i;
+    int p, s, n;
     int count = 0;
     if (!d)
         return;
@@ -1206,16 +1434,23 @@ static void comp_accept(void)
 static void draw_completions(HDC dc)
 {
     int i;
-    int w = 220;
+    int w = 180;
     int h;
     int x, y;
     if (!g_ide.comp_open || g_ide.comp_count <= 0)
         return;
+    for (i = 0; i < g_ide.comp_count; i++) {
+        int iw = text_w(dc, g_ide.comp_items[i], g_ide.font) + 20;
+        if (iw > w)
+            w = iw;
+    }
+    if (w > 420)
+        w = 420;
     x = g_ide.comp_x;
     y = g_ide.comp_y;
-    h = g_ide.comp_count * 18 + 4;
-    if (x + w > g_ide.rc_editor.right - 4)
-        x = g_ide.rc_editor.right - 4 - w;
+    h = g_ide.comp_count * 20 + 6;
+    if (x + w > g_ide.rc_editor.right - 12)
+        x = g_ide.rc_editor.right - 12 - w;
     if (x < g_ide.rc_editor.left)
         x = g_ide.rc_editor.left;
     {
@@ -1224,10 +1459,10 @@ static void draw_completions(HDC dc)
         frame(dc, box, C_ACCENT);
     }
     for (i = 0; i < g_ide.comp_count; i++) {
-        RECT row = {x + 1, y + 2 + i * 18, x + w - 1, y + 20 + i * 18};
+        RECT row = {x + 2, y + 3 + i * 20, x + w - 2, y + 23 + i * 20};
         if (i == g_ide.comp_index)
             fill(dc, row, C_SEL);
-        text_at(dc, x + 8, y + 3 + i * 18, g_ide.comp_items[i], C_TEXT, g_ide.font);
+        text_at(dc, x + 10, y + 5 + i * 20, g_ide.comp_items[i], C_TEXT, g_ide.font);
     }
 }
 
@@ -1247,6 +1482,7 @@ void ide_paint(HDC dc, RECT *client)
     draw_tree(mem);
     draw_tabs(mem);
     draw_editor(mem);
+    draw_editor_scrollbar(mem);
     if (g_ide.show_output)
         draw_output(mem);
     draw_find_bar(mem);
@@ -1342,12 +1578,27 @@ static void ide_save_dialog(int index)
     snprintf(file, sizeof(file), "%s", d->path ? d->path : d->name);
     ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = g_ide.hwnd;
-    ofn.lpstrFilter = "All Files\0*.*\0";
+    ofn.lpstrFilter = "All Files\0*.*\0C Sources\0*.c;*.h;*.cpp\0";
     ofn.lpstrFile = file;
     ofn.nMaxFile = sizeof(file);
-    ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST;
-    if (GetSaveFileNameA(&ofn))
-        ide_save_file(index, 0);
+    ofn.Flags = OFN_OVERWRITEPROMPT;
+    if (GetSaveFileNameA(&ofn)) {
+        char norm[MAX_PATH];
+        path_normalize(file, norm, sizeof(norm));
+        free(d->path);
+        free(d->name);
+        d->path = ac_strdup(norm);
+        d->name = ac_strdup(ac_basename(norm));
+        tree_add_file(norm);
+        if (ac_write_file(d->path, d->data.data, d->data.len) == 0) {
+            d->modified = 0;
+            d->saved_undo_pos = d->undo_pos;
+            plugins_fire(2, d->path);
+            ide_set_status("Saved %s (%d bytes)", d->name, (int)d->data.len);
+        } else {
+            ide_set_status("ERROR: cannot write %s", d->path);
+        }
+    }
 }
 
 static int tree_index_of(const char *path)
@@ -1410,6 +1661,7 @@ void ide_open_file(const char *path)
         buf_free(&b);
         doc_reindex(d);
         d->modified = 0;
+        d->saved_undo_pos = d->undo_pos;
     }
     d->lex_lang = ac_has_ext(path, ".c") || ac_has_ext(path, ".h") || ac_has_ext(path, ".cpp");
     d->caret = 0;
@@ -1439,6 +1691,7 @@ void ide_save_file(int index, int save_as)
     }
     if (ac_write_file(d->path, d->data.data, d->data.len) == 0) {
         d->modified = 0;
+        d->saved_undo_pos = d->undo_pos;
         plugins_fire(2, d->path);
         ide_set_status("Saved %s (%d bytes)", d->name, (int)d->data.len);
     } else {
@@ -1449,20 +1702,37 @@ void ide_save_file(int index, int save_as)
 void ide_close_file(int index)
 {
     int i;
+    Doc *d;
     if (index < 0 || index >= g_ide.ndocs)
         return;
+    d = &g_ide.docs[index];
+    if (d->modified) {
+        wchar_t wmsg[1024];
+        wchar_t wcap[128];
+        char msg[900];
+        int ans;
+        snprintf(msg, sizeof(msg), "%s has unsaved changes.\n\nSave before closing?", d->name ? d->name : "untitled");
+        MultiByteToWideChar(CP_UTF8, 0, msg, -1, wmsg, (int)(sizeof(wmsg) / sizeof(wmsg[0])));
+        MultiByteToWideChar(CP_UTF8, 0, "Unsaved changes", -1, wcap, (int)(sizeof(wcap) / sizeof(wcap[0])));
+        ans = MessageBoxW(g_ide.hwnd, wmsg, wcap, MB_YESNOCANCEL | MB_ICONWARNING);
+        if (ans == IDCANCEL)
+            return;
+        if (ans == IDYES) {
+            if (!d->path) {
+                ide_save_dialog(index);
+                if (index < g_ide.ndocs && g_ide.docs[index].modified)
+                    return;
+            } else {
+                ide_save_file(index, 0);
+            }
+        }
+    }
     doc_free(&g_ide.docs[index]);
     for (i = index; i < g_ide.ndocs - 1; i++)
         g_ide.docs[i] = g_ide.docs[i + 1];
     g_ide.ndocs--;
     if (g_ide.active >= g_ide.ndocs)
         g_ide.active = g_ide.ndocs - 1;
-}
-
-static void ide_set_active_index(int i)
-{
-    if (i >= 0 && i < g_ide.ndocs)
-        g_ide.active = i;
 }
 
 void ide_goto_line(int line)
@@ -1507,27 +1777,66 @@ static int find_next_from(Doc *d, int from)
     return -1;
 }
 
-static void do_find(void)
+static int find_prev_from(Doc *d, int from)
+{
+    const char *hay = (const char *)d->data.data;
+    int hlen = (int)d->data.len;
+    int nlen = (int)strlen(g_ide.find_text);
+    int i;
+    if (nlen <= 0)
+        return -1;
+    if (from > hlen - nlen)
+        from = hlen - nlen;
+    for (i = from; i >= 0; i--) {
+        int k;
+        int ok = 1;
+        for (k = 0; k < nlen; k++) {
+            char a = hay[i + k];
+            char b = g_ide.find_text[k];
+            if (a >= 'A' && a <= 'Z')
+                a = (char)(a - 'A' + 'a');
+            if (b >= 'A' && b <= 'Z')
+                b = (char)(b - 'A' + 'a');
+            if (a != b) {
+                ok = 0;
+                break;
+            }
+        }
+        if (ok)
+            return i;
+    }
+    return -1;
+}
+
+static void find_select(Doc *d, int at)
+{
+    d->caret = at;
+    d->anchor = at + (int)strlen(g_ide.find_text);
+    d->sel_active = 1;
+    doc_scroll_to_caret(d);
+}
+
+static void do_find_dir(int dir)
 {
     Doc *d = doc_active();
     int at;
     if (!d || !g_ide.find_text[0])
         return;
-    at = find_next_from(d, d->caret + (doc_has_selection(d) ? 1 : 0));
-    if (at < 0)
-        at = find_next_from(d, 0);
+    if (dir >= 0) {
+        at = find_next_from(d, d->caret + (doc_has_selection(d) ? 1 : 0));
+        if (at < 0)
+            at = find_next_from(d, 0);
+    } else {
+        at = find_prev_from(d, d->caret - 1);
+        if (at < 0)
+            at = find_prev_from(d, (int)d->data.len);
+    }
     if (at < 0) {
         ide_set_status("not found: %s", g_ide.find_text);
         return;
     }
-    d->anchor = at;
-    d->caret = at + (int)strlen(g_ide.find_text);
-    d->sel_active = 1;
-    d->caret = at;
-    d->sel_active = 1;
-    d->anchor = at + (int)strlen(g_ide.find_text);
-    doc_scroll_to_caret(d);
-    ide_set_status("found at offset %d", at);
+    find_select(d, at);
+    ide_set_status("found at line %d", doc_line_of(d, at) + 1);
 }
 
 static void do_goto(void)
@@ -1543,6 +1852,172 @@ static void do_goto(void)
     }
     ide_goto_line(line);
     ide_set_status("line %d", line);
+}
+
+static void doc_line_span(Doc *d, int line, int *start, int *end_incl_nl)
+{
+    int s = doc_line_start(d, line);
+    int e;
+    if (line + 1 < d->nlines)
+        e = d->lines[line + 1];
+    else
+        e = (int)d->data.len;
+    *start = s;
+    *end_incl_nl = e;
+}
+
+static void op_dup_line(void)
+{
+    Doc *d = doc_active();
+    int line, s, e, len, coff;
+    char *tmp;
+    if (!d || d->read_only)
+        return;
+    line = doc_line_of(d, d->caret);
+    coff = d->caret - doc_line_start(d, line);
+    doc_line_span(d, line, &s, &e);
+    len = e - s;
+    if (len <= 0)
+        return;
+    if (e >= (int)d->data.len && d->data.data[e - 1] != '\n') {
+        tmp = ac_alloc((size_t)len + 1);
+        tmp[0] = '\n';
+        memcpy(tmp + 1, d->data.data + s, (size_t)len);
+        doc_insert(d, e, tmp, len + 1);
+        free(tmp);
+    } else {
+        tmp = ac_alloc((size_t)len);
+        memcpy(tmp, d->data.data + s, (size_t)len);
+        doc_insert(d, e, tmp, len);
+        free(tmp);
+    }
+    doc_set_caret(d, doc_line_start(d, line + 1) + coff, 0);
+    doc_scroll_to_caret(d);
+    ide_set_status("line duplicated");
+}
+
+static void op_del_line(void)
+{
+    Doc *d = doc_active();
+    int s, e;
+    if (!d || d->read_only)
+        return;
+    doc_line_span(d, doc_line_of(d, d->caret), &s, &e);
+    if (e <= s) {
+        if (s > 0) {
+            s--;
+        } else {
+            return;
+        }
+    }
+    if (doc_has_selection(d)) {
+        int a, b;
+        int la, lb;
+        doc_sel_range(d, &a, &b);
+        la = doc_line_of(d, a);
+        lb = doc_line_of(d, b);
+        if (b > a && b == doc_line_start(d, lb) && lb > la)
+            lb--;
+        doc_line_span(d, la, &s, &e);
+        {
+            int s2, e2;
+            doc_line_span(d, lb, &s2, &e2);
+            (void)s2;
+            e = e2;
+        }
+        if (e >= (int)d->data.len && s > 0)
+            s--;
+    }
+    doc_delete(d, s, e - s);
+    doc_set_caret(d, s, 0);
+    doc_scroll_to_caret(d);
+    ide_set_status("line deleted");
+}
+
+static void op_toggle_comment(void)
+{
+    Doc *d = doc_active();
+    int la, lb, i;
+    int all_commented = 1;
+    if (!d || d->read_only)
+        return;
+    if (!d->lex_lang) {
+        ide_set_status("line comments apply to C sources");
+        return;
+    }
+    if (doc_has_selection(d)) {
+        int a, b;
+        doc_sel_range(d, &a, &b);
+        la = doc_line_of(d, a);
+        lb = doc_line_of(d, b);
+        if (b > a && b == doc_line_start(d, lb) && lb > la)
+            lb--;
+    } else {
+        la = lb = doc_line_of(d, d->caret);
+    }
+    for (i = la; i <= lb; i++) {
+        int s = doc_line_start(d, i);
+        int e = doc_line_end(d, i);
+        int j = s;
+        while (j < e && (d->data.data[j] == ' ' || d->data.data[j] == '\t'))
+            j++;
+        if (j == e)
+            continue;
+        if (!(j + 1 < e && d->data.data[j] == '/' && d->data.data[j + 1] == '/')) {
+            all_commented = 0;
+            break;
+        }
+    }
+    for (i = lb; i >= la; i--) {
+        int s = doc_line_start(d, i);
+        int e = doc_line_end(d, i);
+        int j = s;
+        while (j < e && (d->data.data[j] == ' ' || d->data.data[j] == '\t'))
+            j++;
+        if (j == e)
+            continue;
+        if (all_commented) {
+            if (j + 1 < e && d->data.data[j] == '/' && d->data.data[j + 1] == '/')
+                doc_delete(d, j, 2);
+        } else {
+            doc_insert(d, j, "//", 2);
+        }
+    }
+    ide_set_status(all_commented ? "uncommented" : "commented");
+}
+
+static void op_indent(int outdent)
+{
+    Doc *d = doc_active();
+    int la, lb, i;
+    if (!d || d->read_only)
+        return;
+    if (doc_has_selection(d)) {
+        int a, b;
+        doc_sel_range(d, &a, &b);
+        la = doc_line_of(d, a);
+        lb = doc_line_of(d, b);
+        if (b > a && b == doc_line_start(d, lb) && lb > la)
+            lb--;
+    } else {
+        la = lb = doc_line_of(d, d->caret);
+    }
+    if (!outdent) {
+        for (i = lb; i >= la; i--)
+            doc_insert(d, doc_line_start(d, i), "\t", 1);
+        ide_set_status("indented %d line(s)", lb - la + 1);
+    } else {
+        for (i = lb; i >= la; i--) {
+            int s = doc_line_start(d, i);
+            if (s < (int)d->data.len) {
+                if (d->data.data[s] == '\t')
+                    doc_delete(d, s, 1);
+                else if (d->data.data[s] == ' ')
+                    doc_delete(d, s, 1);
+            }
+        }
+        ide_set_status("outdented %d line(s)", lb - la + 1);
+    }
 }
 
 static void draw_find_bar(HDC dc)
@@ -1565,29 +2040,48 @@ static void draw_find_bar(HDC dc)
     {
         int lw = text_w(dc, label, g_ide.font_ui);
         char shown[160];
+        char clipped[160];
+        int field_w = box.right - (box.left + 8 + lw + 8) - 8;
+        int avail;
+        int cut = 0;
         snprintf(shown, sizeof(shown), "%s", g_ide.find_text);
-        text_at(dc, box.left + 8 + lw + 6, box.top + 5, shown, C_TEXT, g_ide.font_ui);
+        avail = field_w > 8 ? field_w : 8;
+        while (shown[cut] && text_w(dc, shown + cut, g_ide.font_ui) > avail)
+            cut++;
+        snprintf(clipped, sizeof(clipped), "%s", shown + cut);
+        fill(dc, (RECT){box.left + 8 + lw + 4, box.top + 3, box.right - 5, box.bottom - 3}, C_BG);
+        text_at(dc, box.left + 8 + lw + 8, box.top + 5, clipped, C_TEXT, g_ide.font_ui);
         if (g_ide.blink_on) {
             char pre[160];
             int cw;
-            int n = g_ide.find_caret;
-            if (n < 0 || n > (int)strlen(shown))
-                n = (int)strlen(shown);
-            snprintf(pre, sizeof(pre), "%.*s", n, shown);
+            int n = g_ide.find_caret - cut;
+            if (n < 0)
+                n = 0;
+            if (n > (int)strlen(clipped))
+                n = (int)strlen(clipped);
+            snprintf(pre, sizeof(pre), "%.*s", n, clipped);
             cw = text_w(dc, pre, g_ide.font_ui);
-            fill(dc, (RECT){box.left + 8 + lw + 6 + cw, box.top + 6, box.left + 9 + lw + 6 + cw, box.top + 20}, C_TEXT);
+            fill(dc, (RECT){box.left + 8 + lw + 8 + cw, box.top + 6, box.left + 9 + lw + 8 + cw, box.top + 20}, C_TEXT);
         }
     }
-    text_at(dc, box.left + 8, box.top + 18, "", C_DIM, g_ide.font_ui);
 }
 
 void ide_find(void)
 {
+    Doc *d = doc_active();
     g_ide.find_open = 1;
     g_ide.find_focus = 0;
-    g_ide.find_text[0] = 0;
-    g_ide.find_caret = 0;
-    ide_set_status("type to search, Enter = next, Esc = close");
+    if (d && doc_has_selection(d)) {
+        int a, b;
+        doc_sel_range(d, &a, &b);
+        if (b - a > 0 && b - a < (int)sizeof(g_ide.find_text) - 1 &&
+            memchr(d->data.data + a, '\n', (size_t)(b - a)) == NULL) {
+            memcpy(g_ide.find_text, d->data.data + a, (size_t)(b - a));
+            g_ide.find_text[b - a] = 0;
+        }
+    }
+    g_ide.find_caret = (int)strlen(g_ide.find_text);
+    ide_set_status("type to search, Enter = next, Shift+Enter = prev, Esc = close");
 }
 
 int run_capture(const char *cmd, char *log, size_t logcap)
@@ -1651,11 +2145,6 @@ int run_capture(const char *cmd, char *log, size_t logcap)
     return (int)code;
 }
 
-static void join_path(char *out, size_t cap, const char *a, const char *b)
-{
-    snprintf(out, cap, "%s/%s", a, b);
-}
-
 void add_msg(const char *fmt, ...)
 {
     va_list ap;
@@ -1686,6 +2175,11 @@ static void run_build_pipeline(void)
 
     if (strcmp(g_ide.proj.target, "s60v3") == 0)
         snprintf(g_ide.proj.target, sizeof(g_ide.proj.target), "s60v30");
+
+    if (ide_target_is_legacy(g_ide.proj.target)) {
+        run_build_legacy();
+        return;
+    }
 
     GetModuleFileNameA(NULL, exe_dir, sizeof(exe_dir));
     for (i = (int)strlen(exe_dir); i > 0 && exe_dir[i] != '\\' && exe_dir[i] != '/'; i--)
@@ -2018,6 +2512,52 @@ static void ide_command(int cmd)
     case CMD_EXIT:
         PostMessageA(g_ide.hwnd, WM_CLOSE, 0, 0);
         break;
+    case CMD_NEW_FILE:
+        if (g_ide.ndocs < MAX_DOCS) {
+            Doc *nd = &g_ide.docs[g_ide.ndocs];
+            doc_init(nd, NULL);
+            g_ide.active = g_ide.ndocs;
+            g_ide.ndocs++;
+            ide_set_status("new file (save with Ctrl+Shift+S)");
+        }
+        break;
+    case CMD_SAVE_ALL:
+        {
+            int i;
+            for (i = 0; i < g_ide.ndocs; i++) {
+                if (g_ide.docs[i].path && g_ide.docs[i].modified)
+                    ide_save_file(i, 0);
+                else if (!g_ide.docs[i].path && g_ide.docs[i].modified) {
+                    g_ide.active = i;
+                    ide_save_dialog(i);
+                }
+            }
+            ide_set_status("all saved");
+        }
+        break;
+    case CMD_DUP_LINE:
+        op_dup_line();
+        break;
+    case CMD_DEL_LINE:
+        op_del_line();
+        break;
+    case CMD_TOGGLE_COMMENT:
+        op_toggle_comment();
+        break;
+    case CMD_FIND_NEXT:
+        if (!g_ide.find_text[0]) {
+            ide_find();
+        } else {
+            g_ide.find_focus = 0;
+            do_find_dir(1);
+        }
+        break;
+    case CMD_FIND_PREV:
+        if (g_ide.find_text[0]) {
+            g_ide.find_focus = 0;
+            do_find_dir(-1);
+        }
+        break;
     case CMD_UNDO:
         if (d) doc_undo(d);
         break;
@@ -2067,8 +2607,9 @@ static void ide_command(int cmd)
         ide_layout();
         break;
     case CMD_TOGGLE_TREE:
-        g_ide.split_x = g_ide.split_x > 10 ? 0 : 220;
+        g_ide.hide_tree = !g_ide.hide_tree;
         ide_layout();
+        ide_set_status(g_ide.hide_tree ? "project tree hidden (Ctrl+B to show)" : "project tree visible");
         break;
     case CMD_ABOUT:
         show_about();
@@ -2082,9 +2623,97 @@ static void ide_command(int cmd)
     InvalidateRect(g_ide.hwnd, NULL, FALSE);
 }
 
+static int popup_step(const CtxItem *items, int count, int cur, int dir)
+{
+    int i = cur;
+    int n;
+    for (n = 0; n < count; n++) {
+        i += dir;
+        if (i < 0)
+            i = count - 1;
+        if (i >= count)
+            i = 0;
+        if (!items[i].sep && items[i].cmd)
+            return i;
+    }
+    return cur;
+}
+
+static int popup_first(const CtxItem *items, int count)
+{
+    int i;
+    for (i = 0; i < count; i++)
+        if (!items[i].sep && items[i].cmd)
+            return i;
+    return -1;
+}
+
 int ide_key(int vk, int ctrl, int shift, int alt)
 {
     Doc *d = doc_active();
+    (void)alt;
+    if (g_ctx_kind && g_ctx_items) {
+        if (vk == VK_ESCAPE) {
+            ctx_close();
+            return 1;
+        }
+        if (vk == VK_DOWN) {
+            g_ctx_hover = popup_step(g_ctx_items, g_ctx_count, g_ctx_hover < 0 ? popup_first(g_ctx_items, g_ctx_count) - 1 : g_ctx_hover, 1);
+            InvalidateRect(g_ide.hwnd, NULL, FALSE);
+            return 1;
+        }
+        if (vk == VK_UP) {
+            g_ctx_hover = popup_step(g_ctx_items, g_ctx_count, g_ctx_hover < 0 ? 1 : g_ctx_hover, -1);
+            if (g_ctx_hover < 0)
+                g_ctx_hover = popup_first(g_ctx_items, g_ctx_count);
+            InvalidateRect(g_ide.hwnd, NULL, FALSE);
+            return 1;
+        }
+        if (vk == VK_RETURN) {
+            int it = (g_ctx_hover >= 0) ? g_ctx_hover : popup_first(g_ctx_items, g_ctx_count);
+            if (it >= 0) {
+                int cmd = g_ctx_items[it].cmd;
+                ctx_close();
+                ctx_execute(cmd);
+            }
+            return 1;
+        }
+        return 1;
+    }
+    if (g_ide.menu_index >= 0) {
+        build_menu(g_ide.menu_index);
+        if (vk == VK_ESCAPE) {
+            g_ide.menu_index = -1;
+            return 1;
+        }
+        if (vk == VK_LEFT || vk == VK_RIGHT) {
+            g_ide.menu_index = (g_ide.menu_index + (vk == VK_LEFT ? k_nmenus - 1 : 1)) % k_nmenus;
+            g_ide.menu_hover = -1;
+            return 1;
+        }
+        if (vk == VK_DOWN) {
+            g_ide.menu_hover = popup_step(g_menu_items, g_menu_count, g_ide.menu_hover, 1);
+            return 1;
+        }
+        if (vk == VK_UP) {
+            if (g_ide.menu_hover < 0)
+                g_ide.menu_hover = g_menu_count - 1;
+            g_ide.menu_hover = popup_step(g_menu_items, g_menu_count, g_ide.menu_hover, -1);
+            return 1;
+        }
+        if (vk == VK_RETURN) {
+            int it = (g_ide.menu_hover >= 0) ? g_ide.menu_hover : popup_first(g_menu_items, g_menu_count);
+            if (it >= 0 && it < g_menu_count) {
+                int cmd = g_menu_items[it].cmd;
+                g_ide.menu_index = -1;
+                g_ide.menu_hover = -1;
+                if (cmd)
+                    ide_command(cmd);
+            }
+            return 1;
+        }
+        return 1;
+    }
     if (g_ide.comp_open && !g_ide.find_open) {
         if (vk == VK_DOWN) {
             g_ide.comp_index = (g_ide.comp_index + 1) % g_ide.comp_count;
@@ -2116,7 +2745,7 @@ int ide_key(int vk, int ctrl, int shift, int alt)
             if (g_ide.find_focus)
                 do_goto();
             else
-                do_find();
+                do_find_dir(shift ? -1 : 1);
             return 1;
         }
         if (vk == VK_BACK) {
@@ -2206,12 +2835,39 @@ int ide_key(int vk, int ctrl, int shift, int alt)
         ide_command(CMD_TOGGLE_OUTPUT);
         return 1;
     }
+    if (alt && !ctrl && vk >= 'A' && vk <= 'Z') {
+        static const char keys[] = {'F', 'E', 'B', 'V', 'H', 'P'};
+        int mi;
+        for (mi = 0; mi < k_nmenus && mi < 6; mi++) {
+            if (vk == keys[mi]) {
+                g_ide.menu_index = mi;
+                g_ide.menu_hover = -1;
+                return 1;
+            }
+        }
+    }
     if (ctrl && vk == 'O') {
-        ide_command(CMD_OPEN_FILE);
+        ide_command(shift ? CMD_OPEN_PROJECT : CMD_OPEN_FILE);
         return 1;
     }
     if (ctrl && vk == 'N') {
-        ide_command(CMD_NEW_PROJECT);
+        ide_command(shift ? CMD_NEW_PROJECT : CMD_NEW_FILE);
+        return 1;
+    }
+    if (ctrl && vk == 'B') {
+        ide_command(CMD_TOGGLE_TREE);
+        return 1;
+    }
+    if (ctrl && vk == 'D') {
+        ide_command(CMD_DUP_LINE);
+        return 1;
+    }
+    if (ctrl && vk == 'K' && shift) {
+        ide_command(CMD_DEL_LINE);
+        return 1;
+    }
+    if (ctrl && (vk == VK_OEM_2 || vk == 0xBF || vk == 0xDC)) {
+        ide_command(CMD_TOGGLE_COMMENT);
         return 1;
     }
     if (ctrl && vk == 'W') {
@@ -2254,8 +2910,12 @@ int ide_key(int vk, int ctrl, int shift, int alt)
         ide_command(CMD_GOTO);
         return 1;
     }
+    if (vk == VK_F3) {
+        ide_command(shift ? CMD_FIND_PREV : CMD_FIND_NEXT);
+        return 1;
+    }
     if (vk == VK_F7) {
-        ide_command(shift ? CMD_REBUILD : CMD_BUILD);
+        ide_command((shift || ctrl) ? CMD_REBUILD : CMD_BUILD);
         return 1;
     }
     if (vk == VK_F9) {
@@ -2315,11 +2975,20 @@ int ide_key(int vk, int ctrl, int shift, int alt)
         return 1;
     }
     case VK_HOME: {
-        int ls = doc_line_start(d, doc_line_of(d, d->caret));
-        if (ctrl)
+        int line = doc_line_of(d, d->caret);
+        int ls = doc_line_start(d, line);
+        if (ctrl) {
             doc_set_caret(d, 0, shift);
-        else
-            doc_set_caret(d, ls, shift);
+        } else {
+            int le = doc_line_end(d, line);
+            int fnw = ls;
+            while (fnw < le && (d->data.data[fnw] == ' ' || d->data.data[fnw] == '\t'))
+                fnw++;
+            if (d->caret != fnw)
+                doc_set_caret(d, fnw, shift);
+            else
+                doc_set_caret(d, ls, shift);
+        }
         doc_scroll_to_caret(d);
         return 1;
     }
@@ -2334,24 +3003,28 @@ int ide_key(int vk, int ctrl, int shift, int alt)
     }
     case VK_PRIOR: {
         int visible = (g_ide.rc_editor.bottom - g_ide.rc_editor.top) / (g_ide.line_h ? g_ide.line_h : 16);
+        int line = doc_line_of(d, d->caret);
+        int col = doc_col_of(d, d->caret);
+        int nl = line - visible;
         if (visible < 1)
             visible = 1;
-        d->top_line -= visible;
-        if (d->top_line < 0)
-            d->top_line = 0;
+        if (nl < 0)
+            nl = 0;
+        doc_set_caret(d, doc_pos_from_col(d, nl, col), shift);
+        doc_scroll_to_caret(d);
         return 1;
     }
     case VK_NEXT: {
         int visible = (g_ide.rc_editor.bottom - g_ide.rc_editor.top) / (g_ide.line_h ? g_ide.line_h : 16);
-        int max;
+        int line = doc_line_of(d, d->caret);
+        int col = doc_col_of(d, d->caret);
+        int nl = line + visible;
         if (visible < 1)
             visible = 1;
-        max = d->nlines - visible;
-        if (max < 0)
-            max = 0;
-        d->top_line += visible;
-        if (d->top_line > max)
-            d->top_line = max;
+        if (nl > d->nlines - 1)
+            nl = d->nlines - 1;
+        doc_set_caret(d, doc_pos_from_col(d, nl, col), shift);
+        doc_scroll_to_caret(d);
         return 1;
     }
     case VK_BACK:
@@ -2359,6 +3032,19 @@ int ide_key(int vk, int ctrl, int shift, int alt)
             int a, b;
             doc_sel_range(d, &a, &b);
             doc_delete(d, a, b - a);
+        } else if (ctrl) {
+            int pos = d->caret;
+            int from;
+            while (pos > 0 && (d->data.data[pos - 1] == ' ' || d->data.data[pos - 1] == '\t'))
+                pos--;
+            while (pos > 0 && d->data.data[pos - 1] != ' ' && d->data.data[pos - 1] != '\t' &&
+                   d->data.data[pos - 1] != '\n' && !strchr("(){}[];,+-*/=<>!&|", d->data.data[pos - 1]))
+                pos--;
+            from = pos;
+            if (from < d->caret) {
+                int c = d->caret;
+                doc_delete(d, from, c - from);
+            }
         } else if (d->caret > 0) {
             doc_delete(d, d->caret - 1, 1);
         }
@@ -2369,20 +3055,54 @@ int ide_key(int vk, int ctrl, int shift, int alt)
             int a, b;
             doc_sel_range(d, &a, &b);
             doc_delete(d, a, b - a);
+        } else if (ctrl) {
+            int pos = d->caret;
+            while (pos < (int)d->data.len && (d->data.data[pos] == ' ' || d->data.data[pos] == '\t'))
+                pos++;
+            while (pos < (int)d->data.len && d->data.data[pos] != ' ' && d->data.data[pos] != '\t' &&
+                   d->data.data[pos] != '\n' && !strchr("(){}[];,+-*/=<>!&|", d->data.data[pos]))
+                pos++;
+            if (pos > d->caret)
+                doc_delete(d, d->caret, pos - d->caret);
         } else if (d->caret < (int)d->data.len) {
             doc_delete(d, d->caret, 1);
         }
         return 1;
     case VK_RETURN: {
         int ls = doc_line_start(d, doc_line_of(d, d->caret));
+        int le = doc_line_end(d, doc_line_of(d, d->caret));
         int indent = 0;
+        int extra = 0;
         while (ls + indent < (int)d->data.len && d->data.data[ls + indent] == '\t')
             indent++;
-        {
+        if (d->caret > ls) {
+            int k = d->caret - 1;
+            while (k >= ls && (d->data.data[k] == ' ' || d->data.data[k] == '\t' || d->data.data[k] == '\r'))
+                k--;
+            if (k >= ls && k < (int)d->data.len && d->data.data[k] == '{')
+                extra = 1;
+        }
+        if (d->caret < le && d->data.data[d->caret] == '}' && extra) {
+            char nl[130];
+            int n = 0;
+            int i;
+            nl[n++] = '\n';
+            for (i = 0; i < indent + extra && n < 120; i++)
+                nl[n++] = '\t';
+            nl[n++] = '\n';
+            for (i = 0; i < indent && n < 126; i++)
+                nl[n++] = '\t';
+            doc_insert(d, d->caret, nl, n);
+            doc_set_caret(d, d->caret - indent - 1, 0);
+            doc_scroll_to_caret(d);
+            return 1;
+        } else {
             char nl[64];
             int n = 0;
             nl[n++] = '\n';
             while (indent-- > 0 && n < 60)
+                nl[n++] = '\t';
+            if (extra && n < 60)
                 nl[n++] = '\t';
             doc_insert(d, d->caret, nl, n);
         }
@@ -2390,12 +3110,11 @@ int ide_key(int vk, int ctrl, int shift, int alt)
         return 1;
     }
     case VK_TAB: {
-        if (doc_has_selection(d)) {
-            int a, b;
-            doc_sel_range(d, &a, &b);
-            doc_delete(d, a, b - a);
+        if (shift || doc_has_selection(d)) {
+            op_indent(shift);
+        } else {
+            doc_insert(d, d->caret, "\t", 1);
         }
-        doc_insert(d, d->caret, "\t", 1);
         return 1;
     }
     case VK_ESCAPE:
@@ -2464,6 +3183,9 @@ void ide_char(wchar_t ch)
     comp_update();
 }
 
+static int g_scroll_drag;
+static int g_scroll_dragging;
+
 void ide_rbutton_down(int x, int y)
 {
     ctx_show_at(x, y);
@@ -2486,6 +3208,23 @@ void ide_mouse_down(int x, int y, int shift, int button)
         InvalidateRect(g_ide.hwnd, NULL, FALSE);
         return;
     }
+    if (button == 1) {
+        if (PtInRect(&g_ide.rc_tabs, (POINT){x, y})) {
+            int i;
+            HDC dc = GetDC(g_ide.hwnd);
+            RECT tr;
+            for (i = 0; i < g_ide.ndocs; i++) {
+                if (tab_rect(dc, i, &tr) && PtInRect(&tr, (POINT){x, y})) {
+                    ReleaseDC(g_ide.hwnd, dc);
+                    ide_close_file(i);
+                    InvalidateRect(g_ide.hwnd, NULL, FALSE);
+                    return;
+                }
+            }
+            ReleaseDC(g_ide.hwnd, dc);
+        }
+        return;
+    }
     if (button != 0)
         return;
     if (y < 26) {
@@ -2500,61 +3239,51 @@ void ide_mouse_down(int x, int y, int shift, int button)
     } else if (g_ide.menu_index >= 0) {
         int item;
         if (menu_item_hit(x, y, &item)) {
-            int cmd = k_menus[g_ide.menu_index].items[item].cmd;
+            int cmd;
+            build_menu(g_ide.menu_index);
+            cmd = (item >= 0 && item < g_menu_count) ? g_menu_items[item].cmd : 0;
             g_ide.menu_index = -1;
-            ide_command(cmd);
+            g_ide.menu_hover = -1;
+            if (cmd)
+                ide_command(cmd);
             return;
         }
         g_ide.menu_index = -1;
     }
-    if (y >= 31 && y <= 51) {
-        int bx = 8, i;
-        static const int ids[] = {CMD_BUILD, CMD_REBUILD, CMD_PACKAGE, CMD_SIGN, CMD_RUN};
-        static const char *btns[] = {"Build", "Rebuild", "Package", "Sign", "Run"};
-        HDC dc = GetDC(g_ide.hwnd);
-        for (i = 0; i < 5; i++) {
-            int tw = text_w(dc, btns[i], g_ide.font_ui) + 24;
-            if (x >= bx && x < bx + tw) {
-                ReleaseDC(g_ide.hwnd, dc);
-                ide_command(ids[i]);
-                return;
-            }
-            bx += tw + 6;
+    {
+        int tb = toolbar_hit(x, y);
+        if (tb >= 0) {
+            ide_command(k_tool_ids[tb]);
+            return;
         }
-        ReleaseDC(g_ide.hwnd, dc);
     }
     if (PtInRect(&g_ide.rc_tabs, (POINT){x, y})) {
-        int tx = g_ide.rc_tabs.left + 2;
         int i;
         HDC dc = GetDC(g_ide.hwnd);
+        RECT tr;
         for (i = 0; i < g_ide.ndocs; i++) {
-            char label[300];
-            int tw;
-            snprintf(label, sizeof(label), "%s%s", g_ide.docs[i].name, g_ide.docs[i].modified ? " *" : "");
-            tw = text_w(dc, label, g_ide.font_ui) + 28;
-            if (x >= tx && x < tx + tw) {
+            if (tab_rect(dc, i, &tr) && PtInRect(&tr, (POINT){x, y})) {
                 ReleaseDC(g_ide.hwnd, dc);
-                if (x >= tx + tw - 20)
+                if (x >= tr.right - 23)
                     ide_close_file(i);
                 else
                     g_ide.active = i;
                 InvalidateRect(g_ide.hwnd, NULL, FALSE);
                 return;
             }
-            tx += tw + 2;
         }
         ReleaseDC(g_ide.hwnd, dc);
         return;
     }
     if (PtInRect(&g_ide.rc_tree, (POINT){x, y})) {
-        int row = (y - g_ide.rc_tree.top - TREE_ROWS_TOP) / 20 + g_ide.tree_scroll;
+        int row = (y - g_ide.rc_tree.top - TREE_ROWS_TOP) / TREE_ROW_H + g_ide.tree_scroll;
         if (row >= 0 && row < g_ide.tree_files.count) {
             g_ide.tree_sel = row;
             ide_open_file(g_ide.tree_files.items[row]);
         }
         return;
     }
-    if (abs(x - g_ide.split_x) <= 3 && y > g_ide.rc_toolbar.bottom) {
+    if (!g_ide.hide_tree && abs(x - g_ide.split_x) <= 3 && y > g_ide.rc_toolbar.bottom) {
         g_ide.dragging_split = 1;
         SetCapture(g_ide.hwnd);
         return;
@@ -2567,7 +3296,26 @@ void ide_mouse_down(int x, int y, int shift, int button)
     if (PtInRect(&g_ide.rc_editor, (POINT){x, y})) {
         Doc *d = doc_active();
         if (d) {
-            doc_set_caret(d, doc_hit_test(d, x - g_ide.rc_editor.left - 52, y - g_ide.rc_editor.top - 2), shift);
+            int tt, thh, bt, bh;
+            if (x >= g_ide.rc_editor.right - 9 && x < g_ide.rc_editor.right - 1) {
+                editor_scrollbar_metrics(d, &tt, &thh, &bt, &bh);
+                if (y >= bt && y < bt + bh) {
+                    g_scroll_drag = y - bt;
+                } else {
+                    int visible = thh / (g_ide.line_h ? g_ide.line_h : 16);
+                    if (visible < 1)
+                        visible = 1;
+                    d->top_line += (y < bt ? -visible : visible);
+                    if (d->top_line < 0)
+                        d->top_line = 0;
+                    g_scroll_drag = -1;
+                }
+                if (g_scroll_drag >= 0)
+                    g_scroll_dragging = 1;
+                SetCapture(g_ide.hwnd);
+                return;
+            }
+            doc_set_caret(d, doc_hit_test(d, x - g_ide.rc_editor.left - gutter_width(d), y - g_ide.rc_editor.top - 2), shift);
             SetCapture(g_ide.hwnd);
         }
         return;
@@ -2586,12 +3334,9 @@ void ide_mouse_up(int x, int y)
 {
     (void)x;
     (void)y;
-    if (g_ide.dragging_split) {
-        g_ide.dragging_split = 0;
-        ReleaseCapture();
-    } else {
-        ReleaseCapture();
-    }
+    g_ide.dragging_split = 0;
+    g_scroll_dragging = 0;
+    ReleaseCapture();
 }
 
 void ide_mouse_move(int x, int y, int buttons)
@@ -2608,12 +3353,95 @@ void ide_mouse_move(int x, int y, int buttons)
         InvalidateRect(g_ide.hwnd, NULL, FALSE);
         return;
     }
-    if (buttons & 1) {
+    if (g_scroll_dragging) {
         Doc *d = doc_active();
-        if (d && PtInRect(&g_ide.rc_editor, (POINT){x, y})) {
-            doc_set_caret(d, doc_hit_test(d, x - g_ide.rc_editor.left - 52, y - g_ide.rc_editor.top - 2), 1);
+        if (d) {
+            int tt, thh, bt, bh;
+            int max;
+            int vis = (g_ide.rc_editor.bottom - g_ide.rc_editor.top - 4) / (g_ide.line_h ? g_ide.line_h : 16);
+            if (vis < 1)
+                vis = 1;
+            max = d->nlines - vis;
+            if (max < 0)
+                max = 0;
+            editor_scrollbar_metrics(d, &tt, &thh, &bt, &bh);
+            if (thh - bh > 0 && max > 0) {
+                float frac = (float)(y - g_scroll_drag - tt) / (float)(thh - bh);
+                if (frac < 0.0f)
+                    frac = 0.0f;
+                if (frac > 1.0f)
+                    frac = 1.0f;
+                d->top_line = (int)(frac * max + 0.5f);
+            }
             InvalidateRect(g_ide.hwnd, NULL, FALSE);
         }
+        return;
+    }
+    if (buttons & 1) {
+        Doc *d = doc_active();
+        if (d && PtInRect(&g_ide.rc_editor, (POINT){x, y}) && x < g_ide.rc_editor.right - 10) {
+            doc_set_caret(d, doc_hit_test(d, x - g_ide.rc_editor.left - gutter_width(d), y - g_ide.rc_editor.top - 2), 1);
+            InvalidateRect(g_ide.hwnd, NULL, FALSE);
+        }
+    }
+    {
+        int hot = -1;
+        int need = 0;
+        if (y < 26) {
+            hot = hit_menu(x, y);
+            if (hot != g_bar_hot) {
+                g_bar_hot = hot;
+                need = 1;
+            }
+        } else if (g_bar_hot != -1) {
+            g_bar_hot = -1;
+            need = 1;
+        }
+        {
+            int tb = toolbar_hit(x, y);
+            if (tb != g_tool_hot) {
+                g_tool_hot = tb;
+                need = 1;
+            }
+        }
+        if (PtInRect(&g_ide.rc_tree, (POINT){x, y})) {
+            int row = (y - g_ide.rc_tree.top - TREE_ROWS_TOP) / TREE_ROW_H + g_ide.tree_scroll;
+            if (row < 0 || row >= g_ide.tree_files.count)
+                row = -1;
+            if (row != g_tree_hot) {
+                g_tree_hot = row;
+                need = 1;
+            }
+        } else if (g_tree_hot != -1) {
+            g_tree_hot = -1;
+            need = 1;
+        }
+        if (PtInRect(&g_ide.rc_tabs, (POINT){x, y})) {
+            int i;
+            HDC dc = GetDC(g_ide.hwnd);
+            RECT tr;
+            int th = -1, tc = -1;
+            for (i = 0; i < g_ide.ndocs; i++) {
+                if (tab_rect(dc, i, &tr) && PtInRect(&tr, (POINT){x, y})) {
+                    th = i;
+                    if (x >= tr.right - 23)
+                        tc = i;
+                    break;
+                }
+            }
+            ReleaseDC(g_ide.hwnd, dc);
+            if (th != g_tab_hot || tc != g_tab_close_hot) {
+                g_tab_hot = th;
+                g_tab_close_hot = tc;
+                need = 1;
+            }
+        } else if (g_tab_hot != -1 || g_tab_close_hot != -1) {
+            g_tab_hot = -1;
+            g_tab_close_hot = -1;
+            need = 1;
+        }
+        if (need)
+            InvalidateRect(g_ide.hwnd, NULL, FALSE);
     }
     if (g_ide.menu_index >= 0) {
         int item = -1;
@@ -2666,7 +3494,7 @@ void ide_wheel(int delta, int keys, int x, int y)
     if (notch == 0)
         return;
 
-    if (g_ide.split_x > 0 && x < g_ide.split_x) {
+    if (!g_ide.hide_tree && x < g_ide.rc_tree.right) {
         int max = g_ide.tree_files.count - 1;
         if (max < 0)
             max = 0;
@@ -2770,6 +3598,31 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         ide_mouse_down((short)LOWORD(lp), (short)HIWORD(lp), (GetKeyState(VK_SHIFT) & 0x8000) != 0, 0);
         InvalidateRect(hwnd, NULL, FALSE);
         return 0;
+    case WM_LBUTTONDBLCLK: {
+        Doc *d = doc_active();
+        if (d && PtInRect(&g_ide.rc_editor, (POINT){(short)LOWORD(lp), (short)HIWORD(lp)})) {
+            int x = (short)LOWORD(lp), y = (short)HIWORD(lp);
+            int pos = doc_hit_test(d, x - g_ide.rc_editor.left - gutter_width(d), y - g_ide.rc_editor.top - 2);
+            int a = pos, b = pos;
+            const char *data = (const char *)d->data.data;
+            int len = (int)d->data.len;
+            if (pos < len && (isalnum((unsigned char)data[pos]) || data[pos] == '_')) {
+                while (a > 0 && (isalnum((unsigned char)data[a - 1]) || data[a - 1] == '_'))
+                    a--;
+                while (b < len && (isalnum((unsigned char)data[b]) || data[b] == '_'))
+                    b++;
+                d->anchor = a;
+                d->caret = b;
+                d->sel_active = 1;
+                InvalidateRect(hwnd, NULL, FALSE);
+            }
+        }
+        return 0;
+    }
+    case WM_MBUTTONDOWN:
+        SetFocus(hwnd);
+        ide_mouse_down((short)LOWORD(lp), (short)HIWORD(lp), 0, 1);
+        return 0;
     case WM_RBUTTONDOWN:
         SetFocus(hwnd);
         ide_rbutton_down((short)LOWORD(lp), (short)HIWORD(lp));
@@ -2795,7 +3648,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
             POINT p;
             GetCursorPos(&p);
             ScreenToClient(hwnd, &p);
-            if (abs(p.x - g_ide.split_x) <= 3 && p.y > g_ide.rc_toolbar.bottom) {
+            if (!g_ide.hide_tree && abs(p.x - g_ide.split_x) <= 3 && p.y > g_ide.rc_toolbar.bottom) {
                 SetCursor(LoadCursor(NULL, IDC_SIZEWE));
                 return TRUE;
             }

@@ -217,7 +217,7 @@ void doc_undo(Doc *d)
     d->sel_active = 0;
     d->undo_pos--;
     doc_reindex(d);
-    d->modified = 1;
+    d->modified = (d->undo_pos != d->saved_undo_pos) ? 1 : 0;
 }
 
 void doc_redo(Doc *d)
@@ -240,7 +240,7 @@ void doc_redo(Doc *d)
     d->sel_active = 0;
     d->undo_pos++;
     doc_reindex(d);
-    d->modified = 1;
+    d->modified = (d->undo_pos != d->saved_undo_pos) ? 1 : 0;
 }
 
 int doc_line_of(Doc *d, int pos)
