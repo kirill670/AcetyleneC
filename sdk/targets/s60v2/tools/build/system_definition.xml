@@ -1,0 +1,2877 @@
+<?xml version="1.0"?>
+<!DOCTYPE SystemDefinition [
+<!ELEMENT SystemDefinition (systemModel?, build?)>
+<!ATTLIST SystemDefinition
+  name CDATA #REQUIRED
+  revision CDATA #REQUIRED
+>
+<!-- all paths are relative to the root of the source -->
+
+<!-- System Model Section of DTD -->
+<!ELEMENT systemModel (layer+)>
+
+<!ELEMENT layer (logicalset* | module*)*>
+<!-- Kernel Services, Base Services, OS Services, Etc -->
+<!ATTLIST layer
+  name CDATA #REQUIRED 
+>
+
+<!ELEMENT logicalset (logicalsubset* | module* | unit* | package*)*>
+ <!-- Generic OS services, Comms Services, etc -->
+<!ATTLIST logicalset 
+  name CDATA #REQUIRED
+>
+
+<!ELEMENT logicalsubset (unit* | module* | package*)*>
+<!-- Telephony services, Networking Services, etc -->
+<!ATTLIST logicalsubset 
+  name CDATA #REQUIRED
+>
+
+<!ELEMENT module (unit* | component* | package*)*>
+<!-- Screen Driver, Content Handling, etc -->
+<!ATTLIST module
+  name CDATA #REQUIRED
+>
+
+<!ELEMENT component (unit* | package*)*>
+<!-- units or packages -->
+<!ATTLIST component
+  name CDATA #REQUIRED
+>
+
+<!ELEMENT unit (sourcedata* | package*)*>
+<!-- must be buildable(bld.inf) -->
+<!ATTLIST unit
+  unitID ID #REQUIRED
+  name CDATA #REQUIRED
+  mrp CDATA #IMPLIED
+  bldFile CDATA #REQUIRED
+>
+
+<!ELEMENT sourcedata EMPTY>
+<!-- data about source -->
+<!ATTLIST sourcedata
+  name CDATA #REQUIRED
+  srcRoot ID #REQUIRED
+  iprClass IDREF #REQUIRED
+  osCat IDREF #REQUIRED
+>
+
+<!ELEMENT package EMPTY>
+<!-- Details about how it is packaged -->
+<!ATTLIST package
+  name CDATA #REQUIRED
+  mrp CDATA #REQUIRED
+>
+
+
+
+
+<!-- Build Section of DTD -->
+<!ELEMENT build (option* | target+ | targetList+ | unitList+ | configuration+)*>
+
+<!ELEMENT unitList (unitRef+)>
+<!-- e.g. common, beech, cedar, etc -->
+<!ATTLIST unitList
+  name ID #REQUIRED
+  description CDATA #REQUIRED
+>
+
+<!ELEMENT unitRef EMPTY>
+<!-- Reference to unit in System Model -->
+<!ATTLIST unitRef
+  unit IDREF #REQUIRED
+>
+
+<!ELEMENT targetList EMPTY>
+<!-- e.g. DEFAULT_7.0S, TOOLS_7.0S, etc -->
+<!ATTLIST targetList
+  name ID #REQUIRED
+  description CDATA #REQUIRED
+  target IDREFS #REQUIRED
+>
+
+<!ELEMENT target EMPTY>
+<!-- e.g. WINS, WINSCW, ARM4, etc -->
+<!ATTLIST target
+  name ID #REQUIRED
+  abldTarget CDATA #REQUIRED
+  description CDATA #REQUIRED
+>
+
+<!ELEMENT option EMPTY>
+<!-- e.g. Keepgoing, SaveSpace, etc -->
+<!ATTLIST option
+  name ID #REQUIRED
+  abldOption CDATA #REQUIRED
+  description CDATA #REQUIRED
+  enable (Y | N | y | n) #REQUIRED
+>
+
+<!ELEMENT configuration (unitListRef+ | task+)*>
+<!-- 7.0s, 8.0a, 8.0b, cuskit, etc -->
+<!ATTLIST configuration
+  name ID #REQUIRED
+  description CDATA #REQUIRED
+>
+<!ELEMENT task ( unitListRef* , (buildLayer | specialInstructions))>
+
+<!ELEMENT unitListRef EMPTY>
+<!-- Reference to unitList -->
+<!ATTLIST unitListRef
+  unitList IDREF #REQUIRED
+>
+
+<!ELEMENT buildLayer EMPTY>
+<!-- bldmake, abld export, etc -->
+<!ATTLIST buildLayer
+  command CDATA #REQUIRED
+  targetList IDREFS #IMPLIED
+  unitParallel (Y | N | y | n) #REQUIRED
+  targetParallel (Y | N | y | n) #IMPLIED
+>
+
+<!ELEMENT specialInstructions EMPTY>
+<!-- BootStrap -->
+<!ATTLIST specialInstructions
+  name CDATA #REQUIRED
+  cwd CDATA #REQUIRED
+  command CDATA #REQUIRED
+>
+
+]>
+
+<SystemDefinition name="MCL" revision="22">
+  
+  <systemModel>
+    <layer name="Tools and Utils and SDKENG">
+      <module name="Tools and Utils">
+        <component name="BUILDSYSTEMTOOLS">
+          <unit unitID="BUILDSYSTEMTOOLS" name="tools_build" bldFile="common\generic\tools\build\group" mrp="common\generic\tools\build\group\tools_build.mrp"/>
+        </component>
+        <component name="BCCOMPARATOR">
+          <unit unitID="BCCOMPARATOR" name="testtools_cts_Bccomparator" bldFile="Common\testtools\CTS\BCComparator\Group" mrp="common\testtools\CTS\BCComparator\Group\testtools_cts_Bccomparator.mrp"/>
+        </component>
+        <component name="BURTESTSERVER">
+          <unit unitID="BURTESTSERVER" name="testtools_burtestserver" bldFile="common\testtools\burtestserver\Group" mrp="common\testtools\burtestserver\group\testtools_burtestserver.mrp"/>
+        </component>        
+        <component name="CBRTOOLS">
+          <unit unitID="CBRTOOLS" name="tools_cbr_tools" bldFile="common\generic\tools\cbr\tools\Group" mrp="common\generic\tools\cbr\tools\group\tools_cbr_tools.mrp"/>
+        </component>
+        <component name="CDB">
+          <unit unitID="CDB" name="testtools_cdb" bldFile="common\testtools\cdb\group" mrp="common\testtools\cdb\group\testtools_cdb.mrp"/>
+        </component>
+        <component name="CHATSCRIPTS">
+          <unit unitID="CHATSCRIPTS" name="ChatScripts" bldFile="common\testtools\ChatScripts\group" mrp="common\testtools\chatscripts\group\testtools_chatscripts.mrp"/>
+        </component>
+        <component name="DEPCHECK">
+          <unit unitID="DEPCHECK" name="tools_depcheck" bldFile="common\generic\tools\depcheck" mrp="common\generic\tools\depcheck\tools_depcheck.mrp"/>
+        </component>
+        <component name="DEVICESAPI">
+          <unit unitID="DEVICESAPI" name="tools_sdk_eng_devicesapi" bldFile="common\generic\tools\sdk_eng\devicesapi\group" mrp="common\generic\tools\sdk_eng\devicesAPI\group\tools_sdk_eng_devicesapi.mrp"/>
+        </component>
+        <component name="DEVELOPERLIBRARY">
+          <unit unitID="DEVELOPERLIBRARY_8.1A" name="DEVELOPERLIBRARY_8.1A" bldFile="common\DEVELOPERLIBRARY\GROUP\devlib81a" mrp="common\developerlibrary\developerlibrary_doc_html.mrp"/>
+          <unit unitID="DEVELOPERLIBRARY_8.1B" name="DEVELOPERLIBRARY_8.1B" bldFile="common\DEVELOPERLIBRARY\GROUP\devlib81b" mrp="common\developerlibrary\developerlibrary_doc_html.mrp"/>
+          <unit unitID="DEVELOPERLIBRARY_9.0" name="DEVELOPERLIBRARY_9.0" bldFile="common\DEVELOPERLIBRARY\GROUP\devlib90" mrp="common\developerlibrary\developerlibrary_doc_html.mrp"/>
+          <unit unitID="DEVELOPERLIBRARY_SOURCE" name="DEVELOPERLIBRARY_SOURCE" bldFile="common\DEVELOPERLIBRARY\SECURITYSUPPLEMENT\DOC_SOURCE" mrp="common\developerlibrary\developerlibrary_doc_source.mrp"/>
+        </component>
+        <component name="E32TOOLS EKA1">
+          <unit unitID="E32TOOLS_EKA1" name="tools_e32tools" bldFile="beech\generic\TOOLS\E32Tools\GROUP" mrp="beech\generic\tools\e32tools\group\tools_e32tools.mrp"/>
+        </component>
+        <component name="E32TOOLS EKA2">
+          <unit unitID="E32TOOLS_EKA2" name="tools_e32tools" bldFile="cedar\generic\TOOLS\E32Tools\GROUP" mrp="cedar\generic\tools\e32tools\group\tools_e32tools.mrp"/>
+        </component>
+        <component name="EVALID">
+          <unit unitID="EVALID" name="tools_evalid" bldFile="common\generic\tools\host_utilities\evalid" mrp="common\generic\tools\host_utilities\evalid\tools_evalid.mrp"/>
+        </component>
+        <component name="KITCOMPARATOR">
+          <unit unitID="KITCOMPARATOR" name="testtools_cts_kitcomparator" bldFile="Common\testtools\CTS\KitComparator\Group" mrp="common\testtools\CTS\KitComparator\group\testtools_cts_kitcomparator.mrp"/>
+        </component>
+        <component name="PLATTEST">
+          <unit unitID="PLATTEST" name="plattest" bldFile="common\generic\plattest\Group" mrp="common\generic\plattest\Group\plattest_tools.mrp"/>
+        </component>
+        <component name="LEAVESCAN">
+          <unit unitID="LEAVESCAN" name="testtools_leavescan" bldFile="common\TestTools\LEAVESCAN\GROUP" mrp="common\testtools\Leavescan\group\testtools_leavescan.mrp"/>
+        </component>
+        <component name="PROGRAMCHECKER">
+          <unit unitID="PROGRAMCHECKER" name="testtools_programchecker" bldFile="common\testtools\ProgramChecker\Group" mrp="common\testtools\ProgramChecker\group\testtools_programchecker.mrp"/>
+        </component>
+        <component name="RCOMP">
+          <unit unitID="RCOMP" name="tools_rcomp" bldFile="common\generic\TOOLS\RCOMP\GROUP" mrp="common\generic\tools\rcomp\group\tools_rcomp.mrp"/>
+        </component>
+        <component name="REDISTRIBUTION">
+          <unit unitID="REDISTRIBUTION" name="tools_redistribution_common" bldFile="common\generic\TOOLS\REDISTRIBUTION" mrp="common\generic\tools\redistribution\tools_redistribution_common.mrp"/>
+        </component>      
+        <component name="RESOURCE_HANDLER">
+          <unit unitID="RESOURCE_HANDLER" name="Testtools_ResourceHandler_Techview" bldFile="common\testtools\ResourceHandler\TVResourceHandler\group" mrp="common\testtools\ResourceHandler\TVResourceHandler\group\Testtools_ResourceHandler_techview.mrp"/>
+        </component>
+        <component name="ROMKIT_EKA1">
+          <unit unitID="ROMKIT_EKA1" name="tools_romkit" bldFile="beech\generic\TOOLS\ROMKIT\GROUP" mrp="beech\generic\tools\romkit\group\tools_romkit.mrp"/>
+        </component>
+        <component name="ROMKIT_EKA2">
+          <unit unitID="ROMKIT_EKA2" name="tools_romkit" bldFile="cedar\generic\TOOLS\ROMKIT\GROUP" mrp="cedar\generic\tools\romkit\group\tools_romkit.mrp"/>
+        </component>
+        <component name="MIGRATIONTOOL">
+          <unit unitID="MIGRATIONTOOL" name="testtools_migrationtool" bldFile="common\testtools\migrationtool\group" mrp="common\testtools\migrationtool\group\testtools_migrationtool.mrp"/>
+        </component>
+        <component name="TESTDRIVER">
+          <unit unitID="TESTDRIVER" name="testtools_testdriver" bldFile="common\testtools\TestDriver\Group" mrp="common\testtools\TestDriver\Group\testtools_testdriver.mrp"/>
+        </component>
+        <component name="SMOKETEST">
+          <unit unitID="SMOKETEST" name="testtools_smoketest" bldFile="common\testtools\smoketest\GROUP" mrp="common\testtools\Smoketest\Group\testtools_smoketest.mrp"/>
+        </component>
+        <component name="STATAPI">
+          <unit unitID="STATAPI" name="testtools_stat_device_gt" bldFile="common\testtools\STAT\device\source\statapi\console" mrp="common\testtools\stat\device\group\testtools_stat_device_gt.mrp"/>
+        </component>
+        <component name="STAT_DESKTOP">
+          <unit unitID="STAT_DESKTOP" name="testtools_stat_desktop" bldFile="common\testtools\stat\desktop\group" mrp="common\testtools\stat\desktop\group\testtools_stat_desktop.mrp"/>
+        </component>
+        <component name="STAT_DEVICE">
+          <unit unitID="STAT_DEVICE" name="testtools_stat_device_techview" bldFile="common\testtools\stat\device\source\statapi\techview" mrp="common\testtools\stat\device\group\testtools_stat_device_techview.mrp"/>
+        </component>
+        <component name="WINTUNNEL">
+		  <unit unitID="WINTUNNEL" name="testtools_wintunnel" bldFile="common\testtools\WinTunnel\group" mrp="common\testtools\wintunnel\group\testtools_wintunnel.mrp"/>
+        </component>
+        <component name="TESTEXECUTE">
+          <unit unitID="TESTEXECUTE" name="tools_testexecute" bldFile="common\TestTools\TESTEXECUTE\GROUP" mrp="common\testtools\testexecute\Group\tools_testexecute.mrp"/>
+        </component>
+        <component name="DEBUGGER_STUB_EKA1">
+          <unit unitID="DEBUGGER_STUB_EKA1" name="tools_debugger_stub" bldFile="beech\generic\TOOLS\DEBUGGER_STUB" mrp="beech\generic\tools\debugger_stub\tools_debugger_stub.mrp"/>
+        </component>
+        <component name="EDEBUG_EKA1">
+          <unit unitID="EDEBUG_EKA1" name="tools_debugger_stub_passivestub" bldFile="beech\generic\TOOLS\DEBUGGER_STUB\PASSIVESTUB" mrp="beech\generic\tools\debugger_stub\passivestub\tools_debugger_stub_passivestub.mrp"/>
+        </component>
+        <component name="METROTRK_EKA1">
+          <unit unitID="METROTRK_EKA1" name="generic_metrotrkapp" bldFile="beech\generic\TOOLS\DEBUGGER_STUB\METROTRK" mrp="beech\generic\tools\debugger_stub\metrotrk\generic_metrotrkapp.mrp"/>
+        </component>
+        <component name="CINIDATA">
+          <unit unitID="CINIDATA" name="tools_cinidata" bldFile="common\generic\TOOLS\CINIDATA" mrp="common\generic\tools\cinidata\tools_cinidata.mrp"/>
+        </component>
+        <component name="AUTOTEST">
+          <unit unitID="AUTOTEST" name="tools_autotest" bldFile="common\generic\TOOLS\AUTOTEST\GROUP" mrp="common\generic\tools\autotest\group\tools_autotest.mrp"/>
+        </component>
+        <component name="TESTCONFIGFILEPARSER">
+          <unit unitID="TESTCONFIGFILEPARSER" name="tools_testconfigfileparser" bldFile="common\generic\TOOLS\testconfigfileparser\GROUP" mrp="common\generic\tools\testconfigfileparser\group\tools_testconfigfileparser.mrp"/>
+        </component>
+        <component name="KITSETUPAPP">
+          <unit unitID="KITSETUPAPP" name="tools_devkits_kitsetupapp" bldFile="common\generic\TOOLS\DevKits\KitSetupApp\group" mrp="common\generic\tools\devkits\KitSetupApp\group\tools_devkits_kitsetupapp.mrp"/>
+        </component>
+        <component name="KIT_BUILDER">
+          <unit unitID="KIT_BUILDER" name="tools_custkits_product" bldFile="common\generic\TOOLS\Custkits\kitbuilder\group" mrp="common\generic\tools\custkits\kitbuilder\group\tools_custkits_product.mrp"/>
+        </component>
+        <component name="PRODUCTINSTALLER">
+          <unit unitID="PRODUCTINSTALLER" name="tools_custkits_product" bldFile="common\generic\TOOLS\Custkits\ProductInstaller\group" mrp="common\generic\tools\custkits\kitbuilder\group\tools_custkits_product.mrp"/>
+        </component>
+        <component name="MAKESIS">
+          <unit unitID="MAKESIS" name="security_appinst" bldFile="common\generic\security\appinst\makesis" mrp="common\generic\security\appinst\group\security_appinst.mrp"/>
+        </component>
+        <component name="REDISTRIBUTION_WINC_EKA2">
+          <unit unitID="REDISTRIBUTION_WINC_EKA2" name="tools_redistribution_cedar" bldFile="cedar\generic\tools\redistribution" mrp="cedar\generic\tools\redistribution\tools_redistribution_cedar.mrp"/>
+        </component>
+        <component name="WINSIGNMIDLET">
+          <unit unitID="WINSIGNMIDLET" name="security_javamidletinstaller" bldFile="common\generic\security\JavaMIDletInstaller\source\winsignmidlet" mrp="common\generic\security\JavaMIDletInstaller\group\security_javamidletinstaller.mrp"/>
+        </component>
+        <component name="MAKEKEYS">
+          <unit unitID="MAKEKEYS" name="security_makekeys" bldFile="common\generic\SECURITY\MakeKeys\GROUP" mrp="common\generic\security\makekeys\group\security_makekeys.mrp"/>
+        </component>
+        <component name="CAPTOOLS">
+          <unit unitID="CAPTOOLS" name="testtools_captools" bldFile="common\testtools\captools\group" mrp="common\testtools\CapTools\group\testtools_captools.mrp"/>
+        </component>
+        <component name="Packet Loopback CSY">
+          <unit unitID="PACKETLOOPBACKCSY" name="PacketLoopbackCSY" bldFile="common\generic\networking\test\PacketLoopbackCSY\group" mrp="common\generic\networking\test\PacketLoopbackCSY\group\PacketLoopbackCSY.mrp"/>
+        </component>
+      </module>
+      <module name="SDKENG">
+        <component name="RUNPERL">
+          <unit unitID="RUNPERL" name="tools_sdk_eng_runperl" bldFile="common\generic\TOOLS\SDK_ENG\RUNPERL\GROUP" mrp="common\generic\tools\sdk_eng\runperl\group\tools_sdk_eng_runperl.mrp"/>
+        </component>
+        <component name="BUILD-TOOLS">
+          <unit unitID="BUILD-TOOLS" name="tools_sdk_eng_build-tools" bldFile="common\generic\TOOLS\SDK_ENG\BUILD-TOOLS\GROUP" mrp="common\generic\tools\sdk_eng\build-tools\group\tools_sdk_eng_build-tools.mrp"/>
+        </component>
+        <component name="JAVALIBRARY">
+          <unit unitID="JAVALIBRARY" name="tools_sdk_eng_javalibrary" bldFile="common\generic\TOOLS\SDK_ENG\JAVALIBRARY\GROUP" mrp="common\generic\tools\sdk_eng\javalibrary\group\tools_sdk_eng_javalibrary.mrp"/>
+        </component>
+        <component name="ASSERTION">
+          <unit unitID="ASSERTION" name="tools_sdk_eng_assertion" bldFile="common\generic\TOOLS\SDK_ENG\ASSERTION\GROUP" mrp="common\generic\tools\sdk_eng\assertion\group\tools_sdk_eng_assertion.mrp"/>
+        </component>
+        <component name="DFRDOBJECT">
+          <unit unitID="DFRDOBJECT" name="tools_sdk_eng_dfrdobject" bldFile="common\generic\TOOLS\SDK_ENG\DFRDOBJECT\GROUP" mrp="common\generic\tools\sdk_eng\dfrdobject\Group\tools_sdk_eng_dfrdobject.mrp"/>
+        </component>
+        <component name="ENUM">
+          <unit unitID="ENUM" name="tools_sdk_eng_enum" bldFile="common\generic\TOOLS\SDK_ENG\ENUM\GROUP" mrp="common\generic\tools\sdk_eng\enum\group\tools_sdk_eng_enum.mrp"/>
+        </component>
+        <component name="LOGGER">
+          <unit unitID="LOGGER" name="tools_sdk_eng_logger" bldFile="common\generic\TOOLS\SDK_ENG\LOGGER\GROUP" mrp="common\generic\tools\sdk_eng\logger\group\tools_sdk_eng_logger.mrp"/>
+        </component>
+        <component name="FILESYS">
+          <unit unitID="FILESYS" name="tools_sdk_eng_filesys" bldFile="common\generic\TOOLS\SDK_ENG\FILESYS\GROUP" mrp="common\generic\tools\sdk_eng\filesys\group\tools_sdk_eng_filesys.mrp"/>
+        </component>
+        <component name="ENVVAR">
+          <unit unitID="ENVVAR" name="tools_sdk_eng_envvar" bldFile="common\generic\TOOLS\SDK_ENG\ENVVAR\GROUP" mrp="common\generic\tools\sdk_eng\envvar\group\tools_sdk_eng_envvar.mrp"/>
+        </component>
+        <component name="INSTALLUTILS">
+          <unit unitID="INSTALLUTILS" name="tools_sdk_eng_installutils" bldFile="common\generic\TOOLS\SDK_ENG\INSTALLUTILS\GROUP" mrp="common\generic\tools\sdk_eng\InstallUtils\group\tools_sdk_eng_installutils.mrp"/>
+        </component>
+        <component name="MNEMONICFIX">
+          <unit unitID="MNEMONICFIX" name="tools_sdk_eng_mnemonicfix" bldFile="common\generic\TOOLS\SDK_ENG\MNEMONICFIX\GROUP" mrp="common\generic\tools\sdk_eng\mnemonicfix\group\tools_sdk_eng_mnemonicfix.mrp"/>
+        </component>
+        <component name="PATHBROWSER">
+          <unit unitID="PATHBROWSER" name="tools_sdk_eng_pathbrowser" bldFile="common\generic\TOOLS\SDK_ENG\PATHBROWSER\GROUP" mrp="common\generic\tools\sdk_eng\pathbrowser\group\tools_sdk_eng_pathbrowser.mrp"/>
+        </component>
+        <component name="SHELLEXEC">
+          <unit unitID="SHELLEXEC" name="tools_sdk_eng_shellexec" bldFile="common\generic\TOOLS\SDK_ENG\SHELLEXEC\GROUP" mrp="common\generic\tools\sdk_eng\shellexec\group\tools_sdk_eng_shellexec.mrp"/>
+        </component>
+        <component name="SWINGWORKER">
+          <unit unitID="SWINGWORKER" name="tools_sdk_eng_swingworker" bldFile="common\generic\TOOLS\SDK_ENG\SWINGWORKER\GROUP" mrp="common\generic\tools\sdk_eng\swingworker\group\tools_sdk_eng_swingworker.mrp"/>
+        </component>
+        <component name="TESTCASERUNNER">
+          <unit unitID="TESTCASERUNNER" name="tools_sdk_eng_testcaserunner" bldFile="common\generic\TOOLS\SDK_ENG\TESTCASERUNNER\GROUP" mrp="common\generic\tools\sdk_eng\testcaserunner\group\tools_sdk_eng_testcaserunner.mrp"/>
+        </component>
+        <component name="TOOLBARPANEL">
+          <unit unitID="TOOLBARPANEL" name="tools_sdk_eng_toolbarpanel" bldFile="common\generic\TOOLS\SDK_ENG\TOOLBARPANEL\GROUP" mrp="common\generic\tools\sdk_eng\toolbarpanel\group\tools_sdk_eng_toolbarpanel.mrp"/>
+        </component>
+        <component name="JAVAHELP">
+          <unit unitID="JAVAHELP" name="tools_sdk_eng_javahelp" bldFile="common\generic\TOOLS\SDK_ENG\JAVAHELP\GROUP" mrp="common\generic\tools\sdk_eng\javahelp\group\tools_sdk_eng_javahelp.mrp"/>
+        </component>
+        <component name="JCOMPS_I18N">
+          <unit unitID="JCOMPS_I18N" name="tools_sdk_eng_jcomps_i18n" bldFile="common\generic\TOOLS\SDK_ENG\JCOMPS_I18N\GROUP" mrp="common\generic\tools\sdk_eng\jcomps_i18n\Group\tools_sdk_eng_jcomps_i18n.mrp"/>
+        </component>
+        <component name="LANGCONFIG">
+          <unit unitID="LANGCONFIG" name="tools_sdk_eng_langconfig" bldFile="common\generic\TOOLS\SDK_ENG\LANGCONFIG\GROUP" mrp="common\generic\tools\sdk_eng\langconfig\group\tools_sdk_eng_langconfig.mrp"/>
+        </component>
+        <component name="MBMCODEC">
+          <unit unitID="MBMCODEC" name="tools_sdk_eng_mbmcodec" bldFile="common\generic\TOOLS\SDK_ENG\MBMCODEC\GROUP" mrp="common\generic\tools\sdk_eng\mbmcodec\group\tools_sdk_eng_mbmcodec.mrp"/>
+        </component>
+        <component name="SDKINFO">
+          <unit unitID="SDKINFO" name="tools_sdk_eng_sdkinfo" bldFile="common\generic\TOOLS\SDK_ENG\SDKINFO\GROUP" mrp="common\generic\tools\sdk_eng\sdkinfo\group\tools_sdk_eng_sdkinfo.mrp"/>
+        </component>
+        <component name="JADE">
+          <unit unitID="JADE" name="tools_sdk_eng_jade" bldFile="common\generic\TOOLS\SDK_ENG\JADE\GROUP" mrp="common\generic\tools\sdk_eng\jade\group\tools_sdk_eng_jade.mrp"/>
+        </component>
+        <component name="APPBUILD">
+          <unit unitID="APPBUILD" name="tools_sdk_eng_appbuild" bldFile="common\generic\TOOLS\SDK_ENG\APPBUILD\GROUP" mrp="common\generic\tools\sdk_eng\appbuild\Group\tools_sdk_eng_appbuild.mrp"/>
+        </component>
+        <component name="AIFAPP">
+          <unit unitID="AIFAPP" name="tools_sdk_eng_aifapp" bldFile="common\generic\TOOLS\SDK_ENG\AIFAPP\GROUP" mrp="common\generic\tools\sdk_eng\aifapp\Group\tools_sdk_eng_aifapp.mrp"/>
+        </component>
+        <component name="AIFBUILDER">
+          <unit unitID="AIFBUILDER" name="tools_sdk_eng_aifbuilder" bldFile="common\generic\TOOLS\SDK_ENG\AIFBUILDER\GROUP" mrp="common\generic\tools\sdk_eng\aifbuilder\Group\tools_sdk_eng_aifbuilder.mrp"/>
+        </component>
+        <component name="CSHLPCMP_GUI">
+          <unit unitID="CSHLPCMP_GUI" name="tools_sdk_eng_cshlpcmp_gui" bldFile="common\generic\TOOLS\SDK_ENG\CSHLPCMP_GUI\GROUP" mrp="common\generic\tools\sdk_eng\cshlpcmp_gui\group\tools_sdk_eng_cshlpcmp_gui.mrp"/>
+        </component>
+        <component name="SISAR">
+          <unit unitID="SISAR" name="tools_sdk_eng_sisar" bldFile="common\generic\TOOLS\SDK_ENG\SISAR\GROUP" mrp="common\generic\tools\sdk_eng\sisar\group\tools_sdk_eng_sisar.mrp"/>
+        </component>
+        <component name="SDKPKG-MANAGER">
+          <unit unitID="SDKPKG-MANAGER" name="tools_sdk_eng_sdkpkg-manager" bldFile="common\generic\TOOLS\SDK_ENG\SDKPKG-MANAGER\GROUP" mrp="common\generic\tools\sdk_eng\sdkpkg-manager\group\tools_sdk_eng_sdkpkg-manager.mrp"/>
+        </component>
+        <component name="SDKPKG-TOOLS">
+          <unit unitID="SDKPKG-TOOLS" name="tools_sdk_eng_sdkpkg-tools" bldFile="common\generic\TOOLS\SDK_ENG\SDKPKG-TOOLS\GROUP" mrp="common\generic\tools\sdk_eng\sdkpkg-tools\group\tools_sdk_eng_sdkpkg-tools.mrp"/>
+        </component>
+        <component name="EMULATOR_LAUNCHER">
+          <unit unitID="EMULATOR_LAUNCHER" name="tools_sdk_eng_emulator_launcher" bldFile="common\generic\TOOLS\SDK_ENG\EMULATOR_LAUNCHER\GROUP" mrp="common\generic\tools\sdk_eng\emulator_launcher\group\tools_sdk_eng_emulator_launcher.mrp"/>
+        </component>
+        <component name="PKGMGRGUI">
+          <unit unitID="PKGMGRGUI" name="tools_sdk_eng_pkgmgrgui" bldFile="common\generic\TOOLS\SDK_ENG\PKGMGRGUI\GROUP" mrp="common\generic\tools\sdk_eng\pkgmgrgui\group\tools_sdk_eng_pkgmgrgui.mrp"/>
+        </component>
+        <component name="LAUNCH">
+          <unit unitID="LAUNCH" name="tools_sdk_eng_launch" bldFile="common\generic\TOOLS\SDK_ENG\LAUNCH\GROUP" mrp="common\generic\tools\sdk_eng\launch\group\tools_sdk_eng_launch.mrp"/>
+        </component>
+        <component name="TOOLS_STUBS">
+          <unit unitID="TOOLS_STUBS" name="tools_sdk_eng_tools_stubs" bldFile="common\generic\TOOLS\SDK_ENG\TOOLS_STUBS\GROUP" mrp="common\generic\tools\sdk_eng\tools_stubs\group\tools_sdk_eng_tools_stubs.mrp"/>
+        </component>
+        <component name="CWPLUGINS">
+          <unit unitID="CWPLUGINS" name="tools_sdk_eng_cwplugins" bldFile="common\generic\TOOLS\SDK_ENG\CWPLUGINS\GROUP" mrp="common\generic\tools\sdk_eng\cwplugins\group\tools_sdk_eng_cwplugins.mrp"/>
+        </component>
+        <component name="BSPBUILDER">
+          <unit unitID="BSPBUILDER" name="tools_bspbuilder" bldFile="common\generic\TOOLS\BSPBUILDER\GROUP" mrp="common\generic\tools\bspbuilder\group\tools_bspbuilder.mrp"/>
+        </component>
+        <component name="ALP2CSH">
+          <unit unitID="ALP2CSH" name="tools_sdk_eng_alp2csh" bldFile="common\generic\TOOLS\SDK_ENG\ALP2CSH\GROUP" mrp="common\generic\tools\sdk_eng\alp2csh\group\tools_sdk_eng_alp2csh.mrp"/>
+        </component>
+        <component name="CJPEG">
+          <unit unitID="CJPEG" name="tools_sdk_eng_cjpeg" bldFile="common\generic\TOOLS\SDK_ENG\CJPEG\GROUP" mrp="common\generic\tools\sdk_eng\cjpeg\group\tools_sdk_eng_cjpeg.mrp"/>
+        </component>
+        <component name="CSHLPCMP_BACKEND">
+          <unit unitID="CSHLPCMP_BACKEND" name="tools_sdk_eng_cshlpcmp_backend" bldFile="common\generic\TOOLS\SDK_ENG\CSHLPCMP_BACKEND\GROUP" mrp="common\generic\tools\sdk_eng\cshlpcmp_backend\group\tools_sdk_eng_cshlpcmp_backend.mrp"/>
+        </component>
+        <component name="CSHLPCMP_FRONTEND">
+          <unit unitID="CSHLPCMP_FRONTEND" name="tools_sdk_eng_cshlpcmp_frontend" bldFile="common\generic\TOOLS\SDK_ENG\CSHLPCMP_FRONTEND\GROUP" mrp="common\generic\tools\sdk_eng\cshlpcmp_frontend\group\tools_sdk_eng_cshlpcmp_frontend.mrp"/>
+        </component>
+        <component name="PERLLIBRARY">
+          <unit unitID="PERLLIBRARY" name="tools_sdk_eng_perllibrary" bldFile="common\generic\TOOLS\SDK_ENG\PERLLIBRARY\GROUP" mrp="common\generic\tools\sdk_eng\perllibrary\group\tools_sdk_eng_perllibrary.mrp"/>
+        </component>
+        <component name="RTF2PTML">
+          <unit unitID="RTF2PTML" name="tools_sdk_eng_rtf2ptml" bldFile="common\generic\TOOLS\SDK_ENG\RTF2PTML\GROUP" mrp="common\generic\tools\sdk_eng\rtf2ptml\group\tools_sdk_eng_rtf2ptml.mrp"/>
+        </component>
+        <component name="SPLASH">
+          <unit unitID="SPLASH" name="tools_sdk_eng_splash" bldFile="common\generic\TOOLS\SDK_ENG\SPLASH\GROUP" mrp="common\generic\tools\sdk_eng\splash\group\tools_sdk_eng_splash.mrp"/>
+        </component>
+      </module>
+    </layer>
+    <layer name="Kernel Services and Hardware Interface">
+      <logicalset name="Kernel Architecture 1">
+        <!-- Only in 8.x -->
+        <module name="Board Support Packages">
+          <component name="Bootstrap">
+            <unit unitID="BOOTSTRAP_EKA1" name="base_bootstrap" bldFile="beech\generic\BASE\BOOTSTRAP" mrp="beech\generic\base\bootstrap\base_bootstrap.mrp"/>
+          </component>
+          <component name="Lubbock BSP">
+            <unit unitID="LUBBOCK_EKA1" name="base_lubbock" bldFile="beech\generic\BASE\LUBBOCK" mrp="beech\generic\base\lubbock\base_lubbock.mrp"/>
+          </component>
+          <component name="PDDs">
+            <unit unitID="ASSABETB_EKA1" name="base_assabetb" bldFile="beech\generic\BASE\ASSABETB" mrp="beech\generic\base\assabetb\base_assabetb.mrp"/>
+            <unit unitID="BRUTUS_EKA1" name="base_brutusa" bldFile="beech\generic\BASE\BRUTUSA" mrp="beech\generic\base\brutusa\base_brutusa.mrp"/>
+            <unit unitID="INTEGRATORAP_EKA1" name="base_integratorap" bldFile="beech\generic\BASE\INTEGRATORAP" mrp="beech\generic\base\integratorap\base_integratorap.mrp"/>
+          </component>
+        </module>
+        <module name="Device Drivers">
+          <component name="Audio Driver">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+          </component>
+          <component name="Ethernet Driver">
+              <!-- common to EKA1 and EKA2 -->
+          </component>
+          <component name="MIDI Driver">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+          </component>
+          <component name="Other LDDs">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+          </component>
+          <component name="Speech Driver">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+          </component>
+          <component name="USB Driver">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+          </component>
+          <component name="Video Driver">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+          </component>
+        </module>  
+        <module name="Emulator">
+          <component name="Emulator">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+          </component>
+        </module>
+        <module name="Kernel Services">
+          <component name="Kernel Architecture 1">
+            <unit unitID="E32_EKA1" name="base_e32" bldFile="beech\generic\BASE\E32" mrp="beech\generic\base\e32\base_e32.mrp"/>
+          </component>
+        </module>
+        <module name="Peripheral Bus Controller">
+          <component name="Peripheral Bus Controllers">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+         </component>
+        </module>
+      </logicalset>
+      
+      <logicalset name="Kernel Architecture 2">
+        <module name="ASSP">
+          <component name="Cotulla XScale">
+            <!-- No unit? -->
+          </component>
+        </module>
+        <module name="Kernel Services">
+          <component name="Kernel Architecture 2">
+            <unit unitID="E32_EKA2" name="base_e32" bldFile="cedar\generic\BASE\E32" mrp="cedar\generic\base\e32\base_e32.mrp"/>
+          </component>
+        </module>
+        <module name="Logical Device Drivers">
+          <component name="Audio Driver">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+          </component>
+          <component name="Ethernet Driver">
+              <!-- common to EKA1 and EKA2 -->
+          </component>
+          <component name="MIDI Driver">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+          </component>
+          <component name="Other LDDs">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+          </component>
+          <component name="Speech Driver">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+          </component>
+          <component name="USB Driver">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+          </component>
+          <component name="Video Driver">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+          </component>
+        </module>  
+        <module name="Variant">
+          <component name="Bootstrap">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+          </component>
+          <component name="Emulator">
+            <unit unitID="WINS_VARIANT_EKA2" name="base_wins" bldFile="cedar\generic\base\wins" mrp="cedar\generic\base\wins\base_wins.mrp"/>
+          </component>
+          <component name="Lubbock Variant">
+            <unit unitID="LUBBOCK_EKA2" name="base_lubbock" bldFile="cedar\generic\BASE\LUBBOCK" mrp="cedar\generic\base\lubbock\base_lubbock.mrp"/>
+          </component>
+          <component name="OMAP H2">
+            <!-- Only in 9.0? -->
+          	<unit unitID="OMAP_H2" name="base_omaph2" bldFile="cedar\generic\base\omap\h2" mrp="cedar\generic\base\omap\h2\base_omaph2.mrp"/>
+          </component>
+          <component name="PDDs">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+          </component>
+          <component name="Peripheral Bus Controllers">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+          </component>
+        </module>
+      </logicalset>
+
+      <module name="Localisation">
+        <component name="Locale Support">
+          <unit unitID="LOCE32_VERSION1" name="base_loce32" bldFile="common\generic\BASE\LOCE32\version1" mrp="common\generic\base\loce32\version1\mmpfiles\base_loce32.mrp"/>
+          <unit unitID="LOCE32_ONGOING" name="base_loce32" bldFile="common\generic\BASE\LOCE32\ongoing" mrp="common\generic\base\loce32\ongoing\mmpfiles\base_loce32.mrp"/>
+        </component>
+      </module>
+
+      <module name="Logical Device Drivers">
+        <component name="Ethernet Driver">
+          <unit unitID="ETHERDRV" name="networking_etherdrv" bldFile="common\generic\NETWORKING\ETHERDRV\GROUP" mrp="common\generic\networking\etherdrv\group\networking_etherdrv.mrp"/>
+        </component>
+      </module>
+      <module name="Screen Driver">
+        <component name="Screen Driver">
+          <unit unitID="SCREENDRIVER" name="graphics_screendriver" bldFile="common\generic\GRAPHICS\ScreenDriver\Group" mrp="common\generic\graphics\screendriver\group\graphics_screendriver.mrp"/>
+        </component>        
+      </module>
+
+    
+    </layer>
+    <layer name="Base Services">
+
+      <module name="Low Level Libraries and Frameworks">
+        <component name="Crypto Library">
+          <unit unitID="CRYPTOGRAPHY" name="security_crypto_weak" bldFile="common\generic\SECURITY\CRYPTO\GROUP" mrp="common\generic\security\crypto\group\security_crypto_weak.mrp"/>
+          <unit unitID="STRONG_CRYPTO" name="security_crypto_strong" bldFile="common\generic\security\crypto\strong" mrp="common\generic\security\crypto\group\security_crypto_strong.mrp"/>
+        </component>
+        <component name="Zip Compression Library">
+          <unit unitID="EZLIB" name="syslibs_ezlib" bldFile="common\generic\SYSLIBS\EZLIB\GROUP" mrp="common\generic\syslibs\ezlib\group\syslibs_ezlib.mrp"/>
+        </component>
+        <component name="Plugin Framework">
+          <unit unitID="ECOM_V1" name="syslibs_ecom" bldFile="common\generic\SYSLIBS\ECOM\version1\GROUP" mrp="common\generic\syslibs\ecom\version1\Group\syslibs_ecom.mrp"/>
+          <unit unitID="ECOM_ONGOING" name="syslibs_ecom" bldFile="common\generic\SYSLIBS\ECOM\ongoing\GROUP" mrp="common\generic\syslibs\ecom\ongoing\Group\syslibs_ecom.mrp"/>
+        </component>
+        <component name="Power, Memory and Disk Management">
+          <unit unitID="PWRCLI" name="syslibs_pwrcli" bldFile="common\generic\SYSLIBS\PWRCLI\GROUP" mrp="common\generic\syslibs\pwrcli\group\syslibs_pwrcli.mrp"/>
+        </component>
+		<component name="Character Encoding and Conversion Framework">
+			<unit unitID="CHARCONV_V1" name="syslibs_charconv" bldFile="common\generic\SYSLIBS\Charconv\Version1\GROUP" mrp="common\generic\syslibs\charconv\version1\group\syslibs_charconv.mrp"/> 
+			<unit unitID="CHARCONV_ONGOING" name="syslibs_charconv" bldFile="common\generic\SYSLIBS\Charconv\Ongoing\GROUP" mrp="common\generic\syslibs\charconv\ongoing\group\syslibs_charconv.mrp"/>  
+		</component>
+        <component name="Character Encoding and Conversion Plugins">
+          <!-- No unit? -->
+        </component>
+        <component name="Application Utilities">
+          <unit unitID="BAFL" name="syslibs_bafl" bldFile="common\generic\SYSLIBS\BAFL\GROUP" mrp="common\generic\syslibs\bafl\group\syslibs_bafl.mrp"/>
+        </component>
+        <component name="Store">
+          <unit unitID="STORE" name="syslibs_store" bldFile="common\generic\SYSLIBS\Store\GROUP" mrp="common\generic\syslibs\store\group\syslibs_store.mrp"/>
+        </component>
+        <component name="DBMS">
+          <unit unitID="DBMS" name="syslibs_dbms" bldFile="common\generic\SYSLIBS\DBMS\GROUP" mrp="common\generic\syslibs\dbms\group\syslibs_dbms.mrp"/>
+        </component>
+        <component name="Media Device Framework">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+        </component>
+        <component name="Media Device Framework Plugins">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+        </component>
+        <component name="Central Repository">
+	  <!-- Only in 9.x -->
+          <unit unitID="CENREP" name="syslibs_cenrep" bldFile="common\generic\syslibs\cenrep\group" mrp="common\generic\syslibs\cenrep\group\syslibs_cenrep.mrp"/>
+        </component>
+        <component name="Central Repository 2">
+          <unit unitID="CENTRALREPOSITORY" name="syslibs_centralrepository" bldFile="common\generic\syslibs\centralrepository\group" mrp="common\generic\syslibs\centralrepository\group\syslibs_centralrepository.mrp"/>
+        </component>        
+        <component name="XML Framework">
+          <unit unitID="XML" name="syslibs_xml" bldFile="common\generic\syslibs\xml\group" mrp="common\generic\syslibs\xml\group\syslibs_xml.mrp"/>
+        </component>
+        <component name="WBXML Parser">
+          <!-- Built by WAPPUSHSUPPORT? -->
+        </component>
+      </module>
+      <module name="User Library and File Server">
+        <component name="User Library">
+          <!-- No unit? -->
+        </component>
+        <component name="File Server">
+          <unit unitID="F32_EKA1" name="base_f32" bldFile="beech\generic\BASE\F32\GROUP" mrp="beech\generic\base\f32\group\base_f32.mrp"/>
+          <unit unitID="F32TEST_EKA1" name="base_f32test" bldFile="beech\generic\BASE\F32TEST\GROUP" mrp="beech\generic\base\f32test\group\base_f32test.mrp"/>
+          <unit unitID="F32_EKA2" name="base_f32" bldFile="cedar\generic\BASE\F32\GROUP" mrp="cedar\generic\base\f32\group\base_f32.mrp"/>
+          <unit unitID="F32TEST_EKA2" name="base_f32test" bldFile="cedar\generic\BASE\F32TEST\GROUP" mrp="cedar\generic\base\f32test\group\base_f32test.mrp"/>
+        </component>
+        <component name="File System Plugins">
+          <!-- No unit? -->
+        </component>
+      </module>
+      <module name="User Side Hardware Abstraction">  
+        <component name="User HAL">
+          <unit unitID="HAL_EKA1" name="base_hal" bldFile="beech\generic\BASE\HAL" mrp="beech\generic\base\hal\base_hal.mrp"/>
+          <unit unitID="HAL_EKA2" name="base_hal" bldFile="cedar\generic\BASE\HAL" mrp="cedar\generic\base\hal\base_hal.mrp"/>
+        </component>        
+      </module>
+      <module name="Text Mode Shell">
+        <component name="Text Window Server">
+          <!-- No unit? -->
+        </component>        
+        <component name="Text Shell">
+          <!-- No unit? -->
+        </component>
+      </module>
+
+    </layer>
+    <layer name="OS Services">
+      <logicalset name="Generic OS Services">
+        <module name="Generic Services">
+          <component name="Event Logger">
+            <unit unitID="LOGENGVERSION1" name="syslibs_logeng" bldFile="common\generic\SYSLIBS\LOGENG\VERSION1\GROUP" mrp="common\generic\syslibs\logeng\version1\group\syslibs_logeng.mrp"/>
+            <unit unitID="LOGENGONGOING" name="syslibs_logeng" bldFile="common\generic\SYSLIBS\LOGENG\ONGOING\GROUP" mrp="common\generic\syslibs\logeng\ongoing\group\syslibs_logeng.mrp"/>
+          </component>        
+          <component name="System Agent">
+	    <!-- Only in 8.x -->
+            <unit unitID="SYSAGENT" name="syslibs_sysagent" bldFile="common\generic\SYSLIBS\SYSAGENT\GROUP" mrp="common\generic\syslibs\sysagent\group\syslibs_sysagent.mrp"/>
+            <unit unitID="SYSAGENT2" name="syslibs_sysagent2" bldFile="common\generic\SYSLIBS\SYSAGENT2\GROUP" mrp="common\generic\syslibs\sysagent2\group\syslibs_sysagent2.mrp"/>
+          </component>
+          <component name="Task Scheduler">
+            <unit unitID="SCHSVR_V2" name="syslibs_schsvr" bldFile="common\generic\SYSLIBS\SCHSVR\version2\GROUP" mrp="common\generic\syslibs\schsvr\version2\group\syslibs_schsvr.mrp"/>
+            <unit unitID="SCHSVR_ONGOING" name="syslibs_schsvr" bldFile="common\generic\SYSLIBS\SCHSVR\ongoing\GROUP" mrp="common\generic\syslibs\schsvr\ongoing\group\syslibs_schsvr.mrp"/>
+          </component>             
+          <component name="File Logger">
+            <unit unitID="FLOGGER" name="comms-infras_flogger" bldFile="common\generic\COMMS-INFRAS\Flogger\GROUP" mrp="common\generic\comms-infras\flogger\group\comms-infras_flogger.mrp"/>
+            <unit unitID="COMMSDEBUGUTILITY" name="comms-infras_commsdebugutility" bldFile="common\generic\comms-infras\commsdebugutility\GROUP" mrp="common\generic\comms-infras\commsdebugutility\group\comms-infras_commsdebugutility.mrp"/>
+          </component>        
+        </module>
+        <module name="Generic Libraries">
+          <component name="C Standard Library">
+            <unit unitID="STDLIB" name="syslibs_stdlib" bldFile="common\generic\SYSLIBS\STDLIB\GROUP" mrp="common\generic\syslibs\stdlib\group\syslibs_stdlib.mrp"/>
+          </component>          
+          <component name="Crypto Token Framework">
+            <unit unitID="CRYPTOTOKENS" name="security_cryptotokens" bldFile="common\generic\SECURITY\CRYPTOTOKENS\GROUP" mrp="common\generic\security\cryptotokens\group\security_cryptotokens.mrp"/>
+          </component>          
+          <component name="Certificate and Key Management">
+            <unit unitID="CERTMAN" name="security_certman" bldFile="common\generic\SECURITY\Certman\GROUP" mrp="common\generic\security\certman\group\security_certman.mrp"/>
+          </component>           
+        </module>
+      </logicalset>
+
+      <logicalset name="Comms Services">
+        <module name="Comms Process and Settings">
+          <component name="Comms Database">
+            <unit unitID="COMMDB_EKA1" name="Comms Database" bldFile="common\generic\COMMS-INFRAS\Commdb\GROUP" mrp="common\generic\comms-infras\commdb\group\comms-infras_commdb_beech.mrp"/>
+            <unit unitID="COMMDB" name="Comms Database" bldFile="common\generic\COMMS-INFRAS\Commdb\GROUP" mrp="common\generic\comms-infras\commdb\group\comms-infras_commdb_cedar.mrp"/>
+            <unit unitID="COMMDB_SHIM" name="Comms Database SHIM" bldFile="common\generic\COMMS-INFRAS\Commdb\GROUP" mrp="common\generic\comms-infras\commdb\group\comms-infras_commdbshim.mrp"/>
+            <unit unitID="COMMDB_COMPAT" name="Comms Database Compatability" bldFile="common\generic\COMMS-INFRAS\COMMDB\COMPAT\7_0" mrp="common\generic\comms-infras\commdb\group\comms-infras_commdb_cedar.mrp"/>
+            <unit unitID="COMMSDAT" name="comms-infras_commsdat" bldFile="common\generic\COMMS-INFRAS\Commsdat\GROUP" mrp="common\generic\comms-infras\commsdat\group\comms-infras_commsdat.mrp"/>            
+          </component>
+          <component name="Comms Framework">
+              <unit unitID="COMMSFW" name="comms-infras_commsfw" bldFile="common\generic\comms-infras\commsfw\GROUP" mrp="common\generic\comms-infras\commsfw\group\comms-infras_commsfw.mrp"/>
+          </component> 
+          <component name="Comms Root Server">
+            <unit unitID="ROOTSERVER" name="comms-infras_rootserver" bldFile="common\generic\comms-infras\rootserver\GROUP" mrp="common\generic\comms-infras\rootserver\group\comms-infras_rootserver.mrp"/>
+          </component> 
+          <component name="MBuf Manager">
+            <unit unitID="MBUFMAN" name="comms-infras_mbufmgr" bldFile="common\generic\comms-infras\mbufmgr\GROUP" mrp="common\generic\comms-infras\mbufmgr\group\comms-infras_mbufmgr.mrp"/>
+          </component>
+        </module>
+
+        <logicalsubset name="Telephony Services">
+          <module name="Telephony Utilities">
+            <component name="Dial">
+              <unit unitID="DIAL" name="telephony_dial" bldFile="common\generic\TELEPHONY\DIAL\GROUP" mrp="common\generic\telephony\dial\group\telephony_dial.mrp"/>
+            </component>          
+            <component name="Phone Book Sync">
+              <unit unitID="PHBKSYNC" name="telephony_phbksync" bldFile="common\generic\TELEPHONY\phbksync\group" mrp="common\generic\telephony\phbksync\group\telephony_phbksync.mrp"/>
+            </component>                  
+          </module>
+          <module name="Telephony Server">
+            <component name="Etel Server and Core">
+	      <!-- Not in 8.0 -->
+              <unit unitID="ETEL" name="telephony_etel" bldFile="common\generic\TELEPHONY\ETEL\GROUP" mrp="common\generic\telephony\etel\group\telephony_etel.mrp"/>
+            </component>      
+            <component name="Etel 3rd Party API">
+              <unit unitID="ETEL3RDPARTY" name="telephony_etel3rdparty" bldFile="common\generic\TELEPHONY\ETel3rdParty\GROUP" mrp="common\generic\telephony\ETel3rdParty\Group\telephony_etel3rdparty.mrp"/>
+            </component>     
+            <component name="Fax Client and Server">
+              <unit unitID="FAX" name="telephony_fax" bldFile="common\generic\TELEPHONY\FAX\GROUP" mrp="common\generic\telephony\FAX\Group\telephony_fax.mrp"/>
+            </component>           
+            <component name="Etel Multi Mode">
+              <unit unitID="ETELMM" name="telephony_etelmm" bldFile="common\generic\TELEPHONY\ETELMM\GROUP" mrp="common\generic\telephony\etelmm\group\telephony_etelmm.mrp"/>
+            </component>           
+            <component name="Etel Packet Data">
+	      <!-- Not in 8.0 -->
+              <unit unitID="ETELPCKT" name="telephony_etelpckt" bldFile="common\generic\TELEPHONY\etelpckt\group" mrp="common\generic\telephony\etelpckt\group\telephony_etelpckt.mrp"/>
+            </component>           
+            <component name="Etel SIM Toolkit">
+              <unit unitID="ETELSAT" name="telephony_etelsat" bldFile="common\generic\TELEPHONY\ETELSAT\GROUP" mrp="common\generic\telephony\etelsat\group\telephony_etelsat.mrp"/>
+            </component>
+            <component name="Etel CDMA">
+	      <!-- Not in 8.0 -->
+              <unit unitID="ETELCDMA" name="telephony_etelcdma" bldFile="common\generic\telephony\etelcdma\group" mrp="common\generic\telephony\etelcdma\Group\telephony_etelcdma.mrp"/>
+            </component>
+          </module>
+          <module name="SMS Protocol Plugins">
+            <unit unitID="SMSSTACK" name="nbprotocols_smsstack" bldFile="common\generic\NBPROTOCOLS\SMSSTACK\GROUP" mrp="common\generic\nbprotocols\smsstack\group\nbprotocols_smsstack.mrp"/>
+
+            <component name="SMS Protocol">
+              <!-- built by SMSSTACK-->
+            </component>
+            <component name="WAP Protocol">
+              <!-- built by SMSSTACK -->
+            </component>
+            <component name="CDMA SMS Protocol">
+	      <!-- Not in 8.0 -->
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+            </component> 
+            <component name="CDMA SMS Plugins">
+	      <!-- Not in 8.0 -->
+            <unit unitID="CDMASMSSTACK" name="nbprotocols_cdmasmsstack" bldFile="common\generic\NBPROTOCOLS\CDMASMSSTACK\GROUP" mrp="common\generic\nbprotocols\cdmasmsstack\group\nbprotocols_cdmasmsstack.mrp"/>
+            </component>
+            <component name="CDMA WAP Protocol">
+	      <!-- Not in 8.0 -->
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+            </component>
+          </module>
+          <module name="SMS Utilities">
+            <component name="GSM Utilities">
+              <!-- built by SMSSTACK-->
+            </component>
+            <component name="SMS Utilities">
+              <!-- built by SMSSTACK -->
+            </component> 
+          </module>
+          <module name="Telephony Server Plugins">
+            <component name="Multi Mode TSY">
+              <unit unitID="MMTSY" name="telephony_mmtsy" bldFile="common\generic\TELEPHONY\mmtsy\group" mrp="common\generic\telephony\mmtsy\group\telephony_mmtsy.mrp"/>
+            </component> 
+            <component name="CDMA TSY">
+	      <!-- Not in 8.0 -->
+              <unit unitID="CDMATSY" name="telephony_cdmatsy" bldFile="common\generic\TELEPHONY\cdmatsy\group" mrp="common\generic\telephony\cdmatsy\group\telephony_cdmatsy.mrp"/>
+            </component> 
+            <component name="SIM TSY">
+              <unit unitID="SIMTSY" name="telephony_simtsy" bldFile="common\generic\TELEPHONY\simtsy\group" mrp="common\generic\telephony\simtsy\group\telephony_simtsy.mrp"/>
+            </component> 
+          </module>
+	  <module name="Telephony Reference Platform">
+            <component name="TRP TSY">
+              <!-- not built -->
+            </component> 
+            <component name="TRP CSY">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+            </component> 
+	  </module>
+        </logicalsubset>
+        <logicalsubset name="Serial Comms and Short Link Services">
+          <module name="Serial Comms Sever">
+            <component name="C32 Serial Server">
+              <unit unitID="C32" name="ser-comms_c32" bldFile="common\generic\SER-COMMS\C32\GROUP" mrp="common\generic\ser-comms\c32\group\ser-comms_c32.mrp"/>
+            </component> 
+            <component name="USB Manager">
+              <unit unitID="USB" name="ser-comms_usb" bldFile="common\generic\SER-COMMS\USB\GROUP" mrp="common\generic\ser-comms\usb\group\ser-comms_usb.mrp"/>
+            </component>  
+          </module>
+          <module name="Short Link">
+            <component name="Bluetooth Manager">
+              <unit unitID="BLUETOOTH_MANAGER" name="bluetooth_manager" bldFile="common\generic\bluetooth\latest\bluetooth\manager" mrp="common\generic\bluetooth\latest\bluetooth\manager\bluetooth_manager.mrp"/>
+              <unit unitID="BLUETOOTH_QUALIFIED_MANAGER" name="bluetooth_manager" bldFile="common\generic\bluetooth\qualified\bluetooth\manager" mrp="common\generic\bluetooth\qualified\bluetooth\manager\bluetooth_manager.mrp"/>
+              <unit unitID="BLUETOOTH_BTEXTNOTIFIERS" name="bluetooth_btextnotifiers" bldFile="common\generic\bluetooth\latest\bluetooth\BTExtNotifiers" mrp="common\generic\bluetooth\latest\bluetooth\BTExtNotifiers\bluetooth_btextnotifiers.mrp"/>
+              <unit unitID="BLUETOOTH_QUALIFIED_BTEXTNOTIFIERS" name="bluetooth_btextnotifiers" bldFile="common\generic\bluetooth\qualified\bluetooth\BTExtNotifiers" mrp="common\generic\bluetooth\qualified\bluetooth\BTExtNotifiers\bluetooth_btextnotifiers.mrp"/>
+              <unit unitID="BLUETOOTH_CONFIG" name="bluetooth_config" bldFile="common\generic\bluetooth\latest\bluetooth\config" mrp="common\generic\bluetooth\latest\bluetooth\config\bluetooth_config.mrp"/>
+              <unit unitID="BLUETOOTH_QUALIFIED_CONFIG" name="bluetooth_config" bldFile="common\generic\bluetooth\qualified\bluetooth\config" mrp="common\generic\bluetooth\qualified\bluetooth\config\bluetooth_config.mrp"/>
+              <unit unitID="BLUETOOTH_GAVDP" name="bluetooth_gavdp" bldFile="common\generic\bluetooth\latest\bluetooth\profiles\gavdp\group" mrp="common\generic\bluetooth\latest\bluetooth\profiles\gavdp\group\bluetooth_gavdp.mrp"/>
+              <unit unitID="BLUETOOTH_PAN" name="bluetooth_pan" bldFile="common\generic\bluetooth\latest\bluetooth\profiles\pan\group" mrp="common\generic\bluetooth\latest\bluetooth\profiles\pan\group\bluetooth_pan.mrp"/>
+              <unit unitID="BLUETOOTH_ROM" name="bluetooth_rom" bldFile="common\generic\bluetooth\latest\bluetooth\rom" mrp="common\generic\bluetooth\latest\bluetooth\rom\bluetooth_rom.mrp"/>
+              <unit unitID="BLUETOOTH_QUALIFIED_ROM" name="bluetooth_rom" bldFile="common\generic\bluetooth\qualified\bluetooth\rom" mrp="common\generic\bluetooth\qualified\bluetooth\rom\bluetooth_rom.mrp"/>
+              <unit unitID="BLUETOOTH_USER" name="bluetooth_user" bldFile="common\generic\bluetooth\latest\bluetooth\user" mrp="common\generic\bluetooth\latest\bluetooth\user\bluetooth_user.mrp"/>
+              <unit unitID="BLUETOOTH_QUALIFIED_USER" name="bluetooth_user" bldFile="common\generic\bluetooth\qualified\bluetooth\user" mrp="common\generic\bluetooth\qualified\bluetooth\user\bluetooth_user.mrp"/>
+            </component>
+            <component name="Bluetooth SDP">
+              <unit unitID="BLUETOOTH_SDP" name="bluetooth_sdp" bldFile="common\generic\bluetooth\latest\bluetooth\sdp" mrp="common\generic\bluetooth\latest\bluetooth\sdp\bluetooth_sdp.mrp"/>
+              <unit unitID="BLUETOOTH_QUALIFIED_SDP" name="bluetooth_sdp" bldFile="common\generic\bluetooth\qualified\bluetooth\sdp" mrp="common\generic\bluetooth\qualified\bluetooth\sdp\bluetooth_sdp.mrp"/>
+              <!-- built by BLUETOOTH -->
+            </component>
+          </module>
+	  <module name="OBEX">
+            <component name="OBEX Protocol">
+              <!-- built by IRDA -->
+            </component>
+	  </module>
+          <module name="Short Link Protocol Plugins">
+            <component name="Bluetooth Stack Protocol">
+              <unit unitID="BLUETOOTH_STACK" name="bluetooth_stack" bldFile="common\generic\bluetooth\latest\bluetooth\stack" mrp="common\generic\bluetooth\latest\bluetooth\stack\bluetooth_stack.mrp"/>
+              <unit unitID="BLUETOOTH_QUALIFIED_STACK" name="bluetooth_stack" bldFile="common\generic\bluetooth\qualified\bluetooth\stack" mrp="common\generic\bluetooth\qualified\bluetooth\stack\bluetooth_stack.mrp"/>
+            </component>
+            <component name="Bluetooth HCI">
+              <unit unitID="BLUETOOTH_HCI" name="bluetooth_hci" bldFile="common\generic\bluetooth\latest\bluetooth\hci" mrp="common\generic\bluetooth\latest\bluetooth\hci\bluetooth_hci.mrp"/>
+              <unit unitID="BLUETOOTH_QUALIFIED_HCI" name="bluetooth_hci" bldFile="common\generic\bluetooth\qualified\bluetooth\hci" mrp="common\generic\bluetooth\qualified\bluetooth\hci\bluetooth_hci.mrp"/>
+              <unit unitID="BLUETOOTH_HCIPROXY" name="bluetooth_hciproxy" bldFile="common\generic\bluetooth\latest\bluetooth\HCIProxy" mrp="common\generic\bluetooth\latest\bluetooth\HCIProxy\bluetooth_hciproxy.mrp"/>
+              <unit unitID="BLUETOOTH_QUALIFIED_HCIPROXY" name="bluetooth_hciproxy" bldFile="common\generic\bluetooth\qualified\bluetooth\HCIProxy" mrp="common\generic\bluetooth\qualified\bluetooth\HCIProxy\bluetooth_hciproxy.mrp"/>
+              <!-- built by BLUETOOTH -->
+            </component>  
+            <component name="IrDA Protocol">
+              <unit unitID="IRDA" name="infra-red_irda" bldFile="common\generic\INFRA-RED\IRDA\GROUP" mrp="common\generic\infra-red\irda\group\infra-red_irda.mrp"/>
+            </component>  
+          </module>
+          <module name="Serial Comms Server Plugins">
+            <component name="Serial Port CSY">
+              <!-- built by C32 -->
+            </component>  
+            <component name="USB CSY">
+              <!-- built by USB -->
+            </component>  
+            <component name="Bluetooth CSY">
+              <unit unitID="BLUETOOTH_BTCOMM" name="bluetooth_btcomm" bldFile="common\generic\bluetooth\latest\bluetooth\btcomm" mrp="common\generic\bluetooth\latest\bluetooth\btcomm\bluetooth_btcomm.mrp"/>
+              <unit unitID="BLUETOOTH_QUALIFIED_BTCOMM" name="bluetooth_btcomm" bldFile="common\generic\bluetooth\qualified\bluetooth\btcomm" mrp="common\generic\bluetooth\qualified\bluetooth\btcomm\bluetooth_btcomm.mrp"/>
+              <!-- built by BLUETOOTH -->
+            </component>  
+            <component name="IrDA CSY">
+              <!-- built by IRDA -->
+            </component> 
+          </module>
+        </logicalsubset>
+        <logicalsubset name="Networking Services">
+          <module name="TCP/IP Security">
+            <component name="TLS">
+              <unit unitID="TLS" name="networking_tls" bldFile="common\generic\networking\tls\group" mrp="common\generic\networking\tls\group\networking_tls.mrp"/>
+            </component>
+            <component name="IPSec">
+              <unit unitID="IPSEC" name="networking_ipsec" bldFile="common\generic\NETWORKING\ipsec\group" mrp="common\generic\networking\ipsec\group\networking_ipsec.mrp"/>
+            </component>
+            <component name="VPN">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+            </component>
+          </module>
+          <module name="TCP/IP Utilities">
+            <component name="DND">
+              <unit unitID="DND" name="networking_dnd" bldFile="common\generic\NETWORKING\dnd\group" mrp="common\generic\networking\dnd\group\networking_dnd.mrp"/>
+            </component>   
+            <component name="DHCP">
+              <unit unitID="DHCP" name="networking_dhcp" bldFile="common\generic\NETWORKING\dhcp\group" mrp="common\generic\networking\dhcp\group\networking_dhcp.mrp"/>
+            </component>   
+          </module>
+          <module name="Sockets Server">
+            <component name="ESock Server">
+              <unit unitID="ESOCK" name="comms-infras_esock" bldFile="common\generic\COMMS-INFRAS\ESOCK\GROUP" mrp="common\generic\comms-infras\esock\group\comms-infras_esock.mrp"/>
+            </component>   
+            <component name="Internet Sockets">
+              <unit unitID="INSOCK" name="networking_insock" bldFile="common\generic\NETWORKING\insock\group" mrp="common\generic\networking\insock\group\networking_insock.mrp"/>
+            </component>
+          </module>
+          <module name="Network Protocol Plugins">
+            <component name="IP Event Notifier">
+              <unit unitID="IPEVENTNOTIFIER" name="networking_ipeventnotifier" bldFile="common\generic\networking\ipeventnotifier\group" mrp="common\generic\networking\ipeventnotifier\group\networking_ipeventnotifier.mrp"/>
+            </component>
+          	<component name="TCP/IPv4/v6 Protocol">
+              <unit unitID="TCPIP6" name="networking_tcpip6" bldFile="common\generic\NETWORKING\TCPIP6\GROUP" mrp="common\generic\networking\tcpip6\group\networking_tcpip6.mrp"/>
+            </component>
+            <component name="IP Hook Examples">
+              <unit unitID="NETWORKING_EXAMPLECODE" name="IP Hook Examples" bldFile="common\generic\NETWORKING\examplecode\GROUP" mrp="common\generic\networking\examplecode\group\networking_examplecode.mrp"/>
+            </component>            
+            <component name="IP Hook">
+              <unit unitID="INHOOK6" name="networking_inhook6" bldFile="common\generic\NETWORKING\inhook6\group" mrp="common\generic\networking\inhook6\group\networking_inhook6.mrp"/>
+            </component>
+            <component name="QOS Framework Protocol">
+              <unit unitID="QOS" name="networking_qos" bldFile="common\generic\NETWORKING\QOS\GROUP" mrp="common\generic\networking\qos\group\networking_qos.mrp"/>
+          <unit unitID="QOSLIB" name="networking_qoslib" bldFile="common\generic\NETWORKING\QOSLIB\GROUP" mrp="common\generic\networking\qoslib\group\networking_qoslib.mrp"/>
+          <unit unitID="PFQOSLIB" name="networking_pfqoslib" bldFile="common\generic\NETWORKING\PFQOSLIB\GROUP" mrp="common\generic\networking\pfqoslib\group\networking_pfqoslib.mrp"/>
+            </component>
+            <component name="Core IPSec Protocol">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+            </component>
+          </module>
+          <module name="Network Plugins">
+            <component name="Network Interface Manager">
+              <unit unitID="NIFMAN" name="comms-infras_nifman" bldFile="common\generic\COMMS-INFRAS\NIFMAN\GROUP" mrp="common\generic\comms-infras\nifman\group\comms-infras_nifman.mrp"/>
+              <unit unitID="DIALOG" name="networking_dialog" bldFile="common\generic\NETWORKING\DIALOG\GROUP" mrp="common\generic\networking\dialog\group\networking_dialog.mrp"/>
+            </component>
+            <component name="Connection AGT">
+              <unit unitID="GENCONN" name="networking_genconn" bldFile="common\generic\NETWORKING\GENCONN\GROUP" mrp="common\generic\networking\genconn\group\networking_genconn.mrp"/>
+              <unit unitID="GENCONN_COMPAT" name="networking_genconn" bldFile="common\generic\NETWORKING\GENCONN\COMPAT\7_0" mrp="common\generic\networking\genconn\group\networking_genconn.mrp"/>
+            </component>
+            <component name="CSD AGT">
+              <unit unitID="CSDAGT" name="networking_csdagt" bldFile="common\generic\NETWORKING\CSDAGT\GROUP" mrp="common\generic\networking\csdagt\group\networking_csdagt.mrp"/>
+            </component>
+            <component name="PSD AGT">
+              <unit unitID="PSDAGT" name="networking_psdagt" bldFile="common\generic\NETWORKING\PSDAGT\GROUP" mrp="common\generic\networking\psdagt\group\networking_psdagt.mrp"/>
+            </component>
+            <!-- Not is in the model but seems to fit here -->
+            <component name="NULL AGT">
+              <unit unitID="NULLAGT" name="networking_nullagt" bldFile="common\generic\NETWORKING\NULLAGT\GROUP" mrp="common\generic\networking\nullagt\group\networking_nullagt.mrp"/>
+            </component>
+            <component name="Network Controller">
+              <unit unitID="NETCON" name="networking_netcon" bldFile="common\generic\NETWORKING\NETCON\GROUP" mrp="common\generic\networking\netcon\group\networking_netcon.mrp"/>
+            </component>
+            <component name="GPRS/UMTS QOS Protocol">
+              <unit unitID="GUQOS" name="networking_guqos" bldFile="common\generic\NETWORKING\GUQOS\GROUP" mrp="common\generic\networking\guqos\group\networking_guqos.mrp"/>
+            </component>
+            <component name="SPUD">
+              <unit unitID="SPUD" name="networking_spud" bldFile="common\generic\NETWORKING\SPUD\GROUP" mrp="common\generic\networking\spud\group\networking_spud.mrp"/>
+            </component>
+          </module>
+          <module name="Link Layer Control">
+            <component name="Ethernet NIF">
+              <unit unitID="ETHER802" name="networking_ether802" bldFile="common\generic\NETWORKING\ETHER802\GROUP" mrp="common\generic\networking\ether802\group\networking_ether802.mrp"/>
+            </component>
+            <component name="Ethernet Packet Driver">
+              <!-- built by ETHER802-->
+            </component>
+            <component name="Ethernet Over IR Packet DRV">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+            </component>
+            <component name="PPP NIF">
+              <unit unitID="PPP" name="networking_ppp" bldFile="common\generic\NETWORKING\PPP\GROUP" mrp="common\generic\networking\ppp\group\networking_ppp.mrp"/>
+            </component>
+            <component name="PPP Compression Plugins">
+              <unit unitID="PREDCOMP" name="networking_predcomp" bldFile="common\generic\NETWORKING\PREDCOMP\GROUP" mrp="common\generic\networking\predcomp\group\networking_predcomp.mrp"/>
+              <unit unitID="MSCOMP" name="networking_mscomp" bldFile="common\generic\NETWORKING\MSComp\GROUP" mrp="common\generic\networking\mscomp\group\networking_mscomp.mrp"/>
+              <unit unitID="STACCOMP" name="networking_staccomp" bldFile="common\generic\NETWORKING\STACCOMP\GROUP" mrp="common\generic\networking\staccomp\group\networking_staccomp.mrp"/>
+            </component>
+            <component name="SLIP NIF">
+              <unit unitID="SLIP" name="networking_slip" bldFile="common\generic\NETWORKING\SLIP\GROUP" mrp="common\generic\networking\slip\group\networking_slip.mrp"/>
+            </component> 
+            <component name="Packet Logger">
+              <unit unitID="PACKETLOGGER" name="networking_packetlogger" bldFile="common\generic\NETWORKING\packetlogger\group" mrp="common\generic\networking\packetlogger\group\networking_packetlogger.mrp"/>
+            </component>
+            <component name="BCA">
+              <unit unitID="BCA" name="networking_bca" bldFile="common\generic\NETWORKING\BasebandAdaptation\bca\group" mrp="common\generic\networking\BasebandAdaptation\bca\group\networking_bca.mrp"/>
+            </component>
+            <component name="c32BCA">
+              <unit unitID="C32BCA" name="networking_c32bca" bldFile="common\generic\NETWORKING\BasebandAdaptation\c32bca\group" mrp="common\generic\networking\BasebandAdaptation\c32bca\group\networking_c32bca.mrp"/>
+            </component>
+            <component name="Raw IP NIF">
+              <unit unitID="RAWIPNIF" name="networking_rawipnif" bldFile="common\generic\NETWORKING\rawipnif\group" mrp="common\generic\networking\rawipnif\group\networking_rawipnif.mrp"/>
+            </component>
+          </module>
+          <module name="WAP Stack">
+            <component name="WAP Message API">
+              <unit unitID="WAPMESSAGE" name="wap-stack_wapmessage" bldFile="common\generic\WAP-STACK\WAPMESSAGE\GROUP" mrp="common\generic\wap-stack\wapmessage\group\wap-stack_wapmessage.mrp"/>
+            </component>
+            <component name="WAP Short Stack">
+              <unit unitID="WAPSTACK" name="WAP Stack Wrapper" bldFile="common\generic\WAP-STACK\WAPSTACK\GROUP" mrp="common\generic\wap-stack\wapstack\group\wap-stack_wapstack.mrp"/>
+            </component>
+          </module>
+	  <module name="QOS Interface">
+            <component name="QOS Interface">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+            </component>
+          </module>
+        </logicalsubset>
+      </logicalset>
+      <logicalset name="Multimedia and Graphics Services">
+        <module name="Multimedia">
+          <component name="Multimedia Framework">
+            <unit unitID="MMF" name="multimedia_mmf" bldFile="common\generic\MULTIMEDIA\MMF\GROUP" mrp="common\generic\Multimedia\MMF\group\multimedia_mmf.mrp"/>
+          </component>        
+          <component name="Multimedia Framework Plugins">
+            <unit unitID="MMF_ASR" name="multimedia_mmf_asr" bldFile="common\generic\MULTIMEDIA\MMF\ASR\GROUP" mrp="common\generic\Multimedia\MMF\ASR\group\multimedia_mmf_asr.mrp"/>
+            <unit unitID="MMF_DEVASR" name="multimedia_mmf_devasr" bldFile="common\generic\MULTIMEDIA\MMF\DEVASR\GROUP" mrp="common\generic\Multimedia\MMF\DevASR\group\multimedia_mmf_devasr.mrp"/>
+            <unit unitID="MMF_DEVVIDEO" name="multimedia_mmf_devvideo" bldFile="common\generic\MULTIMEDIA\MMF\DevVideo\GROUP" mrp="common\generic\Multimedia\MMF\Devvideo\group\multimedia_mmf_devvideo.mrp"/>
+          </component>        
+          <component name="Image Conversion Library">
+            <unit unitID="ICL" name="multimedia_icl" bldFile="common\generic\MULTIMEDIA\ICL\GROUP" mrp="common\generic\Multimedia\ICL\group\multimedia_icl.mrp"/>
+            <unit unitID="ICL_IMAGEDISPLAY" name="multimedia_imagedisplay" bldFile="common\generic\MULTIMEDIA\ICL\imagedisplay\GROUP" mrp="common\generic\Multimedia\ICL\imagedisplay\group\multimedia_imagedisplay.mrp"/>
+          </component>        
+          <component name="Image Conversion Library Plugins">
+            <unit unitID="ICL_GIFSCALER" name="multimedia_gifscaler" bldFile="common\generic\MULTIMEDIA\ICL\GIFSCALER\GROUP" mrp="common\generic\Multimedia\ICL\GifScaler\group\multimedia_gifscaler.mrp"/>
+          </component>       
+          <component name="Camera">
+            <unit unitID="ECAM" name="multimedia_ecam" bldFile="common\generic\MULTIMEDIA\ECAM\GROUP" mrp="common\generic\Multimedia\ECam\Group\multimedia_ecam.mrp"/>
+          </component>   
+          <component name="Broadcast Tuner">
+	        <unit unitID="TUNER" name="multimedia_tuner" bldFile="common\generic\MULTIMEDIA\tuner\GROUP" mrp="common\generic\Multimedia\tuner\Group\multimedia_tuner.mrp"/>
+          </component>
+        </module>
+        <module name="Windowing Framework">
+          <component name="Window Server">
+            <unit unitID="WSERV8.1" name="graphics_wserv" bldFile="common\generic\GRAPHICS\Wserv\Server_v2" mrp="common\generic\graphics\wserv\server_v2\graphics_wserv.mrp"/>
+          </component>   
+        </module>
+        <module name="Open GL ES">
+          <component name="Open GL ES Framework">
+            <unit unitID="OPENGLESDISPLAYPROPERTY" name="graphics_openglesdisplayproperty" bldFile="common\generic\graphics\OpenGLESDisplayProperty\group" mrp="common\generic\graphics\OpenGLESDisplayProperty\group\graphics_openglesdisplayproperty.mrp"/>
+          </component>   
+          <component name="Open GL ES">
+            <unit unitID="OPENGLSHEADERS" name="graphics_openglesheaders" bldFile="common\generic\graphics\OpenGLESHeaders\group" mrp="common\generic\graphics\OpenGLESHeaders\group\graphics_openglesheaders.mrp"/>
+            <unit unitID="OPENGLES8.1" name="graphics_opengles" bldFile="common\generic\graphics\OpenGLES\group\v8.1" mrp="common\generic\graphics\OpenGLES\group\v8.1\graphics_opengles.mrp"/>
+            <unit unitID="OPENGLES9.X" name="graphics_opengles" bldFile="common\generic\graphics\OpenGLES\group\" mrp="common\generic\graphics\OpenGLES\group\graphics_opengles.mrp"/>
+          </component>   
+        </module>
+        <module name="Graphics and Printing Services">
+          <component name="Bit GDI">
+            <unit unitID="BITGDI" name="graphics_bitgdi" bldFile="common\generic\GRAPHICS\Bitgdi\GROUP" mrp="common\generic\graphics\bitgdi\group\graphics_bitgdi.mrp"/>
+          </component>   
+          <component name="Font and Bitmap Server">
+            <unit unitID="FBSERV" name="graphics_fbserv" bldFile="common\generic\GRAPHICS\Fbserv\GROUP" mrp="common\generic\graphics\fbserv\group\graphics_fbserv.mrp"/>
+          </component>   
+          <component name="Font Store">
+            <unit unitID="FNTSTORE" name="graphics_fntstore" bldFile="common\generic\GRAPHICS\Fntstore\GROUP" mrp="common\generic\graphics\fntstore\group\graphics_fntstore.mrp"/>
+          </component>   
+          <component name="Free Type Font Rasterisers">
+            <unit unitID="FREETYPE" name="graphics_freetype" bldFile="common\generic\GRAPHICS\Freetype\GROUP" mrp="common\generic\graphics\freetype\group\graphics_freetype.mrp"/>
+          </component>   
+          <component name="Printing Support">
+            <unit unitID="PDRSTORE" name="graphics_pdrstore" bldFile="common\generic\GRAPHICS\PDRSTORE\GROUP" mrp="common\generic\graphics\pdrstore\group\graphics_pdrstore.mrp"/>
+          </component>   
+          <component name="Printing Drivers">
+            <unit unitID="PRINTDRV" name="graphics_printdrv" bldFile="common\generic\GRAPHICS\PRINTDRV\GROUP" mrp="common\generic\graphics\printdrv\group\graphics_printdrv.mrp"/>
+          </component>
+        </module>
+        <module name="Graphics Device Interface">
+          <component name="GDI">
+            <unit unitID="GDI" name="graphics_gdi" bldFile="common\generic\GRAPHICS\GDI\GROUP" mrp="common\generic\graphics\gdi\group\graphics_gdi.mrp"/>
+          </component>          
+          <component name="Colour Palette">
+            <unit unitID="PALETTE" name="graphics_palette" bldFile="common\generic\GRAPHICS\palette\group" mrp="common\generic\graphics\palette\group\graphics_palette.mrp"/>
+          </component>
+        </module>
+      </logicalset>
+      <logicalset name="Connectivity Services">
+        <module name="Service Providers">
+          <component name="PLP Variant">
+            <unit unitID="PLPVARIANT" name="connectivity_legacy_plp_plpvariant" bldFile="common\generic\connectivity\legacy\plp\PLPVARIANT" mrp="common\generic\connectivity\legacy\PLP\PLPVARIANT\connectivity_legacy_plp_plpvariant.mrp"/>
+          </component>
+          <component name="Remote File Server">
+            <!-- No unit -->
+          </component>
+          <component name="Software Install Server">
+            <!-- No unit -->
+          </component>
+        </module>
+        <module name="Service Framework">
+          <component name="Service Broker">
+            <!-- No unit -->
+          </component>
+        </module>
+        <module name="Device Connection">
+          <component name="M-Router">
+            <unit unitID="MROUTER" name="mRouter" bldFile="cedar\generic\connectivity\mRouter\group" mrp="cedar\generic\connectivity\mRouter\group\mRouter.mrp"/>
+            <unit unitID="MROUTERSECURE" name="mRouterSecure" bldFile="cedar\generic\connectivity\mRouterSecure\group" mrp="cedar\generic\connectivity\mRouterSecure\group\mRouterSecure.mrp"/>
+          </component>
+          <component name="Bearer Abstraction Layer">
+            <unit unitID="MROUTER-PLUGIN" name="mRouter-plugin" bldFile="common\generic\connectivity\BAL\Plugins\mRouter3\group" mrp="common\generic\connectivity\BAL\plugins\mRouter3\group\mrouter3-plugin.mrp"/>
+          </component>
+          <component name="Server Socket">
+            <!-- No unit -->
+          </component>
+        </module>
+      </logicalset>
+    </layer>
+    <layer name="Application Services">
+      <module name="PIM App Services">
+        <component name="Agenda Model">
+          <unit unitID="AGNMODEL" name="app-engines_agnmodel" bldFile="common\generic\APP-ENGINES\AGNMODEL\GROUP" mrp="common\generic\app-engines\agnmodel\group\app-engines_agnmodel.mrp"/>
+          <unit unitID="AGNMODELTEST" name="app-engines_testagendasrv" bldFile="common\generic\app-engines\test_engineering\AgendaServer\TestAgendaSrv" mrp="common\generic\app-engines\test_engineering\AgendaServer\TestAgendaSrv\app-engines_testagendasrv.mrp"/>
+        </component>
+        <component name="Agenda Versit Plugin">
+          <unit unitID="AGNVERSIT" name="app-engines_agnversit" bldFile="common\generic\APP-ENGINES\AgnVersit\GROUP" mrp="common\generic\app-engines\agnversit\group\app-engines_agnversit.mrp"/>
+        </component>
+        <component name="Contacts Model">
+          <unit unitID="CNTMODEL" name="app-engines_cntmodel" bldFile="common\generic\APP-ENGINES\CNTMODEL\GROUP" mrp="common\generic\app-engines\cntmodel\group\app-engines_cntmodel.mrp"/>
+          <unit unitID="CNTMODELTEST" name="app-engines_testcontactsrv" bldFile="common\generic\app-engines\test_engineering\ContactServer\TestContactSrv" mrp="common\generic\app-engines\test_engineering\ContactServer\TestContactSrv\app-engines_testcontactsrv.mrp"/>
+        </component>
+      </module>
+      <module name="PIM App Support">
+        <component name="vCard and vCal">
+          <unit unitID="VERSIT" name="app-services_versit" bldFile="common\generic\APP-SERVICES\VERSIT\GROUP" mrp="common\generic\app-services\versit\group\app-services_versit.mrp"/>
+        </component>
+        <component name="Alarm Server">
+          <unit unitID="ALARMSERVER" name="app-services_alarmserver" bldFile="common\generic\APP-SERVICES\AlarmServer\GROUP" mrp="common\generic\app-services\alarmserver\Group\app-services_alarmserver.mrp"/>
+          <unit unitID="ALARMSERVERTEST" name="app-services_testalarmsrv" bldFile="common\generic\app-services\test_engineering\AlarmServer\TestAlarmSrv" mrp="common\generic\app-services\test_engineering\AlarmServer\TestAlarmSrv\app-services_testalarmsrv.mrp"/>
+        </component>
+        <component name="Chinese Calender Converter">
+          <unit unitID="CALCON" name="app-services_calcon" bldFile="common\generic\APP-SERVICES\Calcon\GROUP" mrp="common\generic\app-services\calcon\group\app-services_calcon.mrp"/>
+        </component>
+        <component name="File Converter Plugins">
+          <unit unitID="CHTMLTOCRTCONVERTER" name="app-services_chtmltocrtconv" bldFile="common\generic\APP-SERVICES\CHTMLTOCRTCONV\GROUP" mrp="common\generic\app-services\chtmltocrtconv\group\app-services_chtmltocrtconv.mrp"/>
+          <unit unitID="CONVERT" name="app-engines_convert" bldFile="common\generic\APP-ENGINES\CONVERT\GROUP" mrp="common\generic\app-engines\convert\group\app-engines_convert.mrp"/>
+          <unit unitID="RICHTEXTTOHTMLCONV" name="app-services_richtexttohtmlconv" bldFile="common\generic\APP-SERVICES\RICHTEXTTOHTMLCONV\GROUP" mrp="common\generic\app-services\richtexttohtmlconv\Group\app-services_richtexttohtmlconv.mrp"/>
+        </component>
+        <component name="Text Handling">
+          <unit unitID="ETEXT" name="app-framework_etext" bldFile="common\generic\APP-FRAMEWORK\ETEXT\GROUP" mrp="common\generic\app-framework\etext\group\app-framework_etext.mrp"/>
+        </component>
+        <component name="Backup Restore Notification">
+	  <!-- 8.1a, 8.1b and 9.0+ -->
+          <unit unitID="BACKUPRESTORENOTIFICATION" name="app-services_BackupRestoreNotification" bldFile="common\generic\APP-SERVICES\BACKUPRESTORENOTIFICATION\GROUP" mrp="common\generic\app-services\backuprestorenotification\Group\app-services_backuprestorenotification.mrp"/>
+        </component>
+        <component name="Time Zone Localization">
+          <unit unitID="TIMEZONELOCALIZATION" name="app-services_timezonelocalization" bldFile="common\generic\APP-SERVICES\TimeZoneLocalization\GROUP" mrp="common\generic\app-services\TimeZoneLocalization\group\app-services_timezonelocalization.mrp"/>
+          <unit unitID="TZLOCALIZATIONRSCFACTORY" name="app-services_tzlocalizationrscfactory" bldFile="common\generic\APP-SERVICES\TzLocalizationRscFactory\GROUP" mrp="common\generic\app-services\TzLocalizationRscFactory\group\app-services_tzlocalizationrscfactory.mrp"/>
+        </component>
+      </module>
+      <module name="Office App Engines">
+        <component name="Data Engine">
+          <unit unitID="DAMODEL" name="app-engines_damodel" bldFile="common\generic\APP-ENGINES\DAMODEL\GROUP" mrp="common\generic\app-engines\damodel\group\app-engines_damodel.mrp"/>
+        </component>
+        <component name="Sheet Engine">
+          <unit unitID="SHENG" name="app-engines_sheng" bldFile="common\generic\APP-ENGINES\SHENG\GROUP" mrp="common\generic\app-engines\sheng\group\app-engines_sheng.mrp"/>
+        </component>
+        <component name="Word Engine">
+          <unit unitID="WPENG" name="app-engines_wpeng" bldFile="common\generic\APP-ENGINES\WPENG\GROUP" mrp="common\generic\app-engines\wpeng\group\app-engines_wpeng.mrp"/>
+        </component>
+      </module>
+      <module name="Other App Services">
+        <component name="Help">
+          <unit unitID="HLPMODEL" name="app-services_hlpmodel" bldFile="common\generic\APP-SERVICES\HLPMODEL\GROUP" mrp="common\generic\app-services\hlpmodel\group\app-services_hlpmodel.mrp"/>
+        </component>
+        <component name="World Server">
+          <unit unitID="WORLDSERVER" name="app-services_worldserver" bldFile="common\generic\APP-SERVICES\WorldServer\GROUP" mrp="common\generic\app-services\worldserver\group\app-services_worldserver.mrp"/>
+          <unit unitID="WORLDSERVERTEST" name="app-services_testworldsrv" bldFile="common\generic\app-services\test_engineering\WorldServer\TestWorldSrv" mrp="common\generic\app-services\test_engineering\WorldServer\TestWorldSrv\app-services_testworldsrv.mrp"/>
+          <unit unitID="EALWL" name="app-services_ealwl" bldFile="beech\generic\APP-SERVICES\EALWL\GROUP" mrp="beech\generic\app-services\ealwl\group\app-services_ealwl.mrp"/>
+        </component>
+        <component name="TZ">
+        	<unit unitID="TZ" name="app-services_tz" bldFile="common\generic\APP-SERVICES\tz\GROUP" mrp="common\generic\app-services\tz\group\app-services_tz.mrp"/> 
+        </component>	
+        <component name="TZCOMPILER">
+        	<unit unitID="TZCOMPILER" name="app-services_tzcompiler" bldFile="common\generic\APP-SERVICES\tzcompiler\GROUP" mrp="common\generic\app-services\tzcompiler\group\app-services_tzcompiler.mrp"/> 
+        </component>	
+        <component name="TZDB">
+        	<unit unitID="TZDB" name="app-services_tzdb" bldFile="common\generic\APP-SERVICES\tzdb\GROUP" mrp="common\generic\app-services\tzdb\group\app-services_tzdb.mrp"/> 
+        </component>	
+        
+      </module>
+      <module name="Messaging App Support">
+        <component name="BIO Message Framework">
+          <unit unitID="MSG_BIOMSG" name="messaging_biomsg" bldFile="common\generic\messaging\biomsg\group" mrp="common\generic\messaging\biomsg\group\messaging_biomsg.mrp"/>
+        </component>
+        <component name="Scheduled Send MTM">
+          <unit unitID="MSG_SCHEDULEDSEND" name="messaging_schedulesend" bldFile="common\generic\messaging\schedulesend\group" mrp="common\generic\messaging\schedulesend\group\messaging_schedulesend.mrp"/>
+        </component>
+        <component name="OBEX MTM">
+          <unit unitID="MSG_OBEXMTM" name="messaging_obex" bldFile="common\generic\messaging\obex\group" mrp="common\generic\messaging\obex\Group\messaging_obex.mrp"/>
+        </component>
+        <component name="SMS MTM">
+          <unit unitID="MSG_SMS8.1" name="messaging_sms_multimode" bldFile="common\generic\messaging\sms\multimode\group" mrp="common\generic\messaging\sms\multimode\group\messaging_sms_multimode.mrp"/>
+        </component>
+        <component name="Message Store">
+          <unit unitID="MSG" name="" bldFile="" mrp=""/>
+          <unit unitID="MSG_FRAMEWORK" name="messaging_framework" bldFile="common\generic\messaging\framework\group" mrp="common\generic\messaging\framework\group\messaging_framework.mrp"/>
+        </component>
+        <component name="POP3 MTM">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+        </component>
+        <component name="IMAP4 MTM">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+        </component>
+        <component name="MMS MTM">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+        </component>
+        <component name="SMTP MTM">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+        </component>
+        <component name="CDMA MTM">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+        </component>
+      </module>
+      <module name="Content Handling">
+        <component name="SMIL Parser">
+          <!-- No Unit -->
+        </component>
+        <component name="MIME Recognition Framework">
+          <unit unitID="EMIME" name="app-framework_emime" bldFile="common\generic\APP-FRAMEWORK\EMIME\GROUP" mrp="common\generic\app-framework\emime\group\app-framework_emime.mrp"/>
+        </component>
+        <component name="WAP Push Handler">
+          <unit unitID="WAPPUSHSUPPORT" name="wap-browser_wappushsupport" bldFile="common\generic\WAP-BROWSER\WAPPUSHSUPPORT\GROUP" mrp="common\generic\wap-browser\WapPushSupport\Group\wap-browser_wappushsupport.mrp"/>
+        </component>
+        <component name="Web Recognisers">
+          <unit unitID="RECOGNISERS" name="application-protocols_recognisers" bldFile="common\generic\APPLICATION-PROTOCOLS\RECOGNISERS\GROUP" mrp="common\generic\application-protocols\recognisers\group\application-protocols_recognisers.mrp"/>
+        </component>
+        <component name="Content Access Framework to support DRM">
+          <unit unitID="CAF" name="security_caf" bldFile="common\generic\SECURITY\CAF\GROUP" mrp="common\generic\security\caf\group\security_caf.mrp"/>
+          <unit unitID="CAF2" name="security_caf" bldFile="common\generic\SECURITY\CAF2\GROUP" mrp="common\generic\security\caf2\group\security_caf.mrp"/>
+        </component>
+        <component name="Reference DRM Agent">
+          <unit unitID="DRMAGENT" name="security_rta" bldFile="common\generic\security\caf2\test\RefTestAgent\group" mrp="common\generic\security\caf2\test\RefTestAgent\group\security_rta.mrp"/>
+        </component>        
+        <component name="MMF Recognisers">
+          <!-- No Unit -->
+        </component>
+        <component name="BIO Messaging Parsers">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+        </component>
+      </module>
+      <module name="Data Sync Services">
+        <component name="Sync Initiation">
+          <!-- No Unit -->
+        </component>
+        <component name="SyncML Framework">
+          <unit unitID="SYNCMLCLIENT" name="syncML" bldFile="common\generic\SyncML\Group" mrp="common\generic\SyncML\group\SyncML.mrp"/>
+        </component>
+        <component name="SyncML Plugins">
+          <unit unitID="SyncMLDataSync" name="syncML" bldFile="common\generic\SyncML\DataSync\Group" mrp=""/>
+        </component>
+      </module>
+      <module name="Provisioning Services">
+        <component name="Device Management Framework">
+          <!-- No Unit -->
+        </component>
+        <component name="Device Management Plugins">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+        </component>
+      </module>
+      <module name="Internet and Web Application Support">
+        <component name="Bookmark Support">
+          <unit unitID="BOOKMARK_SUPPORT" name="application-protocols_bookmarks" bldFile="common\generic\application-protocols\bookmarks\group" mrp="common\generic\application-protocols\bookmarks\group\application-protocols_bookmarks.mrp"/>
+        </component>
+        <component name="WAP Push Framework">
+          <unit unitID="WAPPUSH" name="wap-browser_wappush" bldFile="common\generic\WAP-BROWSER\WAPPUSH\GROUP" mrp="common\generic\wap-browser\wappush\group\wap-browser_wappush.mrp"/>
+        </component>
+        <component name="WAP Push MTM">
+          <!-- No Unit -->
+        </component>
+        <component name="HTTP Transport Framework">
+          <unit unitID="HTTP" name="application-protocols_http" bldFile="common\generic\APPLICATION-PROTOCOLS\HTTP\GROUP" mrp="common\generic\application-protocols\http\group\application-protocols_http.mrp"/>
+        </component>
+        <component name="HTTP Protocol Plugins">
+          <!-- Built by HTTP -->
+        </component>
+        <component name="HTTP Filter Plugins">
+          <!-- Built by HTTP -->
+        </component>
+        <component name="HTTP Utilities Library">
+          <unit unitID="INETPROTUTIL" name="application-protocols_inetprotutil" bldFile="common\generic\APPLICATION-PROTOCOLS\INETPROTUTIL\GROUP" mrp="common\generic\application-protocols\inetprotutil\group\application-protocols_inetprotutil.mrp"/>
+        </component>
+        <component name="FTP Engine">
+          <unit unitID="FTP" name="networking_ftp_e" bldFile="common\generic\NETWORKING\ftp_e\group" mrp="common\generic\networking\ftp_e\group\networking_ftp_e.mrp"/>
+        </component>
+        <component name="Telnet Engine">
+          <unit unitID="TELNET_E" name="networking_telnet_e" bldFile="common\generic\NETWORKING\TELNET_E\GROUP" mrp="common\generic\networking\telnet_e\group\networking_telnet_e.mrp"/>
+        </component>
+      </module>
+      <module name="Application Framework">
+        <component name="Application Installer">
+          <unit unitID="APPINST" name="security_appinst" bldFile="common\generic\SECURITY\APPINST\GROUP" mrp="common\generic\security\appinst\group\security_appinst.mrp"/>
+        </component>
+        <component name="Secure Software Install">
+          <unit unitID="SECURESOFTWAREINSTALL" name="security_swi" bldFile="common\generic\SECURITY\SWI\GROUP" mrp="common\generic\security\swi\group\security_swi.mrp"/>
+        </component>
+        <component name="SIS Installer">
+          <unit unitID="SISINSTALLER" name="security_sisinstaller" bldFile="common\generic\SECURITY\SISInstaller\Group" mrp="common\generic\security\SISInstaller\group\security_sisinstaller.mrp"/>
+        </component>
+        <component name="Java MIDlet Installer">
+          <unit unitID="JAVAMIDLETINSTALLER" name="security_javaMIDletInstaller" bldFile="common\generic\SECURITY\JavaMIDletInstaller\Group" mrp="common\generic\security\JavaMIDletInstaller\group\security_javamidletinstaller.mrp"/>
+        </component>
+        <component name="Application Architecture">
+          <unit unitID="APPARC" name="app-framework_apparc" bldFile="common\generic\APP-FRAMEWORK\APPARC\GROUP" mrp="common\generic\app-framework\apparc\group\app-framework_apparc.mrp"/>
+        </component>
+        <component name="View Server">
+          <unit unitID="VIEWSRV" name="app-framework_viewsrv" bldFile="common\generic\APP-FRAMEWORK\VIEWSRV\GROUP" mrp="common\generic\app-framework\viewsrv\group\app-framework_viewsrv.mrp"/>
+        </component>
+        <component name="File Converter Framework">
+          <unit unitID="CONARC" name="app-framework_conarc" bldFile="common\generic\APP-FRAMEWORK\CONARC\GROUP" mrp="common\generic\app-framework\conarc\group\app-framework_conarc.mrp"/>
+        </component>
+        <component name="Content Handling Framework">
+          <unit unitID="CONTENT_HANDLING" name="Content-Handling" bldFile="common\generic\Content-Handling\GROUP" mrp="common\generic\Content-Handling\Group\content-handling.mrp"/>
+        </component>
+        <component name="UIKON Error Resolver Plugin">
+ 	  <!-- 9.x; In 8.x it's in UI Framework/UI Application Framework/ -->
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+        </component>
+      </module>
+      <module name="Printing Support">
+        <component name="Printing Services">
+          <unit unitID="PRINT" name="app-framework_print" bldFile="common\generic\APP-FRAMEWORK\PRINT\GROUP" mrp="common\generic\app-framework\print\group\app-framework_print.mrp"/>
+        </component>
+      </module>
+      <module name="Multimedia Protocols">
+	<!-- Only in 9.x -->
+      	<component name="RTP">
+	  <!-- Real Time Data Protocol -->
+      	  <unit unitID="RTP" name="mm-protocols_rtp" bldFile="common\generic\mm-protocols\rtp\group" mrp="common\generic\mm-protocols\rtp\group\mm-protocols_rtp.mrp"/>
+      	</component>
+      	<component name="SIP Framework">
+	  <!-- New in 9.1 -->
+	  <!-- Session Initiation Protocol -->
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+      	</component>
+      </module>
+      <module name="Location Based Services">
+        <!-- New in 9.1 -->
+      	<component name="Location Acquisition Framework">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+      	</component>
+      	<component name="Privacy Framework">
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+      	</component>
+      </module>
+    </layer>
+    <layer name="UI Framework">
+      <module name="UI Toolkit">
+        <component name="UI Graphics Utilities">
+          <unit unitID="EGUL" name="app-framework_egul" bldFile="common\generic\APP-FRAMEWORK\EGUL\GROUP" mrp="common\generic\app-framework\egul\group\app-framework_egul.mrp"/>
+          <unit unitID="NUMBERCONVERSION" name="app-framework_numberconversion" bldFile="common\generic\APP-FRAMEWORK\NumberConversion\group" mrp="common\generic\app-framework\numberconversion\group\app-framework_numberconversion.mrp"/>
+        </component>
+        <component name="Text Formatting">
+          <unit unitID="FORM" name="app-framework_form" bldFile="common\generic\APP-FRAMEWORK\FORM\GROUP" mrp="common\generic\app-framework\form\group\app-framework_form.mrp"/>
+        </component>
+        <component name="Grid">
+          <unit unitID="GRID" name="app-framework_grid" bldFile="common\generic\APP-FRAMEWORK\GRID\GROUP" mrp="common\generic\app-framework\grid\group\app-framework_grid.mrp"/>
+        </component>
+        <component name="Clock">
+          <unit unitID="CLOCK" name="app-framework_clock" bldFile="common\generic\APP-FRAMEWORK\CLOCK\GROUP" mrp="common\generic\app-framework\clock\group\app-framework_clock.mrp"/>
+        </component>
+        <component name="BMP Animation">
+          <unit unitID="BMPANIM" name="app-framework_bmpanim" bldFile="common\generic\APP-FRAMEWORK\BmpAnim\GROUP" mrp="common\generic\app-framework\bmpanim\group\app-framework_bmpanim.mrp"/>
+        </component>
+        <component name="Animation">
+          <unit unitID="ANIMATION" name="app-framework_animation" bldFile="common\generic\APP-FRAMEWORK\animation\group" mrp="common\generic\app-framework\animation\group\app-framework_animation.mrp"/>
+        </component>
+      </module>
+      <module name="UI Application Framework">
+        <component name="UIKON">
+          <unit unitID="UIKON" name="app-framework_uikon" bldFile="common\generic\APP-FRAMEWORK\UIKON\GROUP" mrp="common\generic\app-framework\uikon\group\app-framework_uikon.mrp"/>
+        </component>
+        <component name="UI Look and Feel">
+          <unit unitID="UIKLAFGT" name="app-framework_uiklafgt" bldFile="common\generic\APP-FRAMEWORK\UIKLAFGT\GROUP" mrp="common\generic\app-framework\uiklafGT\GROUP\app-framework_uiklafgt.mrp"/>
+        </component>
+        <component name="Control Environment">
+          <unit unitID="CONE" name="app-framework_cone" bldFile="common\generic\APP-FRAMEWORK\CONE\GROUP" mrp="common\generic\app-framework\cone\group\app-framework_cone.mrp"/>
+        </component>
+        <component name="FEP Base">
+          <unit unitID="FEPBASE" name="app-framework_fepbase" bldFile="common\generic\APP-FRAMEWORK\Fepbase\GROUP" mrp="common\generic\app-framework\fepbase\group\app-framework_fepbase.mrp"/>
+        </component>
+        <component name="UIKON Error Resolver Plugin">
+ 	  <!-- 8.x; In 9.x it's in Application Services/Application Framework/ -->
+              <!-- unit unitID="" name="" bldFile="" mrp="" -->
+        </component>
+      </module>
+    </layer>
+    <layer name="UI">
+      <logicalset name="Techview">
+        <module name="Apps">
+          <component name="CONTACUI">
+            <unit unitID="CONTACUI" name="techview_contacui" bldFile="common\techview\APPS\CONTACUI\GROUP" mrp="common\techview\Apps\contacui\group\techview_contacui.mrp"/>
+          </component>
+          <component name="AGENDA">
+            <unit unitID="AGENDA" name="techview_agenda" bldFile="common\techview\APPS\AGENDA\GROUP" mrp="common\techview\Apps\agenda\group\techview_agenda.mrp"/>
+          </component>
+          <component name="AUDIO">
+            <unit unitID="AUDIO" name="techview_audio" bldFile="common\techview\APPS\AUDIO\GROUP" mrp="common\techview\Apps\Audio\group\techview_audio.mrp"/>
+          </component>
+          <component name="CONTACTS">
+            <unit unitID="CONTACTS" name="techview_contacts" bldFile="common\techview\APPS\CONTACTS\GROUP" mrp="common\techview\Apps\contacts\group\techview_contacts.mrp"/>
+          </component>
+          <component name="SYNCMLAPP">
+            <unit unitID="SYNCMLAPP" name="techview_syncmlapp" bldFile="common\techview\APPS\SYNCMLAPP\GROUP" mrp="common\techview\Apps\syncMLApp\group\techview_syncmlapp.mrp"/>
+          </component>
+          <component name="HELP">
+            <unit unitID="HELP" name="techview_help" bldFile="common\techview\APPS\HELP\GROUP" mrp="common\techview\Apps\help\group\techview_help.mrp"/>
+          </component>
+          <component name="TIMEW">
+            <unit unitID="TIMEW" name="techview_timew" bldFile="common\techview\APPS\TIMEW\GROUP" mrp="common\techview\Apps\timew\group\techview_timew.mrp"/>
+          </component>
+          <component name="SECUI">
+            <unit unitID="SECUI" name="techview_secui" bldFile="common\techview\APPS\SECUI\GROUP" mrp="common\techview\Apps\secui\group\techview_secui.mrp"/>
+          </component>
+          <component name="INSTAPP">
+            <unit unitID="INSTAPP" name="techview_instapp" bldFile="common\techview\APPS\APPINSTUI\GROUP" mrp="common\techview\Apps\appinstUI\group\techview_instapp.mrp"/>
+          </component>
+        </module>
+        <module name="CommsUI">
+          <component name="BLUETOOTHUI">
+            <unit unitID="BLUETOOTHUI" name="techview_bluetoothui" bldFile="common\techview\COMMSUI\BLUETOOTHUI\GROUP" mrp="common\techview\CommsUI\bluetoothui\group\techview_bluetoothui.mrp"/>
+          </component>
+          <component name="PHONEUI">
+            <unit unitID="PHONEUI" name="techview_phoneui" bldFile="common\techview\COMMSUI\PHONEUI\GROUP" mrp="common\techview\CommsUI\PhoneUi\group\techview_phoneui.mrp"/>
+          </component>
+          <component name="IAPSTATUSAPP">
+            <unit unitID="IAPSTATUSAPP" name="techview_iapstatusapp" bldFile="common\techview\COMMSUI\IAPSTATUSAPP\GROUP" mrp="common\techview\CommsUI\IAPStatusApp\group\techview_iapstatusapp.mrp"/>
+          </component>
+          <component name="CONNECTUI">
+            <unit unitID="CONNECTUI" name="techview_connectui" bldFile="common\techview\commsui\connectui\group" mrp="common\techview\CommsUI\ConnectUI\group\techview_connectui.mrp"/>
+          </component>
+          <component name="USBUI">
+            <unit unitID="USBUI" name="techview_UsbUi" bldFile="common\techview\CommsUI\UsbUi\group" mrp="common\techview\commsui\UsbUi\group\techview_UsbUi.mrp"/>
+          </component>
+        </module>
+        <module name="MessagingUI">
+          <component name="MESSAGINGUI">
+            <unit unitID="MESSAGINGUI" name="techview_messagingui" bldFile="common\techview\MESSAGINGUI\GROUP" mrp="common\techview\MessagingUi\Group\techview_messagingui.mrp"/>
+          </component>
+        </module>
+        <module name="Misc">
+          <component name="FEPSETUP">
+            <unit unitID="FEPSETUP" name="techview_fepsetup" bldFile="common\techview\MISC\FEPSETUP\GROUP" mrp="common\techview\misc\fepsetup\group\techview_fepsetup.mrp"/>
+          </component>
+          <component name="FEPS">
+            <unit unitID="FEPS" name="techview_feps" bldFile="common\techview\MISC\FEPS\GROUP" mrp="common\techview\misc\feps\group\techview_feps.mrp"/>
+          </component>
+          <component name="CCTLCOLSCHEME">
+            <unit unitID="CCTLCOLSCHEME" name="techview_cctlcolscheme" bldFile="common\techview\MISC\CCTLCOLSCHEME\GROUP" mrp="common\techview\misc\cctlcolscheme\group\techview_cctlcolscheme.mrp"/>
+          </component>
+          <component name="SOUNDSETUP">
+            <unit unitID="SOUNDSETUP" name="techview_soundsetup" bldFile="common\techview\MISC\SOUNDSETUP\GROUP" mrp="common\techview\misc\soundsetup\group\techview_soundsetup.mrp"/>
+          </component>
+          <component name="KEYCLICKREF">
+            <unit unitID="KEYCLICKREF" name="techview_KeyClickRef" bldFile="common\techview\MISC\KEYCLICKREF\GROUP" mrp="common\techview\misc\keyclickref\group\techview_keyclickref.mrp"/>
+          </component>
+        </module>
+        <module name="Networking">
+          <component name="AGENTNOTIFIER">
+            <unit unitID="AGENTNOTIFIER" name="techview_networking_agentnotifier" bldFile="common\techview\networking\agentnotifier\group" mrp="common\techview\networking\agentnotifier\group\techview_networking_agentnotifier.mrp"/>
+          </component>
+          <component name="VPNUI">
+            <unit unitID="VPNUI" name="techview_networking_vpnui" bldFile="common\techview\networking\vpnui\group" mrp="common\techview\networking\vpnui\group\techview_networking_vpnui.mrp"/>
+          </component>
+        </module>
+        <module name="Toolkit">
+          <component name="UIKLAF">
+            <unit unitID="UIKLAF" name="techview_uiklaf" bldFile="common\techview\TOOLKIT\UIKLAF\GROUP" mrp="common\techview\toolkit\uiklaf\GROUP\techview_uiklaf.mrp"/>
+          </component>
+          <component name="EIKSTD">
+            <unit unitID="EIKSTD" name="techview_eikstd" bldFile="common\techview\TOOLKIT\EIKSTD\GROUP" mrp="common\techview\toolkit\eikstd\group\techview_eikstd.mrp"/>
+          </component>
+          <component name="EXTRAS">
+            <unit unitID="EXTRAS" name="techview_extras" bldFile="common\techview\TOOLKIT\EXTRAS\GROUP" mrp="common\techview\toolkit\extras\group\techview_extras.mrp"/>
+          </component>
+          <component name="STATUSPANE">
+            <unit unitID="STATUSPANE" name="techview_statuspane" bldFile="common\techview\TOOLKIT\STATUSPANE\GROUP" mrp="common\techview\toolkit\statuspane\group\techview_statuspane.mrp"/>
+          </component>
+          <component name="SHELL">
+            <unit unitID="SHELL" name="techview_shell" bldFile="common\techview\TOOLKIT\SHELL\GROUP" mrp="common\techview\toolkit\shell\group\techview_shell.mrp"/>
+          </component>
+          <component name="STARTUP">
+            <unit unitID="STARTUP" name="techview_startup" bldFile="common\techview\TOOLKIT\STARTUP\GROUP" mrp="common\techview\toolkit\startup\group\techview_startup.mrp"/>
+          </component>
+          <component name="ROMKIT">
+            <unit unitID="ROMKIT" name="techview_romkit" bldFile="common\techview\TOOLKIT\ROMKIT\GROUP" mrp="common\techview\toolkit\romkit\group\techview_romkit.mrp"/>
+          </component>
+
+        </module>
+      </logicalset>
+    </layer>
+    <layer name="Programming Support">
+      <logicalset name="Java">
+        <logicalsubset name="J2ME">
+          <unit unitID="J2ME8.1a" name="J2ME" bldFile="common\generic\J2ME\GROUP\8.1" mrp="common\generic\j2me\group\8.1\techview_j2me_81a.mrp"/>
+          <unit unitID="J2ME8.1b" name="J2ME" bldFile="common\generic\J2ME\GROUP\8.1" mrp="common\generic\j2me\group\8.1\techview_j2me_81b.mrp"/>
+          <unit unitID="J2ME9.0" name="techview_j2me_90" bldFile="common\generic\J2ME\GROUP\9.0" mrp="common\generic\j2me\group\9.0\techview_j2me_90.mrp"/>
+          <unit unitID="J2ME9.1" name="techview_j2me_91" bldFile="common\generic\J2ME\GROUP\9.1" mrp="common\generic\j2me\group\9.1\techview_j2me_91.mrp"/>
+          <module name="MIDP 2.0 Profile">
+            <component name="MIDP LCDUI">
+              <!-- Built By J2ME -->
+            </component>
+            <component name="MIDP RMS">
+              <!-- Built By J2ME -->
+            </component>
+            <component name="MIDP MIDlet">
+              <unit unitID="MIDP2INSTALLER_8.1A" name="MIDP2INSTALLER" bldFile="common\generic\J2ME\SYSTEMAMS" mrp="common\generic\j2me\group\8.1\generic_j2me_81a.mrp"/>
+              <unit unitID="MIDP2INSTALLER_8.1B" name="MIDP2INSTALLER" bldFile="common\generic\J2ME\SYSTEMAMS" mrp="common\generic\j2me\group\8.1\generic_j2me_81b.mrp"/>
+              <unit unitID="MIDP2INSTALLER_9.0"  name="MIDP2INSTALLER" bldFile="common\generic\J2ME\SYSTEMAMS" mrp="common\generic\j2me\group\9.0\generic_j2me_90.mrp"/>
+              <unit unitID="MIDP2INSTALLER_9.1"  name="MIDP2INSTALLER" bldFile="common\generic\J2ME\SYSTEMAMS" mrp="common\generic\j2me\group\9.1\generic_j2me_91.mrp"/>
+            </component>
+            <component name="MIDP IO">
+              <!-- Built By J2ME -->
+            </component>
+            <component name="MIDP Device Control">
+              <!-- Built By J2ME -->
+            </component>
+            <component name="Security Policy">
+              <!-- Built By J2ME -->
+            </component>
+          </module>
+          <module name="MIDP 2.0 Packages">
+            <component name="MIDP File GCF">
+              <!-- Built By J2ME -->
+            </component>
+            <component name="Mobile Media API 1.1">
+              <!-- Built By J2ME -->
+            </component>
+            <component name="Mobile 3D 1.0">
+              <!-- Built By J2ME -->
+            </component>
+            <component name="JTWI 1.0">
+              <!-- Built By J2ME -->
+            </component>
+            <component name="MIDP PIM">
+              <!-- Built By J2ME -->
+            </component>
+            <component name="Bluetooth 1.0">
+              <!-- Built By J2ME -->
+            </component>
+            <component name="WMA 1.0">
+              <!-- Built By J2ME -->
+            </component>
+          </module>
+          <module name="CLDC 1.1">
+            <component name="Java IO">
+              <!-- Built By J2ME -->
+            </component>
+            <component name="Java Lang">
+              <!-- Built By J2ME -->
+            </component>
+            <component name="Java Utilities">
+              <!-- Built By J2ME -->
+            </component>
+          </module>
+          <module name="Bluetooth and SMS Push">
+            <component name="Bluetooth 1.0">
+              <!-- Built By J2ME -->
+            </component>
+            <component name="WMA 1.0">
+              <!-- Built By J2ME -->
+            </component>
+          </module>
+          <module name="Low Level Plugins">
+            <component name="LCDUI Plugin">
+              <!-- Built By J2ME -->
+            </component>
+            <component name="Runtime Plugin">
+              <!-- Built By J2ME -->
+            </component>
+          </module>
+          <module name="Virtual Machine">
+            <component name="CLDC Hi 1.1">
+              <!-- Built By J2ME -->
+            </component>
+          </module>
+        </logicalsubset>
+      </logicalset>
+    </layer>
+    <layer name="MISC">
+
+      <module name="QOS Support">
+        <!-- Added by Andrew Beck due to Design doc, needs checking and better descriptions -->
+        <component name="UMTSAPI">
+          <unit unitID="UMTSAPI" name="networking_umtsapi" bldFile="common\generic\NETWORKING\UMTSAPI\GROUP" mrp="common\generic\networking\umtsapi\group\networking_umtsapi.mrp"/>
+        </component>
+      </module>
+
+      <module name="MISC">
+          <component name="Assabet BSP">
+            <!-- XML Previous location: Kernel Services & HW Interface/Kernel Arch. 2/Board Support Packages/ -->
+            <unit unitID="ASSABET_EKA2" name="base_assabet" bldFile="cedar\generic\BASE\ASSABET" mrp="cedar\generic\base\assabet\base_assabet.mrp"/>
+          </component>
+          <component name="CONNECTIVITY">
+            <unit unitID="CONNECTIVITY" name="connectivity" bldFile="common\generic\CONNECTIVITY\GROUP" mrp="common\generic\connectivity\group\connectivity.mrp"/>
+          </component>
+          <component name="Broadcast Server">
+            <!-- XML Previous Location: OS Services/Connectivity Services/Connectivity Infrastructure/ -->
+            <unit unitID="BRDCST" name="connectivity_legacy_brdcst" bldFile="common\generic\connectivity\legacy\BRDCST\GROUP" mrp="common\generic\connectivity\legacy\brdcst\group\connectivity_legacy_brdcst.mrp"/>
+          </component>
+          <component name="CDMA BIO Message">
+	    <!-- XML Previous Location: Application Services/Messaging Application Support -->
+            <unit unitID="MSG_BIOWATCHERSCDMA" name="messaging_biomsg_biowatchers_cdma" bldFile="common\generic\messaging\biomsg\biowatcherscdma\group" mrp="common\generic\messaging\biomsg\BioWatchersCdma\group\messaging_biomsg_biowatchers_cdma.mrp"/>
+          </component>
+          <component name="Core Apps Test">
+	    <!-- XML Previous Location: Application Services/Other Application Services/ -->
+            <unit unitID="COREAPPSTEST" name="app-services_coreappstest" bldFile="common\generic\APP-SERVICES\CoreAppsTest\GROUP" mrp="common\generic\app-services\coreappstest\group\app-services_coreappstest.mrp"/> 
+          </component>
+          <component name="DOMAIN">
+            <unit unitID="DOMAIN" name="base_domain" bldFile="cedar\generic\base\domain\group" mrp="cedar\generic\base\domain\group\base_domain.mrp"/>
+          </component>
+          <component name="DUMMY">
+            <unit unitID="DUMMY" name="additional_dummy" bldFile="common\generic\tools\cbr\dummy" mrp="common\generic\tools\cbr\dummy\additional_dummy.mrp"/>
+          </component>
+          <component name="E32TEST">
+            <unit unitID="E32TEST_EKA1" name="base_e32test" bldFile="beech\generic\BASE\E32Test\GROUP" mrp="beech\generic\base\e32test\group\base_e32test.mrp"/>
+            <unit unitID="E32TEST_EKA2" name="base_e32test" bldFile="cedar\generic\BASE\E32Test\GROUP" mrp="cedar\generic\base\e32test\group\base_e32test.mrp"/>
+          </component>
+          <component name="E32UTILS">
+            <unit unitID="E32UTILS_EKA1" name="base_e32utils" bldFile="beech\generic\BASE\E32Utils\GROUP" mrp="beech\generic\base\e32utils\group\base_e32utils.mrp"/>
+            <unit unitID="E32UTILS_EKA2" name="base_e32utils" bldFile="cedar\generic\BASE\E32Utils\GROUP" mrp="cedar\generic\base\e32utils\group\base_e32utils.mrp"/>
+          </component>
+            <component name="EAYsymb Protocol">
+            <!-- XML Previous location: OS Services/Comms Services/Networking Services/Network Protocol Plugins/ -->
+              <!-- No unit or source but listed in Component Summary -->
+            </component>
+          <component name="ELEMENTS">
+            <unit unitID="ELEMENTS" name="comms-infras_elements" bldFile="common\generic\COMMS-INFRAS\elements\group" mrp="common\generic\comms-infras\elements\group\comms-infras_elements.mrp"/>
+          </component>
+          <component name="Email MTM">
+	    <!-- XML Previous Location: Application Services/Messaging Application Support/ -->
+            <unit unitID="MSG_EMAIL" name="messaging_email" bldFile="common\generic\messaging\email\group" mrp="common\generic\messaging\email\group\messaging_email.mrp"/>
+          </component>
+          <component name="ERRORRESGT">
+            <unit unitID="ERRORRESGT" name="app-framework_errorresgt" bldFile="common\generic\APP-FRAMEWORK\ERRORRESGT\GROUP" mrp="common\generic\app-framework\errorresgt\group\app-framework_errorresgt.mrp"/>
+          </component>
+          <component name="Ethernet Services">
+            <!-- XML Previous location: OS Services/Comms Services/Networking Services/Link Layer Control/ -->
+            <!-- Built by ETHER802 -->
+          </component>
+          <component name="ETHER AGT">
+            <!-- XML Previous location: OS Services/Comms Services/Networking Services/Networking Plugins/ -->
+            <!-- No unit or source but listed in Component Summary -->
+          </component>
+          <component name="FILETOKENS">
+            <unit unitID="FILETOKENS" name="security_filetokens" bldFile="common\generic\security\filetokens\group" mrp="common\generic\security\filetokens\group\security_filetokens.mrp"/>
+          </component>
+          <component name="FONTS">
+            <unit unitID="FONTS" name="graphics_fonts" bldFile="common\generic\GRAPHICS\Fonts\GROUP" mrp="common\generic\graphics\fonts\group\graphics_fonts.mrp"/>
+          </component>
+          <component name="GDITOOLS">
+            <unit unitID="GDITOOLS" name="graphics_gditools" bldFile="common\generic\GRAPHICS\GDITools\GROUP" mrp="common\generic\graphics\gditools\group\graphics_gditools.mrp"/>
+          </component>
+          <component name="GDTRAN">
+            <unit unitID="GDTRAN_EKA1" name="GDTRAN" bldFile="common\generic\GRAPHICS\GDTran\GROUP" mrp="common\generic\graphics\gdtran\group\graphics_gdtran_eka1.mrp"/>
+            <unit unitID="GDTRAN" name="GDTRAN" bldFile="common\generic\GRAPHICS\GDTran\GROUP" mrp="common\generic\graphics\gdtran\group\graphics_gdtran.mrp"/>
+          </component>
+          <component name="Generic StrongARM BSP">
+            <!-- XML Previous location: Kernel Services & HW Interface/Kernel Arch. 2/Board Support Packages/ -->
+            <!-- No unit? -->
+          </component>
+          <component name="Image Transform">
+	    <!-- XML Previous Location: OS Services/Multimedia & Graphics Services/Multimedia/ -->
+            <unit unitID="IMAGETRANSFORM" name="multimedia_imagetransform" bldFile="common\generic\MULTIMEDIA\ICL\imagetransform\GROUP" mrp="common\generic\multimedia\icl\imagetransform\group\multimedia_imagetransform.mrp"/>
+          </component>   
+          <component name="INTEGRATIONTEST">
+            <unit unitID="INTEGRATIONTEST" name="networking_integrationtest" bldFile="common\generic\NETWORKING\Integrationtest\group" mrp="common\generic\networking\integrationtest\Group\networking_integrationtest.mrp"/>
+          </component>
+          <component name="Integrator BSP">
+            <!-- XML Previous location: Kernel Services & HW Interface/Kernel Arch. 2/Board Support Packages/ -->
+            <unit unitID="INTEGRATORAP_EKA2" name="base_integrator_integratorap" bldFile="cedar\generic\base\integrator\integratorap" mrp="cedar\generic\base\integrator\integratorap\base_integrator_integratorap.mrp"/>
+            <unit unitID="INTEGRATOR_CORE_EKA2" name="base_integrator_core_8.1b" bldFile="cedar\generic\base\integrator\core" mrp="cedar\generic\base\integrator\core\base_integrator_core_8.1b.mrp"/>
+            <unit unitID="INTEGRATOR_CM920_EKA2" name="base_integrator_core_cm920" bldFile="cedar\generic\base\integrator\core\cm920" mrp="cedar\generic\base\integrator\core\cm920\base_integrator_core_cm920.mrp"/>
+            <unit unitID="INTEGRATOR_CM1136_EKA2" name="base_integrator_core_cm1136" bldFile="cedar\generic\base\integrator\core\cm1136" mrp="cedar\generic\base\integrator\core\cm1136\base_integrator_core_cm1136.mrp"/>
+            <unit unitID="INTEGRATOR_LMXX600_EKA2" name="base_integrator_logic_lmxx600" bldFile="cedar\generic\base\integrator\logic\lmxx600" mrp="cedar\generic\base\integrator\logic\lmxx600\base_integrator_logic_lmxx600.mrp"/>
+            <unit unitID="INTEGRATOR_LMNAND_EKA2" name="base_integrator_logic_lmnand" bldFile="cedar\generic\base\integrator\logic\lmnand" mrp="cedar\generic\base\integrator\logic\lmnand\base_integrator_logic_lmnand.mrp"/>
+          </component>
+          <component name="IPCPR">
+            <!-- XML Previous location: OS Services/Comms Services/Networking Services/Networking Plugins/ -->
+            <unit unitID="IPCPR" name="networking_ipcpr" bldFile="common\generic\NETWORKING\IPCPR\GROUP" mrp="common\generic\networking\ipcpr\group\networking_ipcpr.mrp"/>
+          </component>
+            <component name="MIDP Multimedia">
+	      <!-- XML Previous Location: Java J2ME/MIDP 2.0 Packages/ -->
+              <!-- Built By J2ME -->
+            </component>
+          <component name="Mobile IP">
+            <!-- XML Previous location: OS Services/Comms Services/Networking Services/Networking Plugins/ -->
+            <unit unitID="MOBILEIP" name="networking_mobileip" bldFile="common\generic\networking\mobileip\group" mrp="common\generic\networking\mobileip\group\networking_mobileip.mrp"/>
+          </component>
+          <component name="MSG SENDAS">
+	    <!-- XML Previous Location: Application Services/Messaging Application Support/ -->
+          <unit unitID="MSG_SENDAS" name="messaging_sendas" bldFile="common\generic\messaging\sendas\group" mrp="common\generic\messaging\sendas\group\messaging_sendas.mrp"/>
+          <unit unitID="MSG_SENDAS2" name="messaging_sendas2" bldFile="common\generic\messaging\sendas2\group" mrp="common\generic\messaging\sendas2\group\messaging_sendas2.mrp"/>
+          </component>
+          <component name="MSG TEST">
+	    <!-- XML Previous Location: Application Services/Messaging Application Support/ -->
+            <unit unitID="MSG_TEST" name="messaging_test" bldFile="common\generic\messaging\test\group" mrp="common\generic\messaging\test\group\messaging_test.mrp"/>
+          </component>
+          <component name="MSG URLHANDLER">
+	    <!-- XML Previous Location: Application Services/Messaging Application Support/ -->
+            <unit unitID="MSG_URLHANDLER" name="messaging_urlhandler" bldFile="common\generic\messaging\urlhandler\group" mrp="common\generic\messaging\urlhandler\group\messaging_urlhandler.mrp"/>
+          </component>
+          <component name="NETWORKEMULATOR">
+            <unit unitID="NETWORKEMULATOR" name="testtools_networkemulator" bldFile="common\testtools\networkemulator\buildscripts\group" mrp="common\testtools\NetworkEmulator\BuildScripts\group\testtools_networkemulator.mrp"/>
+          </component>
+          <component name="NETWORKING_GENERAL">
+            <unit unitID="NETWORKING_GENERAL" name="networking_general" bldFile="common\generic\networking\General\group" mrp="common\generic\networking\General\group\networking_general.mrp"/>
+          </component>
+          <component name="PLP">
+            <unit unitID="PLP" name="connectivity_legacy_plp_plpgrp" bldFile="common\generic\connectivity\legacy\plp\PLPGRP" mrp="common\generic\connectivity\legacy\PLP\plpgrp\connectivity_legacy_plp_plpgrp.mrp"/>
+          </component>
+          <component name="SCHEDULER">
+            <unit unitID="SCHEDULER" name="networking_scheduler" bldFile="common\generic\NETWORKING\SCHEDULER\GROUP" mrp="common\generic\networking\scheduler\group\networking_scheduler.mrp"/>
+          </component>
+          <component name="SECURITYCOMMON">
+            <unit unitID="SECURITYCOMMON" name="security_common" bldFile="common\generic\SECURITY\COMMON\GROUP" mrp="common\generic\security\common\group\security_common.mrp"/>
+          </component>
+          <component name="SYSTEMMONITOR">
+            <unit unitID="SYSTEMMONITOR" name="testtools_systemmonitor" bldFile="common\testtools\systemmonitor\group" mrp="common\testtools\SystemMonitor\group\testtools_systemmonitor.mrp"/>
+          </component>
+            <component name="Telephony Watcher">
+            <!-- XML Previous location: OS Services/Comms Services/Telephony Services/Telephony Utilities/ -->
+              <unit unitID="TELEPHONY_WATCHERS" name="telephony_watchers" bldFile="common\generic\telephony\watchers\group" mrp="common\generic\telephony\Watchers\group\telephony_watchers.mrp"/>
+            </component>    
+          <component name="TEMPLATE_EKA1">
+            <unit unitID="VTEMPLATE_EKA1" name="base_vtemplate" bldFile="beech\generic\BASE\VTEMPLATE" mrp="beech\generic\base\vtemplate\base_vtemplate.mrp"/>
+          </component>
+          <component name="TEMPLATE_EKA2">
+            <unit unitID="TEMPLATE_EKA2" name="base_template" bldFile="cedar\generic\base\template\template_variant" mrp="cedar\generic\base\template\base_template.mrp"/>
+          </component>
+          <component name="TLSPROVIDER">
+            <!-- XML Previous location: OS Services/Comms Services/Networking Services/TCP/IP Security/ -->
+            <unit unitID="TLSPROVIDER" name="security_tlsprovider" bldFile="common\generic\security\tlsprovider\group" mrp="common\generic\security\tlsprovider\group\security_tlsprovider.mrp"/>
+          </component>
+          <component name="TUNNEL NIF">
+            <!-- XML Previous location: OS Services/Comms Services/Networking Services/Link Layer Control/ -->
+            <unit unitID="TUNNELNIF" name="networking_tunnelnif" bldFile="common\generic\NETWORKING\tunnelnif\group" mrp="common\generic\networking\tunnelnif\group\networking_tunnelnif.mrp"/>
+          </component> 
+          <component name="UMTSIF">
+            <!-- XML Previous location: OS Services/Comms Services/Networking Services/Link Layer Control/ -->
+            <unit unitID="UMTSIF" name="networking_umtsif" bldFile="common\generic\NETWORKING\UMTSIF\GROUP" mrp="common\generic\networking\umtsif\group\networking_umtsif.mrp"/>
+          </component> 
+          <component name="WAP Base">
+            <!-- XML Previous location: OS Services/Comms Services/Networking Services/WAP Stack/ -->
+            <unit unitID="WAPBASE" name="wap-browser_wapbase" bldFile="common\generic\WAP-BROWSER\WAPBASE\GROUP" mrp="common\generic\wap-browser\wapbase\Group\wap-browser_wapbase.mrp"/>
+          </component>
+          <component name="NWSS WAP Stack">
+            <!-- XML Previous location: OS Services/Comms Services/Networking Services/WAP Stack/ -->
+            <!-- built by WAPSTACK -->
+          </component>
+          <component name="WLDDATABASEKIT">
+            <unit unitID="WLDDATABASEKIT_EKA1" name="WLDDATABASEKIT" bldFile="common\generic\APP-SERVICES\Wlddatabasekit\GROUP" mrp="common\generic\app-services\wlddatabasekit\group\app-services_wlddatabasekit_beech.mrp"/>
+            <unit unitID="WLDDATABASEKIT" name="WLDDATABASEKIT" bldFile="common\generic\APP-SERVICES\Wlddatabasekit\GROUP" mrp="common\generic\app-services\wlddatabasekit\group\app-services_wlddatabasekit_cedar.mrp"/>
+          </component>
+          <component name="WLDTOOLS">
+            <unit unitID="WLDTOOLS" name="app-services_wldtools" bldFile="common\generic\APP-SERVICES\WLDTOOLS\GROUP" mrp="common\generic\app-services\wldtools\group\app-services_wldtools.mrp"/>
+          </component>
+          <component name="XML Parser">
+            <!-- XML Previous location: Base Services/Low Level Libraries & Frameworks/ -->
+            <!-- Might be the XML Parser -->
+            <unit unitID="MSG_GMXML" name="messaging_gmxml" bldFile="common\generic\messaging\gmxml\group" mrp="common\generic\messaging\GMXML\GROUP\messaging_gmxml.mrp"/>
+          </component>
+      </module>
+    </layer>
+  </systemModel>
+  
+  <build>
+    <option name="KEEPGOING" abldOption="-keepgoing" description="Causes make to keepgoing on errors" enable="Y"/>
+    <option name="SAVESPACE" abldOption="-savespace" description="Causes the removal of intermediate files" enable="Y"/>
+    <target name="WINS" abldTarget="wins" description="MSVC Compiler"/>
+    <target name="WINS_REL" abldTarget="wins urel" description="MSVC Compiler"/>
+    <target name="WINS_DEB" abldTarget="wins udeb" description="MSVC Compiler"/>
+    <target name="WINSCW" abldTarget="winscw" description="CodeWarrior Compiler"/>
+    <target name="WINSCW_REL" abldTarget="winscw urel" description="CodeWarrior Compiler"/>
+    <target name="WINSCW_DEB" abldTarget="winscw udeb" description="CodeWarrior Compiler"/>
+    <target name="TOOLS" abldTarget="tools" description="MSVC Compiler for Tools"/>
+    <target name="TOOLS_REL" abldTarget="tools rel" description="MSVC Compiler for Tools Release mode only"/>
+    <target name="WINC" abldTarget="winc" description="MSVC Compiler, emulator tools"/>
+    <target name="WINC_REL" abldTarget="winc urel" description="MSVC Compiler, emulator tools"/>
+    <target name="WINC_DEB" abldTarget="winc udeb" description="MSVC Compiler, emulator tools"/>
+    <target name="ARMV5" abldTarget="armv5" description="RVCT Compiler"/>
+    <target name="ARMV5_REL" abldTarget="armv5 urel" description="RVCT Compiler"/>
+    <target name="ARMV5_DEB" abldTarget="armv5 udeb" description="RVCT Compiler"/>
+    <target name="ARM4" abldTarget="arm4" description="Custom GCC"/>
+    <target name="ARM4_REL" abldTarget="arm4 urel" description="Custom GCC"/>
+    <target name="ARM4_DEB" abldTarget="arm4 udeb" description="Custom GCC"/>
+    <target name="THUMB" abldTarget="thumb" description="Custom GCC"/>
+    <target name="THUMB_REL" abldTarget="thumb urel" description="Custom GCC"/>
+    <target name="THUMB_DEB" abldTarget="thumb udeb" description="Custom GCC"/>
+    <target name="ARMI" abldTarget="armi" description="Custom GCC"/>
+    <target name="ARMI_REL" abldTarget="armi urel" description="Custom GCC"/>
+    <target name="ARMI_DEB" abldTarget="armi udeb" description="Custom GCC"/>
+    <target name="MISA" abldTarget="misa" description="Custom GCC"/>
+    <target name="MISA_REL" abldTarget="misa urel" description="Custom GCC"/>
+    <target name="MISA_DEB" abldTarget="misa udeb" description="Custom GCC"/>
+    <target name="MINT" abldTarget="mint" description="Custom GCC"/>
+    <target name="MINT_REL" abldTarget="mint urel" description="Custom GCC"/>
+    <target name="MINT_DEB" abldTarget="mint udeb" description="Custom GCC"/>
+    <target name="MTEMPLATE" abldTarget="mtemplate" description="Custom GCC"/>
+    <target name="MTEMPLATE_REL" abldTarget="mtemplate urel" description="Custom GCC"/>
+    <target name="MTEMPLATE_DEB" abldTarget="mtemplate udeb" description="Custom GCC"/>
+    <target name="MCOT" abldTarget="mcot" description="Custom GCC"/>
+    <target name="MCOT_REL" abldTarget="mcot urel" description="Custom GCC"/>
+    <target name="MCOT_DEB" abldTarget="mcot udeb" description="Custom GCC"/>
+
+    <!-- Aditional Targets -->
+    <target name="CWTOOLS" abldTarget="cwtools" description="CodeWarrior Compiler for Tools"/> <!-- Not supported -->
+    <target name="CWTOOLS_REL" abldTarget="cwtools rel" description="CodeWarrior Compiler for Tools Release mode only"/> <!-- Not supported -->
+    <target name="ARM4T" abldTarget="arm4t" description="Custom GCC ARM4 Mostly THUMB"/> <!-- Not Supported yet -->
+    <target name="GCCXML" abldTarget="gccxml" description="GCCXML for Code comparision tools"/>
+    <target name="GCCXML_REL" abldTarget="gccxml urel" description="GCCXML for Code comparision tools release mode only"/>
+    
+    <targetList name="default_8.Xa" description="Main Targets for 8.Xa" target="WINS WINSCW ARM4 THUMB ARMI"/>
+    <targetList name="default_8.Xa_rel" description="Main Targets for 8.Xa_rel" target="WINS_REL WINSCW_REL ARM4_REL THUMB_REL ARMI_REL"/>
+    <targetList name="default_8.Xa_deb" description="Main Targets for 8.Xa_deb" target="WINS_DEB WINSCW_DEB ARM4_DEB THUMB_DEB ARMI_DEB"/>
+    <targetList name="arm_assp_8.Xa" description="arm_assp Targets for 8.Xa" target="MISA MINT MTEMPLATE MCOT"/>
+    <targetList name="arm_assp_8.Xa_rel" description="arm_assp Targets for 8.Xa_rel" target="MISA_REL MINT_REL MTEMPLATE_REL MCOT_REL"/>
+    <targetList name="arm_assp_8.Xa_deb" description="arm_assp Targets for 8.Xa_deb" target="MISA_DEB MINT_DEB MTEMPLATE_DEB MCOT_DEB"/>
+    <targetList name="default_8.0b" description="Main Targets for 8.0b" target="WINSCW ARM4"/>
+    <targetList name="default_8.0b_rel" description="Main Targets for 8.0b_rel" target="WINSCW_REL ARM4_REL"/>
+    <targetList name="default_8.0b_deb" description="Main Targets for 8.0b_deb" target="WINSCW_DEB ARM4_DEB"/>
+    <targetList name="default_8.1b" description="Main Targets for 8.1b" target="WINSCW ARM4 ARMV5"/>
+    <targetList name="default_8.1b_rel" description="Main Targets for 8.1b_rel" target="WINSCW_REL ARM4_REL ARMV5_REL"/>
+    <targetList name="default_8.1b_deb" description="Main Targets for 8.1b_deb" target="WINSCW_DEB ARM4_DEB ARMV5_DEB"/>
+    <targetList name="default_9.0" description="Main Targets for 9.0" target="WINSCW ARMV5"/>
+    <targetList name="default_9.0_rel" description="Main Targets for 9.0_rel" target="WINSCW_REL ARMV5_REL"/>
+    <targetList name="default_9.0_deb" description="Main Targets for 9.0_deb" target="WINSCW_DEB ARMV5_DEB"/>
+    <targetList name="tools" description="tools Targets" target="TOOLS"/>
+    <targetList name="tools_rel" description="tools Release Targets" target="TOOLS_REL"/>
+    <targetList name="winc" description="winc tools Targets" target="WINC"/>
+    <targetList name="winc_rel" description="winc_rel tools Targets" target="WINC_REL"/>
+    <targetList name="winc_deb" description="winc_deb tools Targets" target="WINC_DEB"/>
+    <targetList name="gccxml" description="tools Targets" target="GCCXML"/>
+    <targetList name="gccxml_rel" description="tools Release Targets" target="GCCXML_REL"/>
+
+    
+    <unitList name="PLATTEST_LIST" description="PlatTest Code">
+    	<unitRef unit="PLATTEST"/>
+    </unitList>
+    
+    <unitList name="BEECH_GT" description="Beech GT Only">
+      <!-- Source code is entirely Category B (not Symbian's, or not licensed for redistribution by Symbian) -->
+      <unitRef unit="F32_EKA1"/>	<!-- temporary - some is cat B & cannot be distributed -->
+      <unitRef unit="INTEGRATORAP_EKA1"/> <!-- Depends on ARM's proprietary Neon250 PCI VGA card driver -->
+      <unitRef unit="METROTRK_EKA1"/>
+      <unitRef unit="ETHERDRV"/>
+    </unitList>
+
+    <unitList name="CEDAR_GT" description="Cedar GT Only">
+      <!-- Source code is entirely Category B (not Symbian's, or not licensed for redistribution by Symbian) -->
+      <unitRef unit="F32_EKA2"/>	<!-- temporary - some is cat B & cannot be distributed -->
+    </unitList>
+
+    <unitList name="COMMON_GT" description="COMMON GT Only">
+      <!-- Source code is entirely Category B (not Symbian's, or not licensed for redistribution by Symbian) -->
+      <unitRef unit="CRYPTOGRAPHY"/>
+      <unitRef unit="MSCOMP"/>
+      <unitRef unit="STACCOMP"/>
+      <unitRef unit="STATAPI"/>
+      <unitRef unit="STAT_DESKTOP"/>
+      <unitRef unit="STRONG_CRYPTO"/>
+      <unitRef unit="MAKEKEYS"/> <!-- Depends on export-restricted files wincertificategenerator.h -->
+      <unitRef unit="WAPSTACK"/>
+    </unitList>
+    
+    <unitList name="COMMON_GT_8.1_ONLY" description="COMMON GT 8.1 Only">
+      <!-- Source code is entirely Category B (not Symbian's, or not licensed for redistribution by Symbian) -->
+      <unitRef unit="APPINST"/> <!-- Depends on export-restricted files winb64decrypt.h, wincrypto.h -->
+      <unitRef unit="OPENGLES8.1"/> <!-- Contains Category B source code not to be distributed outside Symbian -->
+    </unitList>
+    
+    <unitList name="INTERNAL_COMMON_GT" description="Internal COMMON GT Only">
+      <!-- Most of these have build order dependancies -->
+      <unitRef unit="REDISTRIBUTION"/> <!-- Not in CustKit because it's very large and only contains freely distributable things like java, perl, zip, etc. -->
+      <unitRef unit="DEVELOPERLIBRARY_SOURCE"/> <!-- Documentation - to be built separately if licensee modifications warrant it -->
+      <unitRef unit="RUNPERL"/>
+      <unitRef unit="BUILD-TOOLS"/>
+      <unitRef unit="JAVALIBRARY"/>
+      <unitRef unit="ASSERTION"/>
+      <unitRef unit="DFRDOBJECT"/>
+      <unitRef unit="ENUM"/>
+      <unitRef unit="LOGGER"/>
+      <unitRef unit="FILESYS"/>
+      <unitRef unit="ENVVAR"/>
+      <unitRef unit="INSTALLUTILS"/>
+      <unitRef unit="MNEMONICFIX"/>
+      <unitRef unit="PATHBROWSER"/>
+      <unitRef unit="SHELLEXEC"/>
+      <unitRef unit="SWINGWORKER"/>
+      <unitRef unit="TESTCASERUNNER"/>
+      <unitRef unit="TOOLBARPANEL"/>
+      <unitRef unit="JAVAHELP"/>
+      <unitRef unit="JCOMPS_I18N"/>
+      <unitRef unit="LANGCONFIG"/>
+      <unitRef unit="MBMCODEC"/>
+      <unitRef unit="SDKINFO"/>
+      <unitRef unit="JADE"/>
+      <unitRef unit="APPBUILD"/>
+      <unitRef unit="AIFAPP"/>
+      <unitRef unit="AIFBUILDER"/>
+      <unitRef unit="CSHLPCMP_GUI"/> <!-- Depends on ENVVAR, ASSERTION, PATHBROWSER, SWINGWORKER and many more -->
+      <unitRef unit="SISAR"/>
+      <unitRef unit="SDKPKG-MANAGER"/>
+      <unitRef unit="SDKPKG-TOOLS"/>
+      <unitRef unit="EMULATOR_LAUNCHER"/>
+      <unitRef unit="PKGMGRGUI"/>
+      <unitRef unit="LAUNCH"/>
+      <unitRef unit="TOOLS_STUBS"/>
+      <unitRef unit="CWPLUGINS"/>
+      <unitRef unit="BSPBUILDER"/>
+      <unitRef unit="KITSETUPAPP"/> <!-- Devkit tools, Must be before custkit tools -->
+      <unitRef unit="KIT_BUILDER"/> <!-- Cuskit tools, Must be after DevKit Tools -->
+      <unitRef unit="PRODUCTINSTALLER"/> <!-- Cuskit tools, Must be after DevKit Tools -->
+      <unitRef unit="SMOKETEST"/>
+    </unitList>
+
+    <unitList name="COMMON_BUILD_FIRST_CUSTKIT" description="Components that need to be built first due to dependancies within a layer">
+      <unitRef unit="HTTP"/> <!-- APPINST and CERTMAN depend on HTTPSTRINGCONSTANTS.H that is generates -->
+    </unitList>
+
+    <unitList name="BEECH_CUSTKIT" description="Beech Product custkit">
+      <unitRef unit="ASSABETB_EKA1"/> <!-- Clashes with BRUTUS_EKA1 -->
+      <unitRef unit="BOOTSTRAP_EKA1"/>
+      <unitRef unit="CSHLPCMP_BACKEND"/>
+      <unitRef unit="DEBUGGER_STUB_EKA1"/>
+      <unitRef unit="E32_EKA1"/>
+      <unitRef unit="E32TEST_EKA1"/>
+      <unitRef unit="E32TOOLS_EKA1"/>
+      <unitRef unit="E32UTILS_EKA1"/>
+      <unitRef unit="EALWL"/>
+      <unitRef unit="EDEBUG_EKA1"/>
+      <unitRef unit="F32TEST_EKA1"/>
+      <unitRef unit="HAL_EKA1"/>
+      <unitRef unit="LUBBOCK_EKA1"/>
+      <unitRef unit="ROMKIT_EKA1"/>
+      <unitRef unit="VTEMPLATE_EKA1"/>
+      <unitRef unit="WINTUNNEL"/>
+      <unitRef unit="BRUTUS_EKA1"/> <!-- Clashes with ASSABETB_EKA1 -->
+    </unitList>
+    
+    <unitList name="COMMON_CUSTKIT_8.1A" description="8.1A Common Product custkit">
+      <unitRef unit="COMMDB_EKA1"/>
+      <unitRef unit="MIDP2INSTALLER_8.1A"/>
+      <unitRef unit="NETWORKEMULATOR"/>
+      <unitRef unit="DEVELOPERLIBRARY_8.1A"/>
+      <unitRef unit="GDTRAN_EKA1"/>
+      <unitRef unit="WLDDATABASEKIT_EKA1"/>
+      <unitRef unit="ECOM_V1"/>
+    </unitList>
+
+    <unitList name="CUSTKIT_8.1B_ONLY" description="8.1B CustKit and GT Only">
+      <!-- Source code is entirely Category B (not Symbian's, or not licensed for redistribution by Symbian) -->
+      <unitRef unit="DEVELOPERLIBRARY_8.1B"/>
+      <unitRef unit="COMMDB"/>
+      <unitRef unit="MIDP2INSTALLER_8.1B"/>
+      <unitRef unit="MROUTER"/>
+    </unitList>
+    
+    <unitList name="COMMON_CUSTKIT_8.1B" description="8.1B Common Product custkit">
+      <unitRef unit="CAPTOOLS"/>
+      <unitRef unit="GDTRAN"/>
+      <unitRef unit="WLDDATABASEKIT"/>
+      <unitRef unit="MROUTER-PLUGIN"/>
+      <unitRef unit="ECOM_ONGOING"/>
+    </unitList>
+
+    <unitList name="COMMON_CUSTKIT_8.1_ONLY" description="Versions of Components only in 8.1">
+    	<unitRef unit="LOCE32_VERSION1"/>
+    	<unitRef unit="MAKESIS"/>
+     	<unitRef unit="SCHSVR_V2"/>
+    	<unitRef unit="CHARCONV_V1"/>
+    	<unitRef unit="CAF"/>
+    	<unitRef unit="SYSAGENT"/>
+    	<unitRef unit="LOGENGVERSION1"/>
+    	<unitRef unit="BLUETOOTH_QUALIFIED_MANAGER"/>
+    	<unitRef unit="BLUETOOTH_QUALIFIED_BTEXTNOTIFIERS"/>
+    	<unitRef unit="BLUETOOTH_QUALIFIED_CONFIG"/>
+    	<unitRef unit="BLUETOOTH_QUALIFIED_ROM"/>
+    	<unitRef unit="BLUETOOTH_QUALIFIED_USER"/>
+    	<unitRef unit="BLUETOOTH_QUALIFIED_SDP"/>
+    	<unitRef unit="BLUETOOTH_QUALIFIED_STACK"/>
+    	<unitRef unit="BLUETOOTH_QUALIFIED_HCI"/>
+    	<unitRef unit="BLUETOOTH_QUALIFIED_HCIPROXY"/>
+    	<unitRef unit="BLUETOOTH_QUALIFIED_BTCOMM"/>
+    </unitList>
+    
+    <unitList name="COMMON_CUSTKIT_9.0_ONLY" description="Versions of Components only in 9.0">
+    	<unitRef unit="MIDP2INSTALLER_9.0"/>
+    	<unitRef unit="CAF"/>
+    </unitList>
+    
+    <unitList name="COMMON_CUSTKIT_9.0" description="Versions of Components only in 9.0 Onwards">
+     	<unitRef unit="LOCE32_ONGOING"/>
+     	<unitRef unit="SCHSVR_ONGOING"/>
+     	<unitRef unit="MOBILEIP"/>
+    	<unitRef unit="CHARCONV_ONGOING"/>     	
+   		<unitRef unit="SECURESOFTWAREINSTALL"/>
+   		<unitRef unit="DEVELOPERLIBRARY_9.0"/>
+   		<unitRef unit="IPCPR"/>
+   		<unitRef unit="RTP"/>
+   		<unitRef unit="CDB"/>
+   		<unitRef unit="BURTESTSERVER"/>
+		<unitRef unit="MROUTERSECURE"/>
+		<unitRef unit="SYSAGENT2"/>
+		<unitRef unit="MSG_SENDAS2"/>
+		<unitRef unit="LOGENGONGOING"/>
+    </unitList>
+     
+    <unitList name="COMMON_CUSTKIT_9.1" description="Versions of Components only in 9.1 Onwards">
+	<unitRef unit="ALARMSERVERTEST"/>
+        <unitRef unit="AGNMODELTEST"/>
+    	<unitRef unit="CNTMODELTEST"/>
+	<unitRef unit="CAF2"/>
+	<unitRef unit="COMMDB_SHIM"/>
+	<unitRef unit="DRMAGENT"/>	   	
+    	<unitRef unit="BLUETOOTH_MANAGER"/>
+    	<unitRef unit="BLUETOOTH_BTEXTNOTIFIERS"/>
+    	<unitRef unit="BLUETOOTH_CONFIG"/>
+    	<unitRef unit="BLUETOOTH_GAVDP"/>
+    	<unitRef unit="BLUETOOTH_PAN"/>
+    	<unitRef unit="BLUETOOTH_ROM"/>
+    	<unitRef unit="BLUETOOTH_USER"/>
+    	<unitRef unit="BLUETOOTH_SDP"/>
+    	<unitRef unit="BLUETOOTH_STACK"/>
+    	<unitRef unit="BLUETOOTH_HCI"/>
+    	<unitRef unit="BLUETOOTH_HCIPROXY"/>
+    	<unitRef unit="BLUETOOTH_BTCOMM"/>
+    	<unitRef unit="COMMSDAT"/>
+    	<unitRef unit="MIDP2INSTALLER_9.1"/>
+        <unitRef unit="ICL_IMAGEDISPLAY"/>
+    	<unitRef unit="IPEVENTNOTIFIER"/>
+        <unitRef unit="TUNER"/>
+        <unitRef unit="TIMEZONELOCALIZATION"/>
+    	<unitRef unit="TZ"/>
+    	<unitRef unit="TZCOMPILER"/>
+        <unitRef unit="TZDB"/>
+        <unitRef unit="TZLOCALIZATIONRSCFACTORY"/>
+        <unitRef unit="WORLDSERVERTEST"/>
+        <unitRef unit="ANIMATION"/>
+    </unitList> 
+        
+    <unitList name="COMMON_GT_9.0" description="Common GT 9.0 Onwards">
+    	<unitRef unit="OPENGLES9.X"/>
+    </unitList>
+    
+    <unitList name="CEDAR_CUSTKIT" description="Cedar Product custkit">
+      <unitRef unit="ASSABET_EKA2"/>
+      <unitRef unit="COMMDB_COMPAT"/>
+      <unitRef unit="CONNECTIVITY"/>
+      <unitRef unit="DOMAIN"/>
+      <unitRef unit="E32_EKA2"/>
+      <unitRef unit="E32TEST_EKA2"/>
+      <unitRef unit="E32TOOLS_EKA2"/>
+      <unitRef unit="E32UTILS_EKA2"/>
+      <unitRef unit="F32TEST_EKA2"/>
+      <unitRef unit="GENCONN_COMPAT"/>
+      <unitRef unit="HAL_EKA2"/>
+      <unitRef unit="INTEGRATOR_CM1136_EKA2"/>
+      <unitRef unit="INTEGRATOR_CM920_EKA2"/>
+      <unitRef unit="INTEGRATOR_CORE_EKA2"/>
+      <unitRef unit="INTEGRATORAP_EKA2"/>
+      <unitRef unit="INTEGRATOR_LMXX600_EKA2"/>
+      <unitRef unit="INTEGRATOR_LMNAND_EKA2"/>
+      <unitRef unit="LUBBOCK_EKA2"/>
+      <unitRef unit="OMAP_H2"/>
+      <unitRef unit="REDISTRIBUTION_WINC_EKA2"/>
+      <unitRef unit="ROMKIT_EKA2"/>
+      <unitRef unit="TEMPLATE_EKA2"/>
+      <unitRef unit="WINS_VARIANT_EKA2"/>
+    </unitList>
+    
+    <unitList name="COMMON_CUSTKIT" description="Common Product custkit">
+      <unitRef unit="AGNMODEL"/>
+      <unitRef unit="AGNVERSIT"/>
+      <unitRef unit="ALARMSERVER"/>
+      <unitRef unit="ALP2CSH"/>
+      <unitRef unit="APPARC"/>
+      <unitRef unit="AUTOTEST"/>
+      <unitRef unit="BACKUPRESTORENOTIFICATION"/>
+      <unitRef unit="BAFL"/>
+      <unitRef unit="BCA"/>
+      <unitRef unit="BCCOMPARATOR"/>
+      <unitRef unit="BITGDI"/>
+      <unitRef unit="BMPANIM"/>
+      <unitRef unit="BOOKMARK_SUPPORT"/>
+      <unitRef unit="BRDCST"/>
+      <unitRef unit="BUILDSYSTEMTOOLS"/>
+      <unitRef unit="C32"/>
+      <unitRef unit="C32BCA"/>
+      <unitRef unit="CALCON"/>
+      <unitRef unit="CBRTOOLS"/>
+      <unitRef unit="CDMATSY"/>
+      <unitRef unit="CENREP"/>
+      <unitRef unit="CENTRALREPOSITORY"/>
+      <unitRef unit="CERTMAN"/>
+      <unitRef unit="CHATSCRIPTS"/>
+      <unitRef unit="CHTMLTOCRTCONVERTER"/>
+      <unitRef unit="CINIDATA"/>
+      <unitRef unit="CJPEG"/>
+      <unitRef unit="CLOCK"/>
+      <unitRef unit="CNTMODEL"/>
+      <unitRef unit="COMMSDEBUGUTILITY"/>
+      <unitRef unit="COMMSFW"/>
+      <unitRef unit="CONARC"/>
+      <unitRef unit="CONE"/>
+      <unitRef unit="CONTENT_HANDLING"/>
+      <unitRef unit="CONVERT"/>
+      <unitRef unit="CRYPTOTOKENS"/>
+      <unitRef unit="CSDAGT"/>
+      <unitRef unit="CSHLPCMP_FRONTEND"/>
+      <unitRef unit="DAMODEL"/>
+      <unitRef unit="DBMS"/>
+      <unitRef unit="DEPCHECK"/>
+      <unitRef unit="DEVICESAPI"/>
+      <unitRef unit="DHCP"/>
+      <unitRef unit="DIAL"/>
+      <unitRef unit="DIALOG"/>
+      <unitRef unit="DND"/>
+      <unitRef unit="DUMMY"/>
+      <unitRef unit="ECAM"/>
+      <unitRef unit="EGUL"/>
+      <unitRef unit="ELEMENTS"/>
+      <unitRef unit="EMIME"/>
+      <unitRef unit="ERRORRESGT"/>
+      <unitRef unit="ESOCK"/>
+      <unitRef unit="ETEL"/>
+      <unitRef unit="ETEL3RDPARTY"/>
+      <unitRef unit="ETELMM"/>
+      <unitRef unit="ETELPCKT"/>
+      <unitRef unit="ETELSAT"/>
+      <unitRef unit="ETEXT"/>
+      <unitRef unit="ETHER802"/>
+      <unitRef unit="EVALID"/>
+      <unitRef unit="EZLIB"/>
+      <unitRef unit="FAX"/>
+      <unitRef unit="FBSERV"/>
+      <unitRef unit="FEPBASE"/>
+      <unitRef unit="FILETOKENS"/>
+      <unitRef unit="FLOGGER"/>
+      <unitRef unit="FNTSTORE"/>
+      <unitRef unit="FONTS"/>
+      <unitRef unit="FORM"/>
+      <unitRef unit="FREETYPE"/>
+      <unitRef unit="FTP"/>
+      <unitRef unit="GDI"/>
+      <unitRef unit="GDITOOLS"/>
+      <unitRef unit="GENCONN"/>
+      <unitRef unit="GRID"/>
+      <unitRef unit="GUQOS"/>
+      <unitRef unit="HLPMODEL"/>
+      <unitRef unit="ICL"/>
+      <unitRef unit="ICL_GIFSCALER"/>
+      <unitRef unit="IMAGETRANSFORM"/>
+      <unitRef unit="INETPROTUTIL"/>
+      <unitRef unit="INHOOK6"/>
+      <unitRef unit="INSOCK"/>
+      <unitRef unit="INTEGRATIONTEST"/>
+      <unitRef unit="IPSEC"/>
+      <unitRef unit="IRDA"/>
+      <unitRef unit="JAVAMIDLETINSTALLER"/>
+      <unitRef unit="KITCOMPARATOR"/>
+      <unitRef unit="LEAVESCAN"/>
+      <unitRef unit="MBUFMAN"/>
+      <unitRef unit="MIGRATIONTOOL"/>
+      <unitRef unit="MMF"/>
+      <unitRef unit="MMF_ASR"/>
+      <unitRef unit="MMF_DEVASR"/>
+      <unitRef unit="MMF_DEVVIDEO"/>
+      <unitRef unit="MMTSY"/>
+      <unitRef unit="MSG_BIOMSG"/>
+      <unitRef unit="MSG_EMAIL"/>
+      <unitRef unit="MSG_FRAMEWORK"/>
+      <unitRef unit="MSG_GMXML"/>
+      <unitRef unit="MSG_OBEXMTM"/>
+      <unitRef unit="MSG_SCHEDULEDSEND"/>
+      <unitRef unit="MSG_SENDAS"/>
+      <unitRef unit="MSG_TEST"/>
+      <unitRef unit="MSG_URLHANDLER"/>
+      <unitRef unit="NETCON"/>
+      <unitRef unit="NETWORKING_GENERAL"/>
+      <unitRef unit="NETWORKING_EXAMPLECODE"/>
+      <unitRef unit="NIFMAN"/>
+      <unitRef unit="NULLAGT"/>
+      <unitRef unit="NUMBERCONVERSION"/>
+      <unitRef unit="OPENGLSHEADERS"/>
+      <unitRef unit="OPENGLESDISPLAYPROPERTY"/>
+      <unitRef unit="PACKETLOGGER"/>
+      <unitRef unit="PACKETLOOPBACKCSY"/>
+      <unitRef unit="PALETTE"/>
+      <unitRef unit="PDRSTORE"/>
+      <unitRef unit="PERLLIBRARY"/>
+      <unitRef unit="PFQOSLIB"/>
+      <unitRef unit="PHBKSYNC"/>
+      <unitRef unit="PLP"/>
+      <unitRef unit="PLPVARIANT"/>
+      <unitRef unit="PPP"/>
+      <unitRef unit="PREDCOMP"/>
+      <unitRef unit="PRINT"/>
+      <unitRef unit="PRINTDRV"/>
+      <unitRef unit="PROGRAMCHECKER"/>
+      <unitRef unit="PSDAGT"/>
+      <unitRef unit="PWRCLI"/>
+      <unitRef unit="QOS"/>
+      <unitRef unit="QOSLIB"/>
+      <unitRef unit="RAWIPNIF"/>
+      <unitRef unit="RCOMP"/>
+      <unitRef unit="RECOGNISERS"/>
+      <unitRef unit="RICHTEXTTOHTMLCONV"/>
+      <unitRef unit="ROOTSERVER"/>
+      <unitRef unit="RTF2PTML"/>
+      <unitRef unit="SCHEDULER"/>
+      <unitRef unit="SCREENDRIVER"/>
+      <unitRef unit="SECURITYCOMMON"/>
+      <unitRef unit="SHENG"/>
+      <unitRef unit="SIMTSY"/>
+      <unitRef unit="SISINSTALLER"/>
+      <unitRef unit="SLIP"/>
+      <unitRef unit="SMSSTACK"/>
+      <unitRef unit="SPLASH"/>
+      <unitRef unit="SPUD"/>
+      <unitRef unit="STDLIB"/>
+      <unitRef unit="STORE"/>
+      <unitRef unit="SYNCMLCLIENT"/>
+      <unitRef unit="TCPIP6"/>
+      <unitRef unit="TELNET_E"/>
+      <unitRef unit="TELEPHONY_WATCHERS"/>
+      <unitRef unit="TESTCONFIGFILEPARSER"/>
+      <unitRef unit="TESTDRIVER"/>
+      <unitRef unit="TESTEXECUTE"/>
+      <unitRef unit="TUNNELNIF"/>
+      <unitRef unit="UIKLAFGT"/>
+      <unitRef unit="UIKON"/>
+      <unitRef unit="UMTSAPI"/>
+      <unitRef unit="UMTSIF"/>
+      <unitRef unit="USB"/>
+      <unitRef unit="VERSIT"/>
+      <unitRef unit="VIEWSRV"/>
+      <unitRef unit="WAPBASE"/>
+      <unitRef unit="WAPMESSAGE"/>
+      <unitRef unit="WAPPUSH"/>
+      <unitRef unit="WAPPUSHSUPPORT"/>
+      <unitRef unit="WINSIGNMIDLET"/>
+      <unitRef unit="WLDTOOLS"/>
+      <unitRef unit="WORLDSERVER"/>      
+      <unitRef unit="WPENG"/>
+      <unitRef unit="XML"/>
+      <unitRef unit="CDMASMSSTACK"/>
+      <unitRef unit="ETELCDMA"/>
+      <unitRef unit="MSG_BIOWATCHERSCDMA"/>
+      <unitRef unit="MSG_SMS8.1"/>
+      <unitRef unit="TLS"/>
+      <unitRef unit="TLSPROVIDER"/>
+      <unitRef unit="WSERV8.1"/>
+      <unitRef unit="SYSTEMMONITOR"/>
+    </unitList>
+
+    <unitList name="COMMON_TV_BUILD_FIRST" description="Techview components which produce .RSG files used in later resource files">
+      <unitRef unit="UIKLAF"/>
+      <unitRef unit="EIKSTD"/>
+      <unitRef unit="CONTACUI"/>
+    </unitList>
+    
+    <unitList name="CEDAR_TV" description="Techview components only in cedar">
+      <unitRef unit="CONNECTUI"/>
+    </unitList>
+
+    <unitList name="COMMON_TV" description="Techview components">
+      <unitRef unit="EXTRAS"/>
+      <unitRef unit="STATUSPANE"/>
+      <unitRef unit="SHELL"/>
+      <unitRef unit="STARTUP"/>
+      <unitRef unit="ROMKIT"/>
+      <unitRef unit="AGENDA"/>
+      <unitRef unit="AUDIO"/>
+      <unitRef unit="CONTACTS"/>
+      <unitRef unit="SYNCMLAPP"/>
+      <unitRef unit="HELP"/>
+      <unitRef unit="TIMEW"/>
+      <unitRef unit="SECUI"/>
+      <unitRef unit="MESSAGINGUI"/>
+      <unitRef unit="BLUETOOTHUI"/>
+      <unitRef unit="PHONEUI"/>
+      <unitRef unit="IAPSTATUSAPP"/>
+      <unitRef unit="FEPSETUP"/>
+      <unitRef unit="FEPS"/>
+      <unitRef unit="CCTLCOLSCHEME"/>
+      <unitRef unit="SOUNDSETUP"/>
+      <unitRef unit="KEYCLICKREF"/>
+      <unitRef unit="AGENTNOTIFIER"/>
+      <unitRef unit="VPNUI"/>
+      <unitRef unit="USBUI"/>
+      <unitRef unit="STAT_DEVICE"/>
+      <unitRef unit="RESOURCE_HANDLER"/>
+    </unitList>
+
+    <unitList name="COMMON_TV_8.1_ONLY" description="Techview components only in 8.1">
+      <unitRef unit="INSTAPP"/>
+    </unitList>
+
+    <unitList name="JAVA8.1a" description="Java">
+      <unitRef unit="J2ME8.1a"/>
+    </unitList>
+    
+    <unitList name="JAVA8.1b" description="Java">
+      <unitRef unit="J2ME8.1b"/>
+    </unitList>
+    
+    <unitList name="JAVA9.0" description="Java">
+      <unitRef unit="J2ME9.0"/>
+    </unitList>
+   
+    <unitList name="JAVA9.1" description="Java">
+      <unitRef unit="J2ME9.1"/>
+    </unitList>
+    
+<!-- 8.1 configurations -->
+    <configuration name="Custkit_8.1a" description="8.1a Custkit build">
+      <unitListRef unitList="COMMON_BUILD_FIRST_CUSTKIT"/>
+      <unitListRef unitList="BEECH_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT_8.1A"/>
+      <unitListRef unitList="COMMON_CUSTKIT_8.1_ONLY"/>
+      <task><specialInstructions name="BootStrap1" cwd="beech\generic\tools\e32toolp\group" command="setupprj.bat"/></task>
+      <task><specialInstructions name="BootStrap2" cwd="beech\generic\tools\e32toolp\group" command="bld.bat rel"/></task>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="tools" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="tools" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what build" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -check build" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld makefile" targetList="winc" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="winc" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="winc" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what build" targetList="winc" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -check build" targetList="winc" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_8.Xa arm_assp_8.Xa gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_8.Xa arm_assp_8.Xa gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_8.Xa arm_assp_8.Xa gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_8.Xa arm_assp_8.Xa gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour reasoures" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_8.Xa arm_assp_8.Xa gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what build" targetList="default_8.Xa arm_assp_8.Xa gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_8.Xa arm_assp_8.Xa gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+    </configuration>
+
+    <configuration name="Custkit_8.1b" description="8.1b Custkit build">
+      <unitListRef unitList="COMMON_BUILD_FIRST_CUSTKIT"/>
+      <unitListRef unitList="CEDAR_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT_8.1B"/>
+      <unitListRef unitList="COMMON_CUSTKIT_8.1_ONLY"/>
+      <unitListRef unitList="CUSTKIT_8.1B_ONLY"/>
+      <task><specialInstructions name="BootStrap1" cwd="cedar\generic\tools\e32toolp\group" command="setupprj.bat"/></task>
+      <task><specialInstructions name="BootStrap2" cwd="cedar\generic\tools\e32toolp\group" command="bld.bat rel"/></task>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="tools" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="tools" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what build" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -check build" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_8.1b gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_8.1b gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_8.1b gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_8.1b gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour reasoures" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_8.1b gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what build" targetList="default_8.1b gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_8.1b gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+    </configuration>
+
+    <configuration name="GT_8.1a" description="8.1a GT Build">
+      <unitListRef unitList="COMMON_BUILD_FIRST_CUSTKIT"/>
+      <unitListRef unitList="BEECH_GT"/>
+      <unitListRef unitList="COMMON_GT"/>
+      <unitListRef unitList="COMMON_GT_8.1_ONLY"/>
+      <unitListRef unitList="BEECH_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT_8.1A"/>
+      <unitListRef unitList="COMMON_CUSTKIT_8.1_ONLY"/>
+      <unitListRef unitList="INTERNAL_COMMON_GT"/>
+      <task><specialInstructions name="BootStrap1" cwd="beech\generic\tools\e32toolp\group" command="setupprj.bat"/></task>
+      <task><specialInstructions name="BootStrap2" cwd="beech\generic\tools\e32toolp\group" command="bld.bat rel"/></task>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="tools" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="tools" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what build" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -check build" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld makefile" targetList="winc" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="winc" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="winc" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="winc" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -check build" targetList="winc" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_8.Xa arm_assp_8.Xa gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_8.Xa arm_assp_8.Xa gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_8.Xa arm_assp_8.Xa gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_8.Xa arm_assp_8.Xa gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour reasoures" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_8.Xa arm_assp_8.Xa gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="default_8.Xa_rel arm_assp_8.Xa_rel gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld help" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_8.Xa arm_assp_8.Xa gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+    </configuration>
+
+    <configuration name="GT_8.1b" description="8.1b GT build">
+      <unitListRef unitList="COMMON_BUILD_FIRST_CUSTKIT"/>
+      <unitListRef unitList="CEDAR_GT"/>
+      <unitListRef unitList="COMMON_GT"/>
+      <unitListRef unitList="COMMON_GT_8.1_ONLY"/>
+      <unitListRef unitList="CEDAR_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT_8.1B"/>
+      <unitListRef unitList="COMMON_CUSTKIT_8.1_ONLY"/>
+      <unitListRef unitList="INTERNAL_COMMON_GT"/>
+      <unitListRef unitList="CUSTKIT_8.1B_ONLY"/>
+      <task><specialInstructions name="BootStrap1" cwd="cedar\generic\tools\e32toolp\group" command="setupprj.bat"/></task>
+      <task><specialInstructions name="BootStrap2" cwd="cedar\generic\tools\e32toolp\group" command="bld.bat rel"/></task>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="tools" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="tools" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -check build" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_8.1b gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_8.1b gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_8.1b gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_8.1b gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour reasoures" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_8.1b gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="default_8.1b_rel gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld help" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_8.1b gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+    </configuration>
+    
+    <configuration name="TV_8.1a" description="8.1a Techview Build">
+      <unitListRef unitList="COMMON_TV_BUILD_FIRST"/>
+      <unitListRef unitList="COMMON_TV"/>
+      <unitListRef unitList="COMMON_TV_8.1_ONLY"/>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_8.Xa gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_8.Xa gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_8.Xa gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_8.Xa gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour reasoures" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_8.Xa gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="default_8.Xa_rel gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld help" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_8.Xa gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Copy Plattest Configuration" cwd="common\generic\plattest\group" command="SetupBuildConfig.bat 8.1a"/></task>
+      <task><specialInstructions name="Copy Plattest Configuration" cwd="common\generic\plattest\group" command="copy configuration.cfg %CleanSourceDir%\common\generic\plattest\group\"/></task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="bldmake bldfiles" unitParallel="Y"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld export" unitParallel="Y"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld export -what" unitParallel="N"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld export -check" unitParallel="N"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld test build" targetList="default_8.Xa" unitParallel="N" targetParallel="N"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld test build -what" targetList="default_8.Xa" unitParallel="N" targetParallel="N"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld test -check build" targetList="default_8.Xa" unitParallel="N" targetParallel="N"/>
+      </task>
+    </configuration>
+
+    <configuration name="TV_8.1b" description="8.1b Techview build">
+      <unitListRef unitList="COMMON_TV_BUILD_FIRST"/>
+      <unitListRef unitList="COMMON_TV"/>
+      <unitListRef unitList="COMMON_TV_8.1_ONLY"/>
+      <unitListRef unitList="CEDAR_TV"/>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_8.1b gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_8.1b gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_8.1b gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_8.1b gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour reasoures" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_8.1b gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="default_8.1b_rel gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld help" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_8.1b gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Copy Plattest Configuration" cwd="common\generic\plattest\group" command="SetupBuildConfig.bat 8.1b"/></task>
+      <task><specialInstructions name="Copy Plattest Configuration" cwd="common\generic\plattest\group" command="copy configuration.cfg %CleanSourceDir%\common\generic\plattest\group\"/></task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="bldmake bldfiles" unitParallel="Y"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld export" unitParallel="Y"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld export -what" unitParallel="N"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld export -check" unitParallel="N"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld test build" targetList="default_8.1b" unitParallel="N" targetParallel="N"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld test build -what" targetList="default_8.1b" unitParallel="N" targetParallel="N"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld test -check build" targetList="default_8.1b" unitParallel="N" targetParallel="N"/>
+      </task>
+    </configuration>
+
+    <configuration name="JAVA_8.1a" description="8.1a JAVA Build">
+      <unitListRef unitList="JAVA8.1a"/>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_8.Xa gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_8.Xa gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_8.Xa gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_8.Xa gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour reasoures" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_8.Xa gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="default_8.Xa_rel gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld help" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_8.Xa gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+    </configuration>
+
+    <configuration name="JAVA_8.1b" description="8.1b JAVA build">
+      <unitListRef unitList="JAVA8.1b"/>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_8.1b gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_8.1b gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_8.1b gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_8.1b gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour reasoures" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_8.1b gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="default_8.1b_rel gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld help" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_8.1b gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+    </configuration>
+
+<!-- 9.0 configuration -->
+
+    <configuration name="Custkit_9.0" description="9.0 Custkit build">
+      <unitListRef unitList="COMMON_BUILD_FIRST_CUSTKIT"/>
+      <unitListRef unitList="CEDAR_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT_8.1B"/>
+      <unitListRef unitList="COMMON_CUSTKIT_9.0"/>
+      <unitListRef unitList="COMMON_CUSTKIT_9.0_ONLY"/>
+      <task><specialInstructions name="BootStrap1" cwd="cedar\generic\tools\e32toolp\group" command="setupprj.bat secure"/></task>
+      <task><specialInstructions name="BootStrap2" cwd="cedar\generic\tools\e32toolp\group" command="bld.bat rel"/></task>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="tools" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="tools" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what build" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -check build" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_9.0 gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_9.0 gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour resources" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what build" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+    </configuration>
+
+    <configuration name="GT_9.0" description="9.0 GT build">
+      <unitListRef unitList="COMMON_BUILD_FIRST_CUSTKIT"/>
+      <unitListRef unitList="CEDAR_GT"/>
+      <unitListRef unitList="COMMON_GT"/>
+      <unitListRef unitList="COMMON_GT_9.0"/>
+      <unitListRef unitList="CEDAR_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT_8.1B"/>
+      <unitListRef unitList="COMMON_CUSTKIT_9.0"/>
+      <unitListRef unitList="COMMON_CUSTKIT_9.0_ONLY"/>
+      <unitListRef unitList="INTERNAL_COMMON_GT"/>
+      <task><specialInstructions name="BootStrap1" cwd="cedar\generic\tools\e32toolp\group" command="setupprj.bat secure"/></task>
+      <task><specialInstructions name="BootStrap2" cwd="cedar\generic\tools\e32toolp\group" command="bld.bat rel"/></task>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="tools" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="tools" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -check build" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_9.0 gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_9.0 gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour reasoures" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="default_9.0_rel gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld help" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+    </configuration>
+    
+    <configuration name="TV_9.0" description="9.0 Techview build">
+      <unitListRef unitList="COMMON_TV_BUILD_FIRST"/>
+      <unitListRef unitList="COMMON_TV"/>
+      <unitListRef unitList="CEDAR_TV"/>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_9.0 gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_9.0 gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour reasoures" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="default_9.0_rel gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld help" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+    </configuration>
+
+    <configuration name="JAVA_9.0" description="9.0 JAVA build">
+      <unitListRef unitList="JAVA9.0"/>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_9.0 gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_9.0 gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour reasoures" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="default_9.0_rel gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld help" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+    </configuration>
+
+<!-- 9.1 configuration -->
+
+    <configuration name="Custkit_9.1" description="9.1 Custkit build">
+      <unitListRef unitList="COMMON_BUILD_FIRST_CUSTKIT"/>
+      <unitListRef unitList="CEDAR_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT_8.1B"/>
+      <unitListRef unitList="COMMON_CUSTKIT_9.0"/>
+      <unitListRef unitList="COMMON_CUSTKIT_9.1"/>
+      <task><specialInstructions name="BootStrap1" cwd="cedar\generic\tools\e32toolp\group" command="setupprj.bat secure"/></task>
+      <task><specialInstructions name="BootStrap2" cwd="cedar\generic\tools\e32toolp\group" command="bld.bat rel"/></task>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="tools" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="tools" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what build" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -check build" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_9.0 gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_9.0 gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour resources" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what build" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+    </configuration>
+
+    <configuration name="GT_9.1" description="9.1 GT build">
+      <unitListRef unitList="COMMON_BUILD_FIRST_CUSTKIT"/>
+      <unitListRef unitList="CEDAR_GT"/>
+      <unitListRef unitList="COMMON_GT"/>
+      <unitListRef unitList="COMMON_GT_9.0"/>
+      <unitListRef unitList="CEDAR_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT_8.1B"/>
+      <unitListRef unitList="COMMON_CUSTKIT_9.0"/>
+      <unitListRef unitList="COMMON_CUSTKIT_9.1"/>      
+      <unitListRef unitList="INTERNAL_COMMON_GT"/>      
+      <task><specialInstructions name="BootStrap1" cwd="cedar\generic\tools\e32toolp\group" command="setupprj.bat secure"/></task>
+      <task><specialInstructions name="BootStrap2" cwd="cedar\generic\tools\e32toolp\group" command="bld.bat rel"/></task>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="tools" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="tools" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -check build" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_9.0 gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_9.0 gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour reasoures" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="default_9.0_rel gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld help" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+    </configuration>
+    
+    <configuration name="TV_9.1" description="9.1 Techview build">
+      <unitListRef unitList="COMMON_TV_BUILD_FIRST"/>
+      <unitListRef unitList="COMMON_TV"/>
+      <unitListRef unitList="CEDAR_TV"/>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_9.0 gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_9.0 gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour reasoures" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="default_9.0_rel gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld help" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Copy Plattest Configuration" cwd="common\generic\plattest\group" command="SetupBuildConfig.bat 9.1"/></task>
+      <task><specialInstructions name="Copy Plattest Configuration" cwd="common\generic\plattest\group" command="copy configuration.cfg %CleanSourceDir%\common\generic\plattest\group\"/></task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="bldmake bldfiles" unitParallel="Y"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld export" unitParallel="Y"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld export -what" unitParallel="N"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld export -check" unitParallel="N"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld test build" targetList="default_9.0" unitParallel="N" targetParallel="N"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld test build -what" targetList="default_9.0" unitParallel="N" targetParallel="N"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld test -check build" targetList="default_9.0" unitParallel="N" targetParallel="N"/>
+      </task>
+    </configuration>
+
+    <configuration name="JAVA_9.1" description="9.1 JAVA build">
+      <unitListRef unitList="JAVA9.1"/>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_9.0 gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_9.0 gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour reasoures" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="default_9.0_rel gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld help" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+    </configuration>
+    
+    
+    <!-- Bravo configuration -->
+
+    <configuration name="Custkit_Bravo" description="Bravo Custkit build">
+      <unitListRef unitList="COMMON_BUILD_FIRST_CUSTKIT"/>
+      <unitListRef unitList="CEDAR_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT_8.1B"/>
+      <unitListRef unitList="COMMON_CUSTKIT_9.0"/>
+      <unitListRef unitList="COMMON_CUSTKIT_9.1"/>
+      <task><specialInstructions name="BootStrap1" cwd="cedar\generic\tools\e32toolp\group" command="setupprj.bat secure"/></task>
+      <task><specialInstructions name="BootStrap2" cwd="cedar\generic\tools\e32toolp\group" command="bld.bat rel"/></task>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="tools" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="tools" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what build" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -check build" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_9.0 gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_9.0 gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour resources" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what build" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+    </configuration>
+
+    <configuration name="GT_Bravo" description="Bravo GT build">
+      <unitListRef unitList="COMMON_BUILD_FIRST_CUSTKIT"/>
+      <unitListRef unitList="CEDAR_GT"/>
+      <unitListRef unitList="COMMON_GT"/>
+      <unitListRef unitList="COMMON_GT_9.0"/>
+      <unitListRef unitList="CEDAR_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT"/>
+      <unitListRef unitList="COMMON_CUSTKIT_8.1B"/>
+      <unitListRef unitList="COMMON_CUSTKIT_9.0"/>
+      <unitListRef unitList="COMMON_CUSTKIT_9.1"/>      
+      <unitListRef unitList="INTERNAL_COMMON_GT"/>      
+      <task><specialInstructions name="BootStrap1" cwd="cedar\generic\tools\e32toolp\group" command="setupprj.bat secure"/></task>
+      <task><specialInstructions name="BootStrap2" cwd="cedar\generic\tools\e32toolp\group" command="bld.bat rel"/></task>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="tools" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="tools" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what build" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -check build" targetList="tools_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_9.0 gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_9.0 gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour reasoures" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="default_9.0_rel gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld help" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+    </configuration>
+    
+    <configuration name="TV_Bravo" description="Bravo Techview build">
+      <unitListRef unitList="COMMON_TV_BUILD_FIRST"/>
+      <unitListRef unitList="COMMON_TV"/>
+      <unitListRef unitList="CEDAR_TV"/>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_9.0 gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_9.0 gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour reasoures" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="default_9.0_rel gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld help" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Copy Plattest Configuration" cwd="common\generic\plattest\group" command="SetupBuildConfig.bat 9.1"/></task>
+      <task><specialInstructions name="Copy Plattest Configuration" cwd="common\generic\plattest\group" command="copy configuration.cfg %CleanSourceDir%\common\generic\plattest\group\"/></task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="bldmake bldfiles" unitParallel="Y"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld export" unitParallel="Y"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld export -what" unitParallel="N"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld export -check" unitParallel="N"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld test build" targetList="default_9.0" unitParallel="N" targetParallel="N"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld test build -what" targetList="default_9.0" unitParallel="N" targetParallel="N"/>
+      </task>
+      <task>
+      	<unitListRef unitList="PLATTEST_LIST"/>
+      	<buildLayer command="abld test -check build" targetList="default_9.0" unitParallel="N" targetParallel="N"/>
+      </task>
+    </configuration>
+
+    <configuration name="JAVA_Bravo" description="Bravo JAVA build">
+      <unitListRef unitList="JAVA9.1"/>
+      <task><buildLayer command="bldmake bldfiles" unitParallel="Y"/></task>
+      <task><buildLayer command="abld export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld makefile" targetList="default_9.0 gccxml" unitParallel="Y" targetParallel="N"/></task>
+      <task><buildLayer command="abld resource" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld library" targetList="default_9.0 gccxml" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld target" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><specialInstructions name="Install colour reasoures" cwd="%EPOCROOT%" command="instcol cl"/></task>
+      <task><buildLayer command="abld final" targetList="default_9.0 gccxml_rel" unitParallel="N" targetParallel="N"/></task>
+      <task><buildLayer command="abld -what export" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -what target" targetList="default_9.0_rel gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+      <task><buildLayer command="abld help" unitParallel="Y"/></task>
+      <task><buildLayer command="abld -check build" targetList="default_9.0 gccxml_rel" unitParallel="Y" targetParallel="Y"/></task>
+    </configuration>
+
+    
+    
+  </build>
+</SystemDefinition>

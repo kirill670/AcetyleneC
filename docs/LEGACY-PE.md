@@ -22,6 +22,12 @@ build/bin/acetylene-pe.exe -o hello.app hello.o shim.o \
 
 `hello.app` is the finished executable. `-v` prints every section that goes into text, data and bss.
 
+The IDE runs the same command: `run_build_pipeline` asks `ide_target_is_legacy` whether the target
+'s `target.ini` says `format=pe`, and if so hands the project to `run_build_legacy`, which compiles
+every `source=` entry, adds the legacy entry shim and calls `acetylene-pe` with the runtime libraries
+listed in that `target.ini`. Setting `target=s60v2` (or `s60v1`, `s80`, `uiq21`) in a `.acproj` is all
+a project needs.
+
 The C entry point is plain `E32Main`; `sdk/runtime/e32main_shim_legacy.c` provides the ARM C++
 mangling (`E32Main__Fv`) that `ecrt0.lib` calls. That is the legacy equivalent of the Itanium
 (`_Z7E32Mainv`) shim used by the EABI path.

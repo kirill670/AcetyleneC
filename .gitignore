@@ -1,6 +1,7 @@
 build/*
 !build/*.sh
 build/extract-sdks.sh
+build/nested-extract.sh
 .cache/
 *.o
 *.obj
